@@ -6,7 +6,7 @@ import org.json.JSONObject;
 /**
  * This class is responsible to handle current Game
  */
-public class Game {
+public class MineSweeperLogicManager {
 
     private Level gameLevel;
     private Status gameStatus;
@@ -15,7 +15,7 @@ public class Game {
 
 
 
-    public Game(String gameSetting){
+    public MineSweeperLogicManager(String gameSetting){
         gameStatus = Status.NOT_STARTED;
         this.gameSetting = gameSetting;
         startGame();
@@ -33,7 +33,7 @@ public class Game {
         return gameBoard;
     }
 
-    public Status getStatus(){
+    public Status getGameStatus(){
         return gameStatus;
     }
 
@@ -45,7 +45,7 @@ public class Game {
         this.gameLevel = gameLevel;
     }
 
-    public void setStatus(Status newStatus){
+    public void setGameStatus(Status newStatus){
         gameStatus = newStatus;
     }
 
@@ -53,7 +53,6 @@ public class Game {
      * Function starts new game
      */
     public void startGame(){
-        gameStatus = Status.STARTED;
         try {
             JSONObject settings = new JSONObject(gameSetting);
             String level = settings.getString(GeneralGameProperties.Level);     //get game level from json
@@ -65,6 +64,12 @@ public class Game {
         }catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void makeMove(int row,int column){
+        if(getGameStatus() == Status.NOT_STARTED)
+            setGameStatus(Status.STARTED);
+            gameBoard.setBoardForNewGame();
     }
 
     public void endGame(){
