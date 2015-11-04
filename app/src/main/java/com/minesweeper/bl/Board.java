@@ -17,19 +17,22 @@ public class Board {
 
 
 
-        public Board(int rows,int columns,int numberOfBomb){
-            this.rows = rows;
-            this.columns = columns;
-            this.numberOfBombs = numberOfBomb;
-            setBoard();
-        }
+    public Board(int rows,int columns,int numberOfBomb){
+        this.rows = rows;
+        this.columns = columns;
+        this.numberOfBombs = numberOfBomb;
+        initializeGameBoard(rows,columns);
+    }
 
-    private void setBoard(){
+    private void initializeGameBoard(int rows,int columns){
         cells = new Cell[rows][columns];
-        fillUpBombs();
         fillUpEmptyCells();
-        setNumberOfAdjacentMinesForEachCell();
+    }
 
+
+    public void setBoardForNewGame(){
+        fillUpBombs();
+        setNumberOfAdjacentMinesForEachCell();
     }
 
     /**
@@ -62,13 +65,13 @@ public class Board {
     }
 
     /**
-     * Function calculate for each cell
+     * Function calculate for relevant cells only the number Of adjacent mines
      */
     private void setNumberOfAdjacentMinesForEachCell(){
 
         for(int i = 0; i < bombsOnBoard.size(); i++){
             Cell bomb = bombsOnBoard.get(i);
-            int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow,relevantColumn; // calculate Adjacent Cell only once
+            int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow,relevantColumn; // keep Adjacent Cell index
             //One Cell Up
             if((relevantRow = bombRow - 1) >= 0 && cells[relevantRow][bombColumn].getCellType() != Cell.CellType.MINE)
                 cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
@@ -100,6 +103,7 @@ public class Board {
         }
     }
 
+
     /**
      * function disabled all cells.
      */
@@ -107,6 +111,10 @@ public class Board {
         for(int i = 0; i < rows; i++)
             for(int j = 0; j < columns; j++)
                 cells[i][j].setEnabled(false);
+    }
+
+    public void applyMove(int row,int column){
+
     }
 
 }
