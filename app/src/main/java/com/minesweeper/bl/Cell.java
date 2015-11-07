@@ -26,7 +26,12 @@ public class Cell {
         numberOfAdjacentMines = 0;
     }
 
-
+    /**
+     * EMPTY_FIRST_CLICKED - First Cell To be clicked prior game starts(uses for not placing a bomb on it)
+     * EMPTY - If a cell is neither Bomb or Marked
+     * BOMB - Contains Bomb
+     * MARKED - Contain a number which indicates number of adjacent mines
+     */
     public enum CellType{
         EMPTY_FIRST_CLICKED,EMPTY, BOMB, MARKED
     }

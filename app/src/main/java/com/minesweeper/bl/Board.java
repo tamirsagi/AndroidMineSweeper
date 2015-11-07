@@ -52,7 +52,7 @@ public class Board {
 
 
     /**
-     * Function fill up board with bombs cells in random indexes
+     * Function fills up board with bombs cells in random indexes
      */
     private void fillUpBombs(){
         bombsOnBoard = new LinkedList<Cell>();
@@ -79,7 +79,7 @@ public class Board {
     }
 
     /**
-     * Function fill up board with empty cells
+     * Function fills up board with empty cells
      */
     private void fillUpEmptyCells(){
         for(int i = 0; i < rows; i++)
@@ -89,7 +89,7 @@ public class Board {
     }
 
     /**
-     * Function calculate for relevant cells only the number Of adjacent mines
+     * Function calculates the number Of adjacent mines for relevant cells only
      */
     private void setNumberOfAdjacentMinesForEachCell(){
 
@@ -128,7 +128,7 @@ public class Board {
     }
 
     /**
-     * function disabled all cells.
+     * function disables all cells.
      */
     public void lockBoard(){
         for(int i = 0; i < rows; i++)
