@@ -2,6 +2,7 @@ package com.minesweeper.bl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 
 /**
@@ -13,7 +14,9 @@ public class Board {
     private int rows;
     private int columns;
     private int numberOfBombs;
-    private List<Cell> bombsOnBoard;
+    private List<Cell> bombsOnBoard; //bomb Adjacent Mines
+    private Queue<Cell> cellsToReveal; //cells to reveal when click on an empty cell
+
 
 
 
@@ -29,11 +32,24 @@ public class Board {
         fillUpEmptyCells();
     }
 
+    public void setFirstClickedCell(int row,int column){
+        cells[row][column].setCellType(Cell.CellType.EMPTY_FIRST_CLICKED);
+    }
+
+    public boolean lose(int row,int col){
+        return cells[row][col].getCellType() == Cell.CellType.BOMB;
+    }
+
+    public boolean isCellEnabled(int row, int col){
+        return cells[row][col].isEnabled();
+    }
+
 
     public void setBoardForNewGame(){
         fillUpBombs();
         setNumberOfAdjacentMinesForEachCell();
     }
+
 
     /**
      * Function fill up board with bombs cells in random indexes
@@ -45,13 +61,21 @@ public class Board {
           while( placedBombs < numberOfBombs){
               int row = rand.nextInt(rows);
               int col = rand.nextInt(columns);
-              if(cells[row][col] == null){
-                  Cell bombCell = new Cell(Cell.CellType.MINE,row,col);
-                  cells[row][col]= bombCell;
-                  bombsOnBoard.add(bombCell);
+              if(canPlaceBomb(row,col)){
+                  cells[row][col].setCellType(Cell.CellType.BOMB);
+                  bombsOnBoard.add(cells[row][col]);
                   placedBombs++;
             }
         }
+    }
+
+    /**
+     *
+     * @return true if a mine can be placed within a current cell or false otherwise
+     */
+    private boolean canPlaceBomb(int row, int column){
+        return !cells[row][column].containsBomb() && !cells[row][column].isCellMarked() &&
+                cells[row][column].getCellType() != Cell.CellType.EMPTY_FIRST_CLICKED;
     }
 
     /**
@@ -73,36 +97,35 @@ public class Board {
             Cell bomb = bombsOnBoard.get(i);
             int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow,relevantColumn; // keep Adjacent Cell index
             //One Cell Up
-            if((relevantRow = bombRow - 1) >= 0 && cells[relevantRow][bombColumn].getCellType() != Cell.CellType.MINE)
+            if((relevantRow = bombRow - 1) >= 0 && !cells[relevantRow][bombColumn].containsBomb())
                 cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
             //one Cell Bottom
-            if((relevantRow = bombRow + 1) < rows && cells[relevantRow][bombColumn].getCellType() != Cell.CellType.MINE)
+            if((relevantRow = bombRow + 1) < rows && !cells[relevantRow][bombColumn].containsBomb())
                 cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
             //Left Cell
-            if((relevantColumn = bombColumn - 1) >= 0 && cells[bombRow][relevantRow].getCellType() != Cell.CellType.MINE)
+            if((relevantColumn = bombColumn - 1) >= 0 && !cells[bombRow][relevantColumn].containsBomb())
                 cells[bombRow][relevantColumn].setNumberOfAdjacentMines(cells[bombRow][relevantColumn].getNumberOfAdjacentMines() + 1);
             //Right Cell
-            if((relevantColumn = bombColumn + 1) < columns && cells[bombRow][relevantColumn].getCellType() != Cell.CellType.MINE)
+            if ((relevantColumn = bombColumn + 1) < columns && !cells[bombRow][relevantColumn].containsBomb())
                 cells[bombRow][relevantColumn].setNumberOfAdjacentMines(cells[bombRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Top Right Diagonal
+            //Top Right
             if((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn + 1) < columns
-                    && cells[relevantRow][relevantColumn].getCellType() != Cell.CellType.MINE)
+                    && !cells[relevantRow][relevantColumn].containsBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Bottom Right Diagonal
-            if((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn + 1) <columns
-                    && cells[relevantRow][relevantColumn].getCellType() != Cell.CellType.MINE)
+            //Bottom Right
+            if((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn + 1) < columns
+                    && !cells[relevantRow][relevantColumn].containsBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Top Left Diagonal
+            //Top Left
             if((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn - 1) >= 0
-                    && cells[relevantRow][relevantColumn].getCellType() != Cell.CellType.MINE)
+                    && !cells[relevantRow][relevantColumn].containsBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Bottom Left Diagonal
+            //Bottom Left
             if((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn - 1) >= 0
-                    && cells[relevantRow][relevantColumn].getCellType() != Cell.CellType.MINE)
+                    && !cells[relevantRow][relevantColumn].containsBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
         }
     }
-
 
     /**
      * function disabled all cells.
@@ -113,8 +136,47 @@ public class Board {
                 cells[i][j].setEnabled(false);
     }
 
-    public void applyMove(int row,int column){
+    public void setBombCellsRevealed(){
+        for (Cell c : bombsOnBoard)
+            c.setRevealed(true);
+    }
 
+    public void applyMove(int row,int column){
+        cellToRevealed(row,column);
+    }
+
+    /**
+     * Function picks cells to reveal(Marked and empty), If Cell Is empty we keep looking for other cells.
+     * @param currentRow
+     * @param currentColumn
+     */
+    private void cellToRevealed(int currentRow,int currentColumn){
+        if(currentRow >= 0 && currentRow < rows && currentColumn >= 0 && currentColumn < columns &&
+               !cells[currentRow][currentColumn].containsBomb() && !cells[currentRow][currentColumn].isVisited()  ) {
+            cells[currentRow][currentColumn].setVisited(true);
+            cells[currentRow][currentColumn].setRevealed(true);
+            cells[currentRow][currentColumn].setEnabled(false);
+            cellsToReveal.add(cells[currentRow][currentColumn]);
+            //if cell is empty check its adjacent cells
+            if (cells[currentRow][currentColumn].isEmpty()){
+                //Top Cell
+                cellToRevealed(currentRow - 1,currentColumn);
+                //Bottom Cell
+                cellToRevealed(currentRow + 1,currentColumn);
+                //left Cell
+                cellToRevealed(currentRow,currentColumn - 1);
+                //right Cell
+                cellToRevealed(currentRow,currentColumn + 1);
+                //Top right Cell
+                cellToRevealed(currentRow - 1,currentColumn + 1);
+                //Bottom right Cell
+                cellToRevealed(currentRow + 1,currentColumn + 1);
+                //Top Left Cell
+                cellToRevealed(currentRow - 1,currentColumn - 1);
+                //Bottom Left Cell
+                cellToRevealed(currentRow + 1,currentColumn - 1);
+            }
+        }
     }
 
 }

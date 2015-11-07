@@ -9,6 +9,7 @@ public class Cell {
     private boolean enabled;
     private boolean revealed;
     private boolean flagged;
+    public boolean visited; //use for open up cells
     private int numberOfAdjacentMines;
     private int row;
     private int col;
@@ -21,12 +22,13 @@ public class Cell {
         enabled = true;
         flagged = false;
         revealed = false;
+        visited = false;
         numberOfAdjacentMines = 0;
     }
 
 
     public enum CellType{
-        EMPTY, MINE, MARKED
+        EMPTY_FIRST_CLICKED,EMPTY, BOMB, MARKED
     }
 
 
@@ -55,11 +57,15 @@ public class Cell {
     }
 
     public boolean isEmpty(){
-        return cellType == CellType.EMPTY;
+        return cellType == CellType.EMPTY || cellType == CellType.EMPTY_FIRST_CLICKED;
     }
 
     public void setCellMarked(){
         cellType = CellType.MARKED;
+    }
+
+    public boolean isCellMarked(){
+        return cellType == CellType.MARKED;
     }
 
     public boolean isFlagged(){
@@ -75,6 +81,14 @@ public class Cell {
         return row;
     }
 
+    public boolean isVisited(){
+        return visited;
+    }
+
+    public void setVisited(boolean visited){
+        this.visited = visited;
+    }
+
     public int getColumnNumber(){
         return col;
     }
@@ -88,6 +102,10 @@ public class Cell {
         if(numberOfAdjacentMines == 0 && value > 0)
             setCellType(CellType.MARKED);
         numberOfAdjacentMines = value;
+    }
+
+    public boolean containsBomb(){
+        return cellType == CellType.BOMB;
     }
 
 

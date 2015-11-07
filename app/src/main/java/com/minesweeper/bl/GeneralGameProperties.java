@@ -1,23 +1,20 @@
 package com.minesweeper.bl;
 
-/**
- * Created by Administrator on 11/3/2015.
- */
+
 public class GeneralGameProperties {
 
 
     public static final String Level = "Level";
-    public static final String NumberOfBombs = "NumberOfBombs";
     public static final String RowsInBoard = "Rows";
     public static final String ColumnsInBoard = "Columns";
-    public static final String MineOnBoard = "Mine";
+    public static final String MinesOnBoard = "Mines";
 
 
     public final static String EeasySettings =
             "{"
 
                     + "      \\\"Level\\\" : \\\"Beginner\\\",\"\n" +
-                    "                    + \"      \\\"Mine\\\": \\\"10\\\",\"\n" +
+                    "                    + \"      \\\"Mines\\\": \\\"10\\\",\"\n" +
                     "                    + \"      \\\"Rows\\\": \\\"9\\\",\"\n" +
                     "                    + \"      \\\"Columns\\\" : \\\"9\","
                     + "    }";
@@ -26,7 +23,7 @@ public class GeneralGameProperties {
             "{"
 
                     + "      \"Level\" : \"Intermediate\","
-                    + "      \"Mine\": \"40\","
+                    + "      \"Mines\": \"40\","
                     + "      \"Rows\": \"16\","
                     + "      \"Columns\" : \"16\","
                     + "    }";
@@ -35,7 +32,7 @@ public class GeneralGameProperties {
             "{"
 
                     + "      \"Level\" : \"Expert\","
-                    + "      \"Mine\": \"99\","
+                    + "      \"Mines\": \"99\","
                     + "      \"Rows\": \"16\","
                     + "      \"Columns\" : \"31\","
                     + "    }";
