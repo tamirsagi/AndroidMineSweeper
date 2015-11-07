@@ -1,3 +1,9 @@
+/**
+ * This Application was created as part of academic course
+ * Tamir Sagi
+ */
+
+
 package com.minesweeper.bl;
 
 /**
@@ -30,7 +36,7 @@ public class Cell {
      * EMPTY_FIRST_CLICKED - First Cell To be clicked prior game starts(uses for not placing a bomb on it)
      * EMPTY - If a cell is neither Bomb or Marked
      * BOMB - Contains Bomb
-     * MARKED - Contain a number which indicates number of adjacent mines
+     * MARKED - Contains a number which indicates number of adjacent mines
      */
     public enum CellType{
         EMPTY_FIRST_CLICKED,EMPTY, BOMB, MARKED

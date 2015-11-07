@@ -1,5 +1,9 @@
-package com.minesweeper.bl;
+/**
+ * This Application was created as part of academic course
+ * Tamir Sagi
+ */
 
+package com.minesweeper.bl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,7 +75,7 @@ public class MineSweeperLogicManager {
      * @param row
      * @param column
      */
-    public boolean makeMove(int row,int column){
+    public void makeMove(int row,int column){
             if (getGameStatus() == Status.NOT_STARTED) {
                 setGameStatus(Status.STARTED);
                 gameBoard.setFirstClickedCell(row, column);
@@ -80,11 +84,15 @@ public class MineSweeperLogicManager {
             }
             else if (gameBoard.lose(row, column)) {
                 endGame();
-                return false;
+                /**
+                 * Should fire an event got game is over
+                 */
             }
             else
                 gameBoard.applyMove(row,column);
-        return true;
+        /**
+         * Should fire an event to success move
+         */
     }
 
     /**

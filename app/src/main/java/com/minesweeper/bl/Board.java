@@ -1,5 +1,10 @@
-package com.minesweeper.bl;
+/**
+ * This Application was created as part of academic course
+ * Tamir Sagi
+ */
 
+
+package com.minesweeper.bl;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
