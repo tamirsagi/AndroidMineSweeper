@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+            android:title="@string/title_pref_player_profile" >
+        <EditTextPreference
+                android:title="@string/title_pref_player_name"
+                android:summary="@string/summary_pref_player_name"
+                android:defaultValue="@string/default_pref_player_profile_name"
+                android:key="@string/key_pref_player_name"/>
+        <EditTextPreference
+                android:title="@string/title_pref_player_last_name"
+                android:summary="@string/summary_pref_player_last_name"
+                android:defaultValue="@string/default_pref_player_profile_name"
+                android:key="@string/key_pref_player_last_name"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="@string/title_pref_game_settings" >
+        <ListPreference
+                android:key="@string/key_pref_level"
+                android:summary="@string/summary_pref_game_level"
+                android:entries="@array/gameLevels"
+                android:entryValues="@array/gameLevels"
+                android:title="@string/title_pref_game_level_Selection" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

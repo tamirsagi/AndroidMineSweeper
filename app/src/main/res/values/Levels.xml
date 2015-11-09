@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Use For Both Entries and Values -->
+    <string-array name="gameLevels">
+        <item name="Beginner">Beginner</item>
+        <item name="Intermediate">Intermediate</item>
+        <item name="Expert">Expert</item>
+    </string-array>
+
+</resources>

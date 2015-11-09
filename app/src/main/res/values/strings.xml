@@ -1,6 +1,35 @@
 <resources>
     <string name="app_name">Mine Sweeper</string>
-    <string name="hello_world">Hello world!</string>
+
+    <!-- Button Strings -->
+    <string name="BTH_Play">Play</string>
+    <string name="BTH_Option">Options</string>
+    <string name="BTH_About">About</string>
+
+    <!--App Settings -->
+    <string name="title_menu_game_options">Settings</string>
+    <string name="title_activity_options">Options</string>
+    <!-- Profile Setting -->
+    <string name="title_pref_player_profile">Player Profile</string>
+    <string name="title_pref_player_name">First Name</string>
+    <string name="title_pref_player_last_name">Last Name</string>
+    <string name="summary_pref_player_name">Set Player Name</string>
+    <string name="summary_pref_player_last_name">Set Player Last Name</string>
+    <string name="default_pref_player_profile_name">Player</string>
+    <string name="key_pref_player_name">prefPlayerName</string>
+    <string name="key_pref_player_last_name">prefPlayerLastName</string>
+
+    <!-- Game Setting -->
+    <string name="title_pref_game_settings">Game Settings</string>
+    <string name="title_pref_game_level_Selection">Levels</string>
+    <string name="key_pref_level">prefGameLevel</string>
+    <string name="summary_pref_game_level">Please Select Game Level</string>
     <string name="title_activity_game">GameActivity</string>
+
+    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+
+
+
 </resources>

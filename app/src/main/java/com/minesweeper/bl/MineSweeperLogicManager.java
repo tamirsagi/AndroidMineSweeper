@@ -3,9 +3,8 @@
  * Tamir Sagi
  */
 
-package com.minesweeper.bl;
-import org.json.JSONException;
-import org.json.JSONObject;
+package com.minesweeper.BL;
+
 
 /**
  * This class is responsible to handle current Game
@@ -13,25 +12,41 @@ import org.json.JSONObject;
 public class MineSweeperLogicManager {
 
     private Level gameLevel;
-    private Status gameStatus;
+    private Status gameStatus; //keep current game status
+    private Result gameResult;     //When game is over it keeps the result(Win/Lose)
     private Board gameBoard;
-    private String gameSetting;
 
 
 
-    public MineSweeperLogicManager(String gameSetting){
+    public MineSweeperLogicManager(String level,int rows,int columns,int numberOfMines){
+        initializeBL(level,rows,columns,numberOfMines);
+    }
+
+    /**
+     * Function prepare Game
+     * @param level
+     * @param rows
+     * @param columns
+     * @param numberOfMines
+     */
+    private void initializeBL(String level,int rows,int columns,int numberOfMines){
         gameStatus = Status.NOT_STARTED;
-        this.gameSetting = gameSetting;
-        startGame();
+        gameResult = Result.NONE;
+        gameLevel = Level.valueOf(level);
+        gameBoard = new Board(rows,columns,numberOfMines);   //create new board
     }
 
-        public enum Level{
-            BEGINNER, INTERMEDIATE,EXPERT
-        }
-
-        public enum Status{
-            NOT_STARTED, STARTED,PAUSED ,OVER
+    public enum Level{
+        BEGINNER, INTERMEDIATE,EXPERT
     }
+
+    public enum Status{
+        NOT_STARTED, STARTED,PAUSED ,OVER
+    }
+
+    public enum Result{
+        NONE,LOST , WIN
+    };
 
     public Board getBoard(){
         return gameBoard;
@@ -53,22 +68,6 @@ public class MineSweeperLogicManager {
         gameStatus = newStatus;
     }
 
-    /**
-     * Function starts new game
-     */
-    public void startGame(){
-        try {
-            JSONObject settings = new JSONObject(gameSetting);
-            String level = settings.getString(GeneralGameProperties.Level);     //get game level from json
-            gameLevel = Level.valueOf(level);                                   // set game level
-            int rows = settings.getInt(GeneralGameProperties.RowsInBoard);      //rows in board
-            int columns = settings.getInt(GeneralGameProperties.ColumnsInBoard);   //columns in board
-            int mines = settings.getInt(GeneralGameProperties.MinesOnBoard);     //mines on board
-            gameBoard = new Board(rows,columns,mines);                          //create new board
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Function makes move for current Cell
@@ -76,34 +75,38 @@ public class MineSweeperLogicManager {
      * @param column
      */
     public void makeMove(int row,int column){
-            if (getGameStatus() == Status.NOT_STARTED) {
-                setGameStatus(Status.STARTED);
-                gameBoard.setFirstClickedCell(row, column);
-                gameBoard.setBoardForNewGame();
-                gameBoard.applyMove(row,column);
+        if (getGameStatus() == Status.NOT_STARTED) {
+            setGameStatus(Status.STARTED);
+            gameBoard.setFirstClickedCell(row, column);
+            gameBoard.setBoardForNewGame();
+        }
+        gameBoard.applyMove(row, column);
+        if(gameBoard.lost()) {
+            endGame(Result.LOST);
+            playerLost(gameBoard.getGameBoard()[row][column]);
+        }
+        else if(gameBoard.won()) {
+                endGame(Result.WIN);
+                playerWon();
             }
-            else if (gameBoard.lose(row, column)) {
-                endGame();
-                /**
-                 * Should fire an event got game is over
-                 */
-            }
-            else
-                gameBoard.applyMove(row,column);
+        }
+
+    private void endGame(Result result) {
+        gameStatus = Status.OVER;
+        gameResult = result;
+     //   gameBoard.lockBoard();
+    }
+
+    private void playerLost(Cell clickedMine){
+        gameBoard.setBombCellsRevealed();
         /**
-         * Should fire an event to success move
+         * Should fire an event including the bomb cells
          */
     }
 
-    /**
-     * Function ends game
-     */
-    public void endGame(){
-        gameStatus = Status.OVER;
-        gameBoard.setBombCellsRevealed();
-        gameBoard.lockBoard();
+    private void playerWon(){
         /**
-         * Should fire an event
+         * Should fire an event including cells to reveal
          */
     }
 

@@ -1,12 +1,52 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="${relativePackage}.${activityClass}">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:id="@+id/textView"/>
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/wallpaper_3"
+        android:id="@+id/OpeningScreenLayout">
+
+    <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/menu_Button_Padding_Top"
+            android:layout_marginBottom="@dimen/menu_Button_Padding_Bottom"
+            android:layout_marginLeft="@dimen/menu_Button_Padding_Left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/MenuButtons">
+        <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
+            <Button android:id="@+id/BTH_Play"
+                    android:text="@string/BTH_Play"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:onClick="onButtonPlayClicked"
+                    android:layout_height="wrap_content"></Button>
+        </LinearLayout>
+        <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
+            <Button android:id="@+id/BTH_Settings"
+                    android:text="@string/BTH_Option"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:onClick="onButtonOptionsClicked"
+                    android:layout_height="wrap_content"></Button>
+        </LinearLayout>
+        <LinearLayout
+                      android:layout_height="wrap_content"
+                      android:layout_width="wrap_content">
+            <Button android:id="@+id/BTH_About"
+                    android:text="@string/BTH_About"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"></Button>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

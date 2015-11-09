@@ -1,4 +1,9 @@
 <resources>
+
+    <dimen name="menu_Button_Padding_Top">150dp</dimen>
+    <dimen name="menu_Button_Padding_Bottom">150dp</dimen>
+    <dimen name="menu_Button_Padding_Left">150dp</dimen>
+    <dimen name="menu_Button_Padding_Right">150dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>

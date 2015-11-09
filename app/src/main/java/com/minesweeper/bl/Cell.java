@@ -4,7 +4,7 @@
  */
 
 
-package com.minesweeper.bl;
+package com.minesweeper.BL;
 
 /**
  * Class Represents a single cell within the board. it's responsible for,type and state

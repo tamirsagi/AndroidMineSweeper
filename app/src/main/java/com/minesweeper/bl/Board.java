@@ -4,7 +4,7 @@
  */
 
 
-package com.minesweeper.bl;
+package com.minesweeper.BL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -19,16 +19,17 @@ public class Board {
     private int rows;
     private int columns;
     private int numberOfBombs;
-    private List<Cell> bombsOnBoard; //bomb Adjacent Mines
-    private Queue<Cell> cellsToReveal; //cells to reveal when click on an empty cell
-
-
-
+    private List<Cell> bombsOnBoard; //bomb on board
+    private List<Cell> cellsToReveal; //cells to reveal when click on an empty cell
+    private int remainsCells;
+    private Cell.CellType lastClicked;
 
     public Board(int rows,int columns,int numberOfBomb){
         this.rows = rows;
         this.columns = columns;
         this.numberOfBombs = numberOfBomb;
+        remainsCells = this.rows * this.columns - numberOfBombs;    //cells to be revealed
+        cellsToReveal = new LinkedList<Cell>();
         initializeGameBoard(rows,columns);
     }
 
@@ -41,15 +42,13 @@ public class Board {
         cells[row][column].setCellType(Cell.CellType.EMPTY_FIRST_CLICKED);
     }
 
-    public boolean lose(int row,int col){
-        return cells[row][col].getCellType() == Cell.CellType.BOMB;
+    public Cell[][] getGameBoard(){
+        return cells;
     }
 
-    public boolean isCellEnabled(int row, int col){
-        return cells[row][col].isEnabled();
-    }
-
-
+    /**
+     * Function set the board
+     */
     public void setBoardForNewGame(){
         fillUpBombs();
         setNumberOfAdjacentMinesForEachCell();
@@ -132,22 +131,47 @@ public class Board {
         }
     }
 
-    /**
-     * function disables all cells.
-     */
-    public void lockBoard(){
-        for(int i = 0; i < rows; i++)
-            for(int j = 0; j < columns; j++)
-                cells[i][j].setEnabled(false);
+    public boolean lost(){
+        return lastClicked == Cell.CellType.BOMB;
     }
+
+    public boolean won(){
+        return remainsCells == 0;
+    }
+
+
+//    /**
+//     * function disables all cells.
+//     */
+//    public void lockBoard(){
+//        for(int i = 0; i < rows; i++)
+//            for(int j = 0; j < columns; j++)
+//                cells[i][j].setEnabled(false);
+//    }
 
     public void setBombCellsRevealed(){
         for (Cell c : bombsOnBoard)
             c.setRevealed(true);
     }
 
+    public List<Cell> getBombsOnBoard(){
+        return bombsOnBoard;
+    }
+
+    public List<Cell> getCellsToReveal(){
+        return cellsToReveal;
+    }
+
+    public Cell.CellType getLastClikedCell(){
+        return lastClicked;
+    }
+
     public void applyMove(int row,int column){
-        cellToRevealed(row,column);
+        if((lastClicked = cells[row][column].getCellType()) != Cell.CellType.BOMB) {
+            cellsToReveal.clear(); //clear last revealed cells list
+            cellToRevealed(row, column);
+            remainsCells -= cellsToReveal.size();
+        }
     }
 
     /**
