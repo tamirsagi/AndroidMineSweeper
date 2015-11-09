@@ -94,7 +94,6 @@ public class MineSweeperLogicManager {
     private void endGame(Result result) {
         gameStatus = Status.OVER;
         gameResult = result;
-     //   gameBoard.lockBoard();
     }
 
     private void playerLost(Cell clickedMine){

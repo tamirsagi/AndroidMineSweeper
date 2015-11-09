@@ -12,7 +12,6 @@ package com.minesweeper.BL;
 public class Cell {
 
     private CellType cellType;
-    private boolean enabled;
     private boolean revealed;
     private boolean flagged;
     public boolean visited; //use for open up cells
@@ -25,7 +24,6 @@ public class Cell {
         this.cellType = cellType;
         this.row = row;
         this.col = column;
-        enabled = true;
         flagged = false;
         revealed = false;
         visited = false;
@@ -51,14 +49,6 @@ public class Cell {
         return cellType;
     }
 
-    public boolean isEnabled(){
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled){
-            this.enabled = enabled;
-    }
-
     public boolean isRevealed(){
         return revealed;
     }
@@ -71,12 +61,12 @@ public class Cell {
         return cellType == CellType.EMPTY || cellType == CellType.EMPTY_FIRST_CLICKED;
     }
 
-    public void setCellMarked(){
-        cellType = CellType.MARKED;
-    }
-
     public boolean isCellMarked(){
         return cellType == CellType.MARKED;
+    }
+
+    public boolean isBomb(){
+        return cellType == CellType.BOMB;
     }
 
     public boolean isFlagged(){
@@ -85,7 +75,6 @@ public class Cell {
 
     public void setFlagged(boolean isFlagged){
         flagged = isFlagged;
-        enabled = flagged;
     }
 
     public int getRowNumber(){
@@ -115,9 +104,7 @@ public class Cell {
         numberOfAdjacentMines = value;
     }
 
-    public boolean containsBomb(){
-        return cellType == CellType.BOMB;
-    }
+
 
 
 
