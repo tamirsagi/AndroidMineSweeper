@@ -1,34 +1,67 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:background="@drawable/wallpaper_3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
- <LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:background="@drawable/wallpaper_0"
+                android:stretchColumns="0,3"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent">
+        <ImageView
+                android:layout_height="50dp"
+                android:id="@+id/minesCounterIcon"
+                android:src="@drawable/MinesCountIcon"
+                android:layout_width="50dp" android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+                android:layout_marginStart="23dp"/>
+        <TextView
+                android:id="@+id/minesCounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14pt"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:text="@string/text_view_upper_menu_default_text"
+                android:layout_above="@+id/gameBoard" android:layout_toEndOf="@+id/minesCounterIcon"/>
 
-         android:orientation="horizontal"
-         android:id="@+id/UpperGameScreen"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignParentTop="true">
+         <TextView
+                android:id="@+id/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14pt"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:text="@string/text_view_upper_menu_default_text"
+                android:layout_above="@+id/gameBoard" android:layout_toStartOf="@+id/timerIcon"/>
 
- </LinearLayout>
-
-    <LinearLayout
-            android:orientation="horizontal"
-            android:id="@+id/GameBoard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-    <GridView
-            android:numColumns="auto_fit"
+        <ImageView
+                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:id="@+id/timerIcon"
+                android:src="@drawable/unnamed"
+                android:layout_marginEnd="21dp" android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"/>
+    <TableLayout
+            android:layout_width="200dp"
+            android:stretchColumns="*"
+            android:id="@+id/gameBoard"
             android:gravity="center"
-            android:stretchMode="columnWidth"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="200dp" android:layout_below="@+id/minesCounterIcon"
+            android:layout_marginTop="23dp"
+            android:layout_alignEnd="@+id/timerIcon" android:layout_alignStart="@+id/minesCounterIcon"/>
+    <ImageButton
+            android:id="@+id/BTH_Restart_Game"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/refresh"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/gameBoard"/>
+    <ImageView
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:id="@+id/leftCells"
+            android:src="@drawable/ok"
+            android:layout_alignBottom="@+id/BTH_Restart_Game" android:layout_alignEnd="@+id/gameBoard"/>
+    <TextView android:id="@+id/textView" android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:textSize="14pt" android:gravity="center" android:textColor="#FFFFFF"
+              android:text="@string/text_view_upper_menu_default_text"
+              android:layout_alignTop="@+id/leftCells" android:layout_toStartOf="@+id/leftCells"/>
 
-    </GridView>
-</LinearLayout>
 
-
-
-
-</LinearLayout>
+</RelativeLayout>

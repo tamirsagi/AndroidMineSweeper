@@ -26,7 +26,8 @@
     <string name="summary_pref_game_level">Please Select Game Level</string>
     <string name="title_activity_game">GameActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="text_view_upper_menu_default_text">"000</string>
+
     <string name="action_settings">Settings</string>
 
 

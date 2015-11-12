@@ -8,23 +8,27 @@ package com.minesweeper.app;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import com.minesweeper.BL.GeneralGameProperties;
 import com.minesweeper.BL.MineSweeperLogicManager;
 
 
 public class GameActivity extends ActionBarActivity {
 
-    public static final String ID_UPPER_MENU = "UpperGameScreen";
-    public static final String ID_GAME_BAORD = "gameBoard";
-
-    private int rows;
-    private int columns;
+    private int gameBoardRows;
+    private int gameBoardColumns;
     private int minesOnBoard;
     private String level;
     private String playerName;
     private MineSweeperLogicManager mineSweeperLogicManager;
+    private TableLayout gameBoard;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +68,12 @@ public class GameActivity extends ActionBarActivity {
         return level;
     }
 
-    public int getRows(){
-        return rows;
+    public int getGameBoardRows(){
+        return gameBoardRows;
     }
 
-    public int getColumns(){
-        return columns;
+    public int getGameBoardColumns(){
+        return gameBoardColumns;
     }
 
     public int getMinesOnBoard(){
@@ -83,8 +87,8 @@ public class GameActivity extends ActionBarActivity {
 
     private void setGameScreen(){
         setSettings();
-
-        mineSweeperLogicManager = new MineSweeperLogicManager(level,rows,columns,minesOnBoard);
+        mineSweeperLogicManager = new MineSweeperLogicManager(level, gameBoardRows, gameBoardColumns,minesOnBoard);
+        createGameBoard();
 
 
     }
@@ -98,12 +102,48 @@ public class GameActivity extends ActionBarActivity {
         Bundle extraData = received.getExtras();
         playerName = extraData.getString(GeneralGameProperties.KEY_PLAYER_FULL_NAME);
         level = extraData.getString(GeneralGameProperties.KEY_GAME_LEVEL);
-        rows = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_ROWS);
-        columns = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS);
+        gameBoardRows = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_ROWS);
+        gameBoardColumns = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS);
         minesOnBoard = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_MINES);
 
     }
 
+    private void createGameBoard()
+    {
+        gameBoard = (TableLayout)findViewById(R.id.gameBoard);
+        final float scale = ((View)getWindow().getDecorView().findViewById(android.R.id.content)).getContext()
+                .getResources().getDisplayMetrics().density;
+        for (int row = 0; row < gameBoardRows; row++) {
+            TableRow tableRow = new TableRow(this);
+            for (int column = 0; column < gameBoardColumns; column++) {
+                final ImageButton button = new ImageButton(this);
+                int bthID = (row + 1) * (column + 1);
+                button.setId(bthID);
+                button.setTag("" + row + "," + column +"");   // row,col, it's the tag which indicates the position
+                button.setBackgroundResource(R.drawable.emptyCell);
+                button.setEnabled(false);
+                button.setMaxWidth((int) (50 * scale));
+                button.setMaxHeight((int) (50 * scale));
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String[] position = ((String)button.getTag()).split(",");
+                        int row = Integer.parseInt(position[0]);
+                        int col = Integer.parseInt(position[0]);
+                        applyMove(row,col);
+                    }
+                });
+                tableRow.addView(button);
+
+            }
+            gameBoard.addView(tableRow);
+        }
+    }
+
+
+    public void applyMove(int row,int column){
+        Log.i("game activity","applyMove clicked");
+    }
 
 
 
