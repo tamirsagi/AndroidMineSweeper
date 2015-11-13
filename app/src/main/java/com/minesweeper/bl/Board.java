@@ -21,7 +21,7 @@ public class Board {
     private List<Cell> bombsOnBoard; //bomb on board
     private List<Cell> cellsToReveal; //cells to reveal when click on an empty cell
     private int remainsCells;
-    private Cell.CellType lastClicked;
+    private Cell lastClicked;
 
     public Board(int rows,int columns,int numberOfBomb){
         this.rows = rows;
@@ -65,8 +65,9 @@ public class Board {
               int row = rand.nextInt(rows);
               int col = rand.nextInt(columns);
               if(canPlaceBomb(row,col)){
-                  cells[row][col].setCellType(Cell.CellType.BOMB);
-                  bombsOnBoard.add(cells[row][col]);
+                  Cell bomb = new BombCell(row,col);
+                  cells[row][col] = bomb;
+                  bombsOnBoard.add(bomb);
                   placedBombs++;
             }
         }
@@ -77,18 +78,16 @@ public class Board {
      * @return true if a mine can be placed within a current cell or false otherwise
      */
     private boolean canPlaceBomb(int row, int column){
-        return !cells[row][column].isBomb() && !cells[row][column].isCellMarked() &&
-                cells[row][column].getCellType() != Cell.CellType.EMPTY_FIRST_CLICKED;
+        return cells[row][column].getCellType() == Cell.CellType.EMPTY;
     }
 
     /**
      * Function fills up board with empty cells
      */
-    private void fillUpEmptyCells(){
+    public void fillUpEmptyCells(){
         for(int i = 0; i < rows; i++)
             for(int j = 0; j < columns; j++)
-                if(cells[i][j] == null)
-                    cells[i][j] = new Cell(Cell.CellType.EMPTY,i,j);
+                cells[i][j] = new Cell(Cell.CellType.EMPTY,i,j);
     }
 
     /**
@@ -131,7 +130,7 @@ public class Board {
     }
 
     public boolean lost(){
-        return lastClicked == Cell.CellType.BOMB;
+        return getLastClikedCell().getCellType() == Cell.CellType.BOMB;
     }
 
     public boolean won(){
@@ -151,16 +150,17 @@ public class Board {
         return cellsToReveal;
     }
 
-    public Cell.CellType getLastClikedCell(){
+    private Cell getLastClikedCell(){
         return lastClicked;
     }
 
     public void applyMove(int row,int column){
-        if((lastClicked = cells[row][column].getCellType()) != Cell.CellType.BOMB) {
+        if((lastClicked = cells[row][column]).getCellType() != Cell.CellType.BOMB) {
             cellsToReveal.clear(); //clear last revealed cells list
             cellToRevealed(row, column);
             remainsCells -= cellsToReveal.size();
         }
+        lastClicked.setClicked(true);
     }
 
     /**

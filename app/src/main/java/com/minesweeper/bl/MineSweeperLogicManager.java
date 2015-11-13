@@ -109,5 +109,10 @@ public class MineSweeperLogicManager {
          */
     }
 
+    public void rematch(){
+        setGameStatus(Status.NOT_STARTED);
+        getBoard().fillUpEmptyCells();
+    }
+
 
 }

@@ -41,11 +41,8 @@
     <GridView
               android:id="@+id/gameBoard"
               android:gravity="center"
-              android:scrollbars="none"
-              android:fastScrollEnabled="false"
               android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:layout_margin="5dp"
+              android:layout_height="fill_parent"
               android:layout_below="@+id/minesCounterIcon"
               android:layout_above="@+id/BTH_Restart_Game"/>
 
@@ -55,6 +52,7 @@
             android:layout_height="50dp"
             android:background="@drawable/refresh"
             android:layout_alignParentBottom="true"
+            android:onClick="rematch"
             android:layout_alignStart="@+id/gameBoard"/>
     <ImageView
             android:layout_height="50dp"

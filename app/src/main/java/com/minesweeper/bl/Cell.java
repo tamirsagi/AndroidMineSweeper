@@ -6,19 +6,25 @@
 
 package com.minesweeper.BL;
 
+import android.util.Log;
+import com.minesweeper.app.R;
+
 /**
  * Class Represents a single cell within the board. it's responsible for,type and state
  */
 public class Cell {
 
+    private static int noImage = -1;
     private CellType cellType;
     private boolean revealed;
+    private boolean clicked;
     private boolean flagged;
     public boolean visited; //use for open up cells
     private int numberOfAdjacentMines;
     private int row;
     private int col;
 
+    public Cell(){}
 
     public Cell(CellType cellType,int row,int column){
         this.cellType = cellType;
@@ -40,7 +46,6 @@ public class Cell {
         EMPTY_FIRST_CLICKED,EMPTY, BOMB, MARKED
     }
 
-
     public void setCellType(CellType newType){
         cellType = newType;
     }
@@ -48,6 +53,14 @@ public class Cell {
     public CellType getCellType(){
         return cellType;
     }
+
+
+    public int getCellImage() {
+        if(isRevealed())
+            return R.drawable.diabled_cell;
+        return R.drawable.empty_cell;
+    }
+
 
     public boolean isRevealed(){
         return revealed;
@@ -77,6 +90,14 @@ public class Cell {
         flagged = isFlagged;
     }
 
+    public boolean isClicked(){
+        return clicked;
+    }
+
+    public void setClicked(boolean clicked){
+        this.clicked = clicked;
+    }
+
     public int getRowNumber(){
         return row;
     }
@@ -94,7 +115,9 @@ public class Cell {
     }
 
     public int getNumberOfAdjacentMines(){
-        return numberOfAdjacentMines;
+        if(isRevealed())
+            return numberOfAdjacentMines;
+        return 0;
     }
 
     public void setNumberOfAdjacentMines(int value){
