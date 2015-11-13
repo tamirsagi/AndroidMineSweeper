@@ -19,7 +19,7 @@ public class Board {
     private int columns;
     private int numberOfBombs;
     private List<Cell> bombsOnBoard; //bomb on board
-    private List<Cell> cellsToReveal; //cells to reveal when click on an empty cell
+    private int cellsToReveal; //cells to reveal when click on an empty cell
     private int remainsCells;
     private Cell lastClicked;
 
@@ -28,7 +28,7 @@ public class Board {
         this.columns = columns;
         this.numberOfBombs = numberOfBomb;
         remainsCells = this.rows * this.columns - numberOfBombs;    //remained cells to be revealed
-        cellsToReveal = new LinkedList<Cell>();
+        cellsToReveal = 0;
         initializeGameBoard(rows,columns);
     }
 
@@ -101,7 +101,7 @@ public class Board {
             //One Cell Up
             if((relevantRow = bombRow - 1) >= 0 && !cells[relevantRow][bombColumn].isBomb())
                 cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
-            //one Cell Bottom
+            //One Cell Bottom
             if((relevantRow = bombRow + 1) < rows && !cells[relevantRow][bombColumn].isBomb())
                 cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
             //Left Cell
@@ -110,19 +110,19 @@ public class Board {
             //Right Cell
             if ((relevantColumn = bombColumn + 1) < columns && !cells[bombRow][relevantColumn].isBomb())
                 cells[bombRow][relevantColumn].setNumberOfAdjacentMines(cells[bombRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Top Right
+            //Diagonal Top Right
             if((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn + 1) < columns
                     && !cells[relevantRow][relevantColumn].isBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Bottom Right
+            //Diagonal Bottom Right
             if((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn + 1) < columns
                     && !cells[relevantRow][relevantColumn].isBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Top Left
+            //Diagonal Top Left
             if((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn - 1) >= 0
                     && !cells[relevantRow][relevantColumn].isBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Bottom Left
+            //Diagonal Bottom Left
             if((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn - 1) >= 0
                     && !cells[relevantRow][relevantColumn].isBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
@@ -146,19 +146,15 @@ public class Board {
         return bombsOnBoard;
     }
 
-    public List<Cell> getCellsToReveal(){
-        return cellsToReveal;
-    }
-
     private Cell getLastClikedCell(){
         return lastClicked;
     }
 
     public void applyMove(int row,int column){
         if((lastClicked = cells[row][column]).getCellType() != Cell.CellType.BOMB) {
-            cellsToReveal.clear(); //clear last revealed cells list
+            cellsToReveal = 0;
             cellToRevealed(row, column);
-            remainsCells -= cellsToReveal.size();
+            remainsCells -= cellsToReveal;
         }
         lastClicked.setClicked(true);
     }
@@ -173,7 +169,7 @@ public class Board {
                !cells[currentRow][currentColumn].isBomb() && !cells[currentRow][currentColumn].isVisited()  ) {
             cells[currentRow][currentColumn].setVisited(true);
             cells[currentRow][currentColumn].setRevealed(true);
-            cellsToReveal.add(cells[currentRow][currentColumn]);
+            cellsToReveal++;
             //if cell is empty check its adjacent cells
             if (cells[currentRow][currentColumn].isEmpty()){
                 //Top Cell

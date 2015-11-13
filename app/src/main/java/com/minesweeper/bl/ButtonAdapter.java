@@ -16,7 +16,7 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
     private Context context;
     int layoutResourceId;
     private Cell[][] gameBoard;
-    private int boardsize;
+    private int boardSize;
     private int row, columns;
 
     public ButtonAdapter(Context context, int layoutResourceId, Cell[][] gameBoard) {
@@ -24,14 +24,14 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
         this.gameBoard = gameBoard;
         row = gameBoard.length;
         columns = gameBoard[0].length;
-        boardsize = row * columns;
+        boardSize = row * columns;
         this.context = context;
         this.layoutResourceId = layoutResourceId;
     }
 
     @Override
     public int getCount() {
-        return boardsize;
+        return boardSize;
     }
 
     @Override
@@ -51,10 +51,9 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
         int clickedRow = position % row;
         int clickedColumn = position / row;
         Cell cell = gameBoard[clickedRow][clickedColumn];
-        int adjecentMine = cell.getNumberOfAdjacentMines();
         holder.button.setBackgroundResource(cell.getCellImage());
-        if (adjecentMine > 0)
-            holder.button.setText("" + adjecentMine);
+        if (cell.isCellMarked() && cell.isRevealed())
+            holder.button.setText("" + cell.getNumberOfAdjacentMines());
         else
             holder.button.setText("");
         return convertView;

@@ -22,14 +22,14 @@ public class Cell {
     public boolean visited; //use for open up cells
     private int numberOfAdjacentMines;
     private int row;
-    private int col;
+    private int column;
 
     public Cell(){}
 
     public Cell(CellType cellType,int row,int column){
         this.cellType = cellType;
         this.row = row;
-        this.col = column;
+        this.column = column;
         flagged = false;
         revealed = false;
         visited = false;
@@ -111,13 +111,11 @@ public class Cell {
     }
 
     public int getColumnNumber(){
-        return col;
+        return column;
     }
 
     public int getNumberOfAdjacentMines(){
-        if(isRevealed())
-            return numberOfAdjacentMines;
-        return 0;
+         return numberOfAdjacentMines;
     }
 
     public void setNumberOfAdjacentMines(int value){
