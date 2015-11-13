@@ -1,12 +1,12 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 
     <style name="PreferencesTheme">
-        <item name="android:windowBackground">@drawable/wallpaper</item>
+        <item name="android:windowBackground">@drawable/wallpaper_0</item>
     </style>
 
 </resources>

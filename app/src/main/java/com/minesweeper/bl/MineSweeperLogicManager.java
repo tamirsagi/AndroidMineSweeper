@@ -37,7 +37,7 @@ public class MineSweeperLogicManager {
     }
 
     public enum Level{
-        BEGINNER, INTERMEDIATE,EXPERT
+        Beginner, Intermediate,Expert
     }
 
     public enum Status{
