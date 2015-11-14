@@ -52,21 +52,21 @@ public class MainActivity extends Activity {
     }
 
 
-    public void onButtonOptionsClicked(View view){
-        Intent i = new Intent(this,OptionsActivity.class);
+    public void onButtonOptionsClicked(View view) {
+        Intent i = new Intent(this, OptionsActivity.class);
         startActivityForResult(i, 0);
     }
 
-    public void onButtonPlayClicked(View view){
+    public void onButtonPlayClicked(View view) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String firstName = sharedPrefs.getString(OptionsActivity.KEY_PREF_PLAYER_NAME, "NULL");//get player name
         String lastName = sharedPrefs.getString(OptionsActivity.KEY_PREF_PLAYER_LAST_NAME, "NULL");//get player last name
         String prefLevel = sharedPrefs.getString(OptionsActivity.KEY_PREF_GAME_LEVEL, "NULL"); //get the selected level
         String gameSettings = GeneralGameProperties.getGameSettings(prefLevel); //get corresponded game settings
 
-        Intent gameActivity = new Intent(this,GameActivity.class);
-        gameActivity.putExtra(GeneralGameProperties.KEY_PLAYER_FULL_NAME,firstName +" " + lastName);
-        try{
+        Intent gameActivity = new Intent(this, GameActivity.class);
+        gameActivity.putExtra(GeneralGameProperties.KEY_PLAYER_FULL_NAME, firstName + " " + lastName);
+        try {
             JSONObject settings = new JSONObject(gameSettings);
             int rows = settings.getInt(GeneralGameProperties.RowsInBoard);         //rows in board
             int columns = settings.getInt(GeneralGameProperties.ColumnsInBoard);   //columns in board
@@ -74,18 +74,16 @@ public class MainActivity extends Activity {
 
             //Save Data for next Activity
             gameActivity.putExtra(GeneralGameProperties.KEY_GAME_LEVEL, prefLevel);
-            gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_ROWS,rows);
-            gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS,columns);
-            gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_MINES,mines);
+            gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_ROWS, rows);
+            gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS, columns);
+            gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_MINES, mines);
 
             //Chane activity
             startActivity(gameActivity);
-        }catch(JSONException e){
-            Log.e("Main Activity - JSON",e.getMessage());
+        } catch (JSONException e) {
+            Log.e("Main Activity - JSON", e.getMessage());
         }
     }
-
-
 
 
 }

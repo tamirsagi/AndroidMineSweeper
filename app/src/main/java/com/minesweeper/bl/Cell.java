@@ -24,9 +24,10 @@ public class Cell {
     private int row;
     private int column;
 
-    public Cell(){}
+    public Cell() {
+    }
 
-    public Cell(CellType cellType,int row,int column){
+    public Cell(CellType cellType, int row, int column) {
         this.cellType = cellType;
         this.row = row;
         this.column = column;
@@ -42,94 +43,93 @@ public class Cell {
      * BOMB - Contains Bomb
      * MARKED - Contains a number which indicates number of adjacent mines
      */
-    public enum CellType{
-        EMPTY_FIRST_CLICKED,EMPTY, BOMB, MARKED
+    public enum CellType {
+        EMPTY_FIRST_CLICKED, EMPTY, BOMB, MARKED
     }
 
-    public void setCellType(CellType newType){
+    public void setCellType(CellType newType) {
         cellType = newType;
     }
 
-    public CellType getCellType(){
+    public CellType getCellType() {
         return cellType;
     }
 
 
     public int getCellImage() {
-        if(isRevealed())
-            return R.drawable.diabled_cell;
+        if (isRevealed()) {
+            if (isFlagged())
+                return R.drawable.flag_cell;
+            return R.drawable.disabled_cell;
+        }
+        else if (isFlagged())
+            return R.drawable.flag_cell;
         return R.drawable.empty_cell;
     }
 
 
-    public boolean isRevealed(){
+    public boolean isRevealed() {
         return revealed;
     }
 
-    public void setRevealed(boolean revealed){
+    public void setRevealed(boolean revealed) {
         this.revealed = revealed;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return cellType == CellType.EMPTY || cellType == CellType.EMPTY_FIRST_CLICKED;
     }
 
-    public boolean isCellMarked(){
+    public boolean isCellMarked() {
         return cellType == CellType.MARKED;
     }
 
-    public boolean isBomb(){
+    public boolean isBomb() {
         return cellType == CellType.BOMB;
     }
 
-    public boolean isFlagged(){
+    public boolean isFlagged() {
         return flagged;
     }
 
-    public void setFlagged(boolean isFlagged){
+    public void setFlagged(boolean isFlagged) {
         flagged = isFlagged;
     }
 
-    public boolean isClicked(){
+    public boolean isClicked() {
         return clicked;
     }
 
-    public void setClicked(boolean clicked){
+    public void setClicked(boolean clicked) {
         this.clicked = clicked;
     }
 
-    public int getRowNumber(){
+    public int getRowNumber() {
         return row;
     }
 
-    public boolean isVisited(){
+    public boolean isVisited() {
         return visited;
     }
 
-    public void setVisited(boolean visited){
+    public void setVisited(boolean visited) {
         this.visited = visited;
     }
 
-    public int getColumnNumber(){
+    public int getColumnNumber() {
         return column;
     }
 
-    public int getNumberOfAdjacentMines(){
-         return numberOfAdjacentMines;
+    public int getNumberOfAdjacentMines() {
+        return numberOfAdjacentMines;
     }
 
-    public void setNumberOfAdjacentMines(int value){
+    public void setNumberOfAdjacentMines(int value) {
         // change cell type only once despite we might change its value
-        if(numberOfAdjacentMines == 0 && value > 0)
+        if (numberOfAdjacentMines == 0 && value > 0)
             setCellType(CellType.MARKED);
         numberOfAdjacentMines = value;
     }
-
-
-
-
-
-
 
 
 }

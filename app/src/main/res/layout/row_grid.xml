@@ -4,7 +4,7 @@
         android:id="@+id/BTH_Cell"
         android:layout_width="22dp"
         android:layout_height="22dp"
-        android:layout_margin="2dp"
+        android:layout_margin="4dp"
         android:gravity="center"
         android:background="@drawable/empty_cell" >
 

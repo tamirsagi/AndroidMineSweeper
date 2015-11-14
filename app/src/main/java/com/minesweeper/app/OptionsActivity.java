@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 
-public class OptionsActivity extends PreferenceActivity  {
+public class OptionsActivity extends PreferenceActivity {
 
     public static final String KEY_PREF_PLAYER_NAME = "prefPlayerName";
     public static final String KEY_PREF_PLAYER_LAST_NAME = "prefPlayerLastName";
@@ -19,7 +19,6 @@ public class OptionsActivity extends PreferenceActivity  {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.game_settings);
     }
-
 
 
 }

@@ -60,6 +60,13 @@
             android:layout_alignTop="@+id/remainedCells"
             android:layout_alignParentEnd="true"/>
 
+    <ImageView
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:id="@+id/flags_icon"
+            android:src="@drawable/flags_icon"
+            android:layout_alignParentBottom="true" android:layout_alignParentStart="true"/>
+
     <TextView android:id="@+id/remainedCells"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -79,6 +86,14 @@
             android:layout_alignTop="@+id/timer"
             android:layout_centerHorizontal="true"
             android:layout_alignBottom="@+id/minesCounter"/>
+    <TextView android:id="@+id/remainedFlags"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textSize="12pt"
+              android:gravity="center"
+              android:textColor="#FFFFFF"
+              android:text="@string/text_view_upper_menu_default_text"
+              android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/flags_icon"/>
 
 
 </RelativeLayout>

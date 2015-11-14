@@ -12,106 +12,105 @@ package com.minesweeper.BL;
 public class MineSweeperLogicManager {
 
     private Level gameLevel;
-    private Status gameStatus; //keep current game status
-    private Result gameResult;     //When game is over it keeps the result(Win/Lose)
+    private GameStatus gameStatus; //keep current game status
+    private GameResult gameResult;     //When game is over it keeps the result(Win/Lose)
     private Board gameBoard;
 
 
-
-    public MineSweeperLogicManager(String level,int rows,int columns,int numberOfMines){
-        initializeBL(level,rows,columns,numberOfMines);
+    public MineSweeperLogicManager(String level, int rows, int columns, int numberOfMines) {
+        initializeBL(level, rows, columns, numberOfMines);
     }
 
     /**
      * Function prepare Game
+     *
      * @param level
      * @param rows
      * @param columns
      * @param numberOfMines
      */
-    private void initializeBL(String level,int rows,int columns,int numberOfMines){
-        gameStatus = Status.NOT_STARTED;
-        gameResult = Result.NONE;
-        gameLevel = Level.valueOf(level);
-        gameBoard = new Board(rows,columns,numberOfMines);   //create new board
+    private void initializeBL(String level, int rows, int columns, int numberOfMines) {
+        setGameStatus(GameStatus.NOT_STARTED);
+        setGameResult(GameResult.NONE);
+        setGameLevel(Level.valueOf(level));
+        gameBoard = new Board(rows, columns, numberOfMines);   //create new board
     }
 
-    public enum Level{
-        Beginner, Intermediate,Expert
+    public enum Level {
+        Beginner, Intermediate, Expert
     }
 
-    public enum Status{
-        NOT_STARTED, STARTED,PAUSED ,OVER
+    public enum GameStatus {
+        NOT_STARTED, STARTED, OVER
     }
 
-    public enum Result{
-        NONE,LOST , WIN
-    };
+    public enum GameResult {
+        NONE, LOST, WIN
+    }
 
-    public Board getBoard(){
+    ;
+
+    public Board getBoard() {
         return gameBoard;
     }
 
-    public Status getGameStatus(){
+    public GameStatus getGameStatus() {
         return gameStatus;
     }
 
-    public Level getGameLevel(){
+    public Level getGameLevel() {
         return gameLevel;
     }
 
-    public void setGameLevel(Level gameLevel){
+    public void setGameLevel(Level gameLevel) {
         this.gameLevel = gameLevel;
     }
 
-    public void setGameStatus(Status newStatus){
+    public void setGameStatus(GameStatus newStatus) {
         gameStatus = newStatus;
     }
 
+    public void setGameResult(GameResult result) {
+        gameResult = result;
+    }
+
+    public boolean isGameOver(){
+        return gameResult != GameResult.NONE;
+    }
 
     /**
      * Function makes move for current Cell
+     *
      * @param row
      * @param column
      */
-    public void makeMove(int row,int column){
-        if (getGameStatus() == Status.NOT_STARTED) {
-            setGameStatus(Status.STARTED);
+    public void makeMove(int row, int column) {
+        if (getGameStatus() == GameStatus.NOT_STARTED) {
+            setGameStatus(GameStatus.STARTED);
             gameBoard.setFirstClickedCell(row, column);
             gameBoard.setBoardForNewGame();
         }
         gameBoard.applyMove(row, column);
-        if(gameBoard.lost()) {
-            endGame(Result.LOST);
-            playerLost(gameBoard.getGameBoard()[row][column]);
+        if (gameBoard.lost()) {
+            endGame(GameResult.LOST);
+            gameBoard.setBombCellsRevealed();
+        } else if (gameBoard.won()) {
+            endGame(GameResult.WIN);
         }
-        else if(gameBoard.won()) {
-                endGame(Result.WIN);
-                playerWon();
-            }
-        }
+    }
 
-    private void endGame(Result result) {
-        gameStatus = Status.OVER;
+    private void endGame(GameResult result) {
+        gameStatus = GameStatus.OVER;
         gameResult = result;
     }
 
-    private void playerLost(Cell clickedMine){
-        gameBoard.setBombCellsRevealed();
-        /**
-         * Should fire an event including the bomb cells
-         */
-    }
 
-    private void playerWon(){
-        /**
-         * Should fire an event including cells to reveal
-         */
-    }
-
-    public void rematch(){
-        setGameStatus(Status.NOT_STARTED);
-        getBoard().fillUpEmptyCells();
+    public void rematch() {
+        setGameStatus(GameStatus.NOT_STARTED);
+        setGameResult(GameResult.NONE);
+        int rows = getBoard().getNumberOfRows(), columns = getBoard().getNumberOfColumns(),
+                bombs = getBoard().getNumberOfBombs();
+        getBoard().initializeGameBoard(rows,columns,bombs);
     }
 
 

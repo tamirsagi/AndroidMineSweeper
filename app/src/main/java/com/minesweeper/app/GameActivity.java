@@ -14,8 +14,11 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 import com.minesweeper.BL.ButtonAdapter;
+import com.minesweeper.BL.Cell;
 import com.minesweeper.BL.GeneralGameProperties;
 import com.minesweeper.BL.MineSweeperLogicManager;
+
+import java.util.logging.Handler;
 
 
 public class GameActivity extends AppCompatActivity {
@@ -31,6 +34,9 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_minesCounter;
     private TextView tv_remainedCell;
     private TextView tv_gameLevel;
+    private TextView tv_RemainedFlags;
+    private Handler timerHandler;
+    private TextView tv_Timer;
 
 
     @Override
@@ -85,29 +91,36 @@ public class GameActivity extends AppCompatActivity {
         gameBoardRows = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_ROWS);
         gameBoardColumns = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS);
         minesOnBoard = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_MINES);
+
+        tv_minesCounter = (TextView) findViewById(R.id.minesCounter);
+        tv_gameLevel = (TextView) findViewById(R.id.gameLevel);
+        tv_remainedCell = (TextView) findViewById(R.id.remainedCells);
+        tv_RemainedFlags = (TextView) findViewById(R.id.remainedFlags);
     }
 
 
-    private void setMinesCounter(){
+    private void setMinesCounter() {
         tv_minesCounter.setText("" + minesOnBoard);
     }
 
-    private void setGameLevel(){
-        tv_gameLevel.setText(level.toString()+"(" + gameBoardRows + "X" + gameBoardColumns +")");
+    private void setGameLevel() {
+        tv_gameLevel.setText(level.toString() + "(" + gameBoardRows + "X" + gameBoardColumns + ")");
     }
 
-    private void setRemainedCells(){
+    private void setRemainedCells() {
         tv_remainedCell.setText("" + mineSweeperLogicManager.getBoard().getRemainsCells());
     }
 
+    private void setRemainedFlags() {
+        tv_RemainedFlags.setText("" + mineSweeperLogicManager.getBoard().getNumberOfFlags());
+    }
 
-    private void setGameInfo(){
-        tv_minesCounter =  (TextView)findViewById(R.id.minesCounter);
-        tv_gameLevel =  (TextView)findViewById(R.id.gameLevel);
-        tv_remainedCell =  (TextView)findViewById(R.id.remainedCells);
+
+    private void setGameInfo() {
         setMinesCounter();
         setGameLevel();
         setRemainedCells();
+        setRemainedFlags();
     }
 
     private void setGridView() {
@@ -120,25 +133,51 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
                 Log.i("onItemClick", "" + position);
-                int clickedRow = position % gameBoardRows;
-                int clickedColumn = position / gameBoardRows;
-                applyMove(clickedRow, clickedColumn);
+                if (mineSweeperLogicManager.getGameStatus() != MineSweeperLogicManager.GameStatus.OVER ) {
+                    int clickedRow = position % gameBoardRows;
+                    int clickedColumn = position / gameBoardRows;
+                    Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
+                    if(!clickedCell.isFlagged())
+                        applyMove(clickedRow, clickedColumn);
+                }
             }
         });
+        gv_GameBoard.setOnItemLongClickListener((new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                int clickedRow = position % gameBoardRows;
+                int clickedColumn = position / gameBoardRows;
+                Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
+                if (!mineSweeperLogicManager.isGameOver()  &&
+                        !clickedCell.isRevealed()) {
+                    clickedCell.setFlagged(!clickedCell.isFlagged());
+                    int remainedFlags = mineSweeperLogicManager.getBoard().getNumberOfFlags();
+                    if(clickedCell.isFlagged())
+                        remainedFlags--;
+                    else
+                        remainedFlags++;
+                    mineSweeperLogicManager.getBoard().setNumberOfFlags(remainedFlags);
+                    setRemainedFlags();
+                    buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
+                    return true;
+                }
+                return false;
+            }
+        }));
     }
 
 
     public void applyMove(int row, int column) {
         Log.i("game activity", "applyMove clicked" + row + "," + column);
-        mineSweeperLogicManager.makeMove(row,column);
+        mineSweeperLogicManager.makeMove(row, column);
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
         setRemainedCells();
     }
 
-    public void rematch(View view){
+    public void rematch(View view) {
         mineSweeperLogicManager.rematch();
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
-        setRemainedCells();
+        setGameInfo();
     }
 
 

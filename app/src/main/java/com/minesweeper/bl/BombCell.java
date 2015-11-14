@@ -15,11 +15,14 @@ public class BombCell extends Cell{
     @Override
     public int getCellImage(){
         if(isClicked())
-            return R.drawable.disabled_clicked_bomb_cell;
-        else if(isRevealed())
+            return R.drawable.clicked_bomb_cell;
+       else if(isRevealed()) {
+            if (isFlagged())
+                return R.drawable.disabled_clicked_bomb_cell;
             return R.drawable.bomb_cell;
-        else
-            return R.drawable.empty_cell;
+        }
+       else
+            return super.getCellImage();
     }
 
 
