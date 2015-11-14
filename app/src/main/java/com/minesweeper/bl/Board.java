@@ -150,6 +150,9 @@ public class Board {
         return lastClicked;
     }
 
+    public int getRemainsCells(){
+        return remainsCells;
+    }
     public void applyMove(int row,int column){
         if((lastClicked = cells[row][column]).getCellType() != Cell.CellType.BOMB) {
             cellsToReveal = 0;

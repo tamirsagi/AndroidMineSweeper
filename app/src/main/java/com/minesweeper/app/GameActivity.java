@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import com.minesweeper.BL.ButtonAdapter;
 import com.minesweeper.BL.GeneralGameProperties;
 import com.minesweeper.BL.MineSweeperLogicManager;
@@ -25,8 +26,11 @@ public class GameActivity extends AppCompatActivity {
     private String level;
     private String playerName;
     private MineSweeperLogicManager mineSweeperLogicManager;
-    private GridView gridView;
+    private GridView gv_GameBoard;
     private ButtonAdapter buttonAdapter;
+    private TextView tv_minesCounter;
+    private TextView tv_remainedCell;
+    private TextView tv_gameLevel;
 
 
     @Override
@@ -65,11 +69,12 @@ public class GameActivity extends AppCompatActivity {
     private void setGameScreen() {
         setSettings();
         mineSweeperLogicManager = new MineSweeperLogicManager(level, gameBoardRows, gameBoardColumns, minesOnBoard);
+        setGameInfo();
         setGridView();
     }
 
     /**
-     * Function set the game setting
+     * Functions set the game setting
      */
 
     private void setSettings() {
@@ -82,13 +87,36 @@ public class GameActivity extends AppCompatActivity {
         minesOnBoard = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_MINES);
     }
 
+
+    private void setMinesCounter(){
+        tv_minesCounter.setText("" + minesOnBoard);
+    }
+
+    private void setGameLevel(){
+        tv_gameLevel.setText(level.toString()+"(" + gameBoardRows + "X" + gameBoardColumns +")");
+    }
+
+    private void setRemainedCells(){
+        tv_remainedCell.setText("" + mineSweeperLogicManager.getBoard().getRemainsCells());
+    }
+
+
+    private void setGameInfo(){
+        tv_minesCounter =  (TextView)findViewById(R.id.minesCounter);
+        tv_gameLevel =  (TextView)findViewById(R.id.gameLevel);
+        tv_remainedCell =  (TextView)findViewById(R.id.remainedCells);
+        setMinesCounter();
+        setGameLevel();
+        setRemainedCells();
+    }
+
     private void setGridView() {
-        gridView = (GridView) findViewById(R.id.gameBoard);
-        gridView.setNumColumns(gameBoardColumns);
+        gv_GameBoard = (GridView) findViewById(R.id.gameBoard);
+        gv_GameBoard.setNumColumns(gameBoardColumns);
         buttonAdapter =
                 new ButtonAdapter(this, R.layout.row_grid, mineSweeperLogicManager.getBoard().getGameBoard());
-        gridView.setAdapter(buttonAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gv_GameBoard.setAdapter(buttonAdapter);
+        gv_GameBoard.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
                 Log.i("onItemClick", "" + position);
@@ -104,11 +132,13 @@ public class GameActivity extends AppCompatActivity {
         Log.i("game activity", "applyMove clicked" + row + "," + column);
         mineSweeperLogicManager.makeMove(row,column);
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
+        setRemainedCells();
     }
 
     public void rematch(View view){
         mineSweeperLogicManager.rematch();
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
+        setRemainedCells();
     }
 
 
