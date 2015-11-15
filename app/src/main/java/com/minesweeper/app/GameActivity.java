@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.os.Handler;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -18,11 +19,10 @@ import com.minesweeper.BL.Cell;
 import com.minesweeper.BL.GeneralGameProperties;
 import com.minesweeper.BL.MineSweeperLogicManager;
 
-import java.util.logging.Handler;
-
 
 public class GameActivity extends AppCompatActivity {
 
+    private final int mil = 1000, secondsInAMinute = 60, delayed = 500;
     private int gameBoardRows;
     private int gameBoardColumns;
     private int minesOnBoard;
@@ -37,6 +37,8 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_RemainedFlags;
     private Handler timerHandler;
     private TextView tv_Timer;
+    private Runnable timerJob;
+    private long startedTime;
 
 
     @Override
@@ -77,6 +79,7 @@ public class GameActivity extends AppCompatActivity {
         mineSweeperLogicManager = new MineSweeperLogicManager(level, gameBoardRows, gameBoardColumns, minesOnBoard);
         setGameInfo();
         setGridView();
+        setTimer();
     }
 
     /**
@@ -96,6 +99,8 @@ public class GameActivity extends AppCompatActivity {
         tv_gameLevel = (TextView) findViewById(R.id.gameLevel);
         tv_remainedCell = (TextView) findViewById(R.id.remainedCells);
         tv_RemainedFlags = (TextView) findViewById(R.id.remainedFlags);
+
+        tv_Timer = (TextView) findViewById(R.id.timer);
     }
 
 
@@ -113,6 +118,31 @@ public class GameActivity extends AppCompatActivity {
 
     private void setRemainedFlags() {
         tv_RemainedFlags.setText("" + mineSweeperLogicManager.getBoard().getNumberOfFlags());
+    }
+
+    public void setTimer() {
+
+        timerHandler = new Handler();
+        timerJob = new Runnable() {
+            @Override
+            public void run() {
+                long millis = System.currentTimeMillis() - startedTime;
+                int seconds = (int) (millis / mil);             // get seconds from mili seconds
+                int minutes = seconds / secondsInAMinute;      //  get minutes from seconds
+                seconds = seconds % secondsInAMinute;         //   get updated seconds
+                tv_Timer.setText(String.format("%02d:%02d", minutes, seconds));
+                timerHandler.postDelayed(this, 0);
+            }
+        };
+    }
+
+    private void startTimer() {
+        startedTime = System.currentTimeMillis();
+        timerHandler.postDelayed(timerJob, 0);
+    }
+
+    private void stopTimer() {
+        timerHandler.removeCallbacks(timerJob);
     }
 
 
@@ -133,11 +163,11 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
                 Log.i("onItemClick", "" + position);
-                if (mineSweeperLogicManager.getGameStatus() != MineSweeperLogicManager.GameStatus.OVER ) {
+                if (!mineSweeperLogicManager.isGameOver()) {
                     int clickedRow = position % gameBoardRows;
                     int clickedColumn = position / gameBoardRows;
                     Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
-                    if(!clickedCell.isFlagged())
+                    if (!clickedCell.isFlagged())
                         applyMove(clickedRow, clickedColumn);
                 }
             }
@@ -148,11 +178,10 @@ public class GameActivity extends AppCompatActivity {
                 int clickedRow = position % gameBoardRows;
                 int clickedColumn = position / gameBoardRows;
                 Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
-                if (!mineSweeperLogicManager.isGameOver()  &&
-                        !clickedCell.isRevealed()) {
+                if (!mineSweeperLogicManager.isGameOver() && !clickedCell.isRevealed()) {
                     clickedCell.setFlagged(!clickedCell.isFlagged());
                     int remainedFlags = mineSweeperLogicManager.getBoard().getNumberOfFlags();
-                    if(clickedCell.isFlagged())
+                    if (clickedCell.isFlagged())
                         remainedFlags--;
                     else
                         remainedFlags++;
@@ -166,18 +195,30 @@ public class GameActivity extends AppCompatActivity {
         }));
     }
 
+//    private void resizeButtonsInGrid(String gameLevel){
+//        switch (gameLevel){
+//            case GeneralGameProperties.
+//        }
+//    }
+
 
     public void applyMove(int row, int column) {
-        Log.i("game activity", "applyMove clicked" + row + "," + column);
+        if (!mineSweeperLogicManager.isGameStarted())
+            startTimer();
         mineSweeperLogicManager.makeMove(row, column);
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
         setRemainedCells();
+        if (mineSweeperLogicManager.isGameOver()) {
+            stopTimer();
+        }
     }
 
     public void rematch(View view) {
         mineSweeperLogicManager.rematch();
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
         setGameInfo();
+        startedTime = 0;
+        tv_Timer.setText("00:00");
     }
 
 

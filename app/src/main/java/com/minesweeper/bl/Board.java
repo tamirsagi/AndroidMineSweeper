@@ -67,7 +67,7 @@ public class Board {
     /**
      * Function set the board
      */
-    public void setBoardForNewGame() {
+    public void setBoardAfterFirstClicked() {
         fillUpBombs();
         setNumberOfAdjacentMinesForEachCell();
     }

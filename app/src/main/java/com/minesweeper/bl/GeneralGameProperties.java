@@ -13,7 +13,7 @@ public class GeneralGameProperties {
     public static final String KEY_GAME_LEVEL = "gameLevel";
     public static final String KEY_GAME_BOARD_ROWS = "gameBoardRows";
     public static final String KEY_GAME_BOARD_COLUMNS = "gameBoardColumns";
-    public static final String KEY_GAME_BOARD_MINES = "gameBoarines";
+    public static final String KEY_GAME_BOARD_MINES = "gameBoarMines";
 
 
     public static final String Level = "Level";

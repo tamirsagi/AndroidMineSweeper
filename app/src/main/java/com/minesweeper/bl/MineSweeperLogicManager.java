@@ -78,6 +78,10 @@ public class MineSweeperLogicManager {
         return gameResult != GameResult.NONE;
     }
 
+    public boolean isGameStarted(){
+        return gameStatus ==  GameStatus.STARTED;
+    }
+
     /**
      * Function makes move for current Cell
      *
@@ -88,7 +92,7 @@ public class MineSweeperLogicManager {
         if (getGameStatus() == GameStatus.NOT_STARTED) {
             setGameStatus(GameStatus.STARTED);
             gameBoard.setFirstClickedCell(row, column);
-            gameBoard.setBoardForNewGame();
+            gameBoard.setBoardAfterFirstClicked();
         }
         gameBoard.applyMove(row, column);
         if (gameBoard.lost()) {
@@ -100,8 +104,8 @@ public class MineSweeperLogicManager {
     }
 
     private void endGame(GameResult result) {
-        gameStatus = GameStatus.OVER;
-        gameResult = result;
+        setGameStatus(GameStatus.OVER);
+        setGameResult(result);
     }
 
 

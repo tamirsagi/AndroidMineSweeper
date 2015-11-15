@@ -2,7 +2,6 @@ package com.minesweeper.BL;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             convertView = inflater.inflate(layoutResourceId, parent, false);
             holder = new RecordHolder();
-            holder.button = (TextView) convertView.findViewById(R.id.BTH_Cell);
+            holder.button = (TextView) convertView.findViewById(R.id.buttonInGrid);
             convertView.setTag(holder);
         } else {
             holder = (RecordHolder) convertView.getTag();
