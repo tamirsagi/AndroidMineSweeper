@@ -31,27 +31,27 @@ public class GeneralGameProperties {
             "{"
 
                     + "      \"Level\" : \"Beginner\","
-                    + "      \"Mines\": \"10\","
-                    + "      \"Rows\": \"9\","
-                    + "      \"Columns\" : \"9\""
+                    + "      \"Mines\": \"5\","
+                    + "      \"Rows\": \"5\","
+                    + "      \"Columns\" : \"5\""
                     + "    }";
 
     private final static String IntermediateSettings =
             "{"
 
                     + "      \"Level\" : \"Intermediate\","
-                    + "      \"Mines\": \"40\","
-                    + "      \"Rows\": \"16\","
-                    + "      \"Columns\" : \"16\""
+                    + "      \"Mines\": \"25\","
+                    + "      \"Rows\": \"9\","
+                    + "      \"Columns\" : \"9\""
                     + "    }";
 
     private final static String ExpertSettings =
             "{"
 
                     + "      \"Level\" : \"Expert\","
-                    + "      \"Mines\": \"99\","
+                    + "      \"Mines\": \"40\","
                     + "      \"Rows\": \"16\","
-                    + "      \"Columns\" : \"31\""
+                    + "      \"Columns\" : \"16\""
                     + "    }";
 
 

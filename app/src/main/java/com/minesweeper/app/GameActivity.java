@@ -6,14 +6,15 @@
 package com.minesweeper.app;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.os.Handler;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.*;
 import com.minesweeper.BL.ButtonAdapter;
 import com.minesweeper.BL.Cell;
 import com.minesweeper.BL.GeneralGameProperties;
@@ -39,15 +40,50 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_Timer;
     private Runnable timerJob;
     private long startedTime;
+    private ImageButton bth_Rematch;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("onCreate","onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_board_layout);
         setGameScreen();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("onStop","onStop");
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopTimer();
+        Log.i("onDestroy", "onDestroy");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("onPause","onPause");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("onStart","onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i("onResume","onResume");
+        super.onResume();
+    }
+
 
     public String getPlayerName() {
         return playerName;
@@ -83,9 +119,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     * Functions set the game setting
+     * set general settings
      */
-
     private void setSettings() {
         Intent received = getIntent();
         Bundle extraData = received.getExtras();
@@ -101,6 +136,9 @@ public class GameActivity extends AppCompatActivity {
         tv_RemainedFlags = (TextView) findViewById(R.id.remainedFlags);
 
         tv_Timer = (TextView) findViewById(R.id.timer);
+
+        bth_Rematch = (ImageButton)findViewById(R.id.BTH_Restart_Game);
+        changeRestartButtonState(false);
     }
 
 
@@ -113,7 +151,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setRemainedCells() {
-        tv_remainedCell.setText("" + mineSweeperLogicManager.getBoard().getRemainsCells());
+        tv_remainedCell.setText("" + mineSweeperLogicManager.getBoard().getRemainedCells());
     }
 
     private void setRemainedFlags() {
@@ -121,7 +159,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void setTimer() {
-
         timerHandler = new Handler();
         timerJob = new Runnable() {
             @Override
@@ -145,7 +182,16 @@ public class GameActivity extends AppCompatActivity {
         timerHandler.removeCallbacks(timerJob);
     }
 
+    private void changeRestartButtonState(boolean show){
+        if(show)
+            bth_Rematch.setVisibility(View.VISIBLE);
+        else
+            bth_Rematch.setVisibility(View.INVISIBLE);
+    }
 
+    /**
+     * set text to relevant text views on game window
+     */
     private void setGameInfo() {
         setMinesCounter();
         setGameLevel();
@@ -153,11 +199,15 @@ public class GameActivity extends AppCompatActivity {
         setRemainedFlags();
     }
 
+    /**
+     * set Grid view settings and listeners
+     */
     private void setGridView() {
-        gv_GameBoard = (GridView) findViewById(R.id.gameBoard);
-        gv_GameBoard.setNumColumns(gameBoardColumns);
+        gv_GameBoard = (GridView) findViewById(R.id.gameBoard);         //get grid view element from layout
+        gv_GameBoard.setNumColumns(gameBoardColumns);                  //set grid view column number
+        int cellSizeInGrid = setGridItemSize();
         buttonAdapter =
-                new ButtonAdapter(this, R.layout.row_grid, mineSweeperLogicManager.getBoard().getGameBoard());
+             new ButtonAdapter(this, R.layout.row_grid, mineSweeperLogicManager.getBoard().getGameBoard(),cellSizeInGrid);
         gv_GameBoard.setAdapter(buttonAdapter);
         gv_GameBoard.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -195,6 +245,22 @@ public class GameActivity extends AppCompatActivity {
         }));
     }
 
+    private int setGridItemSize(){
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;                                           //in px unit
+        int columnSizeInPX = width / gameBoardColumns;               //column Size in Px units
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        float logicalDensity = metrics.density;
+        int columnSizeInDP = columnSizeInPX/ (int)logicalDensity;  //get column size in DP units
+        int space = 2;                                           //padding between items
+        int gridItemSizeInDP = columnSizeInDP - 2 * space;      //remove 2dp each side
+
+        return gridItemSizeInDP;
+
+    }
+
 //    private void resizeButtonsInGrid(String gameLevel){
 //        switch (gameLevel){
 //            case GeneralGameProperties.
@@ -202,6 +268,11 @@ public class GameActivity extends AppCompatActivity {
 //    }
 
 
+    /**
+     * apply move on board
+     * @param row
+     * @param column
+     */
     public void applyMove(int row, int column) {
         if (!mineSweeperLogicManager.isGameStarted())
             startTimer();
@@ -210,16 +281,26 @@ public class GameActivity extends AppCompatActivity {
         setRemainedCells();
         if (mineSweeperLogicManager.isGameOver()) {
             stopTimer();
+            changeRestartButtonState(true);
+
         }
     }
 
+    /**
+     * rematch the game
+     * @param view
+     */
     public void rematch(View view) {
+        changeRestartButtonState(false);
         mineSweeperLogicManager.rematch();
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
+        stopTimer();
         setGameInfo();
         startedTime = 0;
         tv_Timer.setText("00:00");
+
     }
+
 
 
 }

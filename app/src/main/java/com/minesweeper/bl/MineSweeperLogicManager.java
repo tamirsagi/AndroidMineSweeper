@@ -103,12 +103,18 @@ public class MineSweeperLogicManager {
         }
     }
 
+    /**
+     * Function ends the game
+     * @param result
+     */
     private void endGame(GameResult result) {
         setGameStatus(GameStatus.OVER);
         setGameResult(result);
     }
 
-
+    /**
+     * function prepares the board for a rematch
+     */
     public void rematch() {
         setGameStatus(GameStatus.NOT_STARTED);
         setGameResult(GameResult.NONE);

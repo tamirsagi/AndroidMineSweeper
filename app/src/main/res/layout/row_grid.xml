@@ -1,12 +1,12 @@
-
 <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/buttonInGrid"
         android:layout_width="22dp"
         android:layout_height="22dp"
-        android:layout_margin="4dp"
         android:gravity="center"
-        android:background="@drawable/empty_cell" >
+        android:background="@drawable/empty_cell">
 
 </TextView>
 
+
+        <!--android:soundEffectsEnabled="false"-->

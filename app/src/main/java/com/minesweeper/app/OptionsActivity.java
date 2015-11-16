@@ -2,6 +2,9 @@
  * This Application was created as part of academic course
  * Tamir Sagi
  */
+
+
+
 package com.minesweeper.app;
 
 import android.os.Bundle;

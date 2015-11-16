@@ -1,3 +1,8 @@
+/**
+ * This Application was created as part of academic course
+ * Tamir Sagi
+ */
+
 package com.minesweeper.BL;
 
 import android.app.Activity;
@@ -17,8 +22,10 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
     private Cell[][] gameBoard;
     private int boardSize;
     private int row, columns;
+    private AbsListView.LayoutParams layoutParams;
+    private int cellSizeInDP;
 
-    public ButtonAdapter(Context context, int layoutResourceId, Cell[][] gameBoard) {
+    public ButtonAdapter(Context context, int layoutResourceId, Cell[][] gameBoard, int cellSizeInDP) {
         super(context, layoutResourceId, new ArrayList());
         this.gameBoard = gameBoard;
         row = gameBoard.length;
@@ -26,6 +33,8 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
         boardSize = row * columns;
         this.context = context;
         this.layoutResourceId = layoutResourceId;
+        //layoutParams = new AbsListView.LayoutParams(cellSizeInDP,cellSizeInDP);
+        this.cellSizeInDP = cellSizeInDP;
     }
 
     @Override
@@ -41,20 +50,23 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             convertView = inflater.inflate(layoutResourceId, parent, false);
             holder = new RecordHolder();
-            holder.button = (TextView) convertView.findViewById(R.id.buttonInGrid);
+            holder.tv_cell = (TextView) convertView.findViewById(R.id.buttonInGrid);
             convertView.setTag(holder);
         } else {
             holder = (RecordHolder) convertView.getTag();
         }
-
         int clickedRow = position % row;
         int clickedColumn = position / row;
         Cell cell = gameBoard[clickedRow][clickedColumn];
-        holder.button.setBackgroundResource(cell.getCellImage());
+        holder.tv_cell.setBackgroundResource(cell.getCellImage());
         if (cell.isCellMarked() && cell.isRevealed())
-            holder.button.setText("" + cell.getNumberOfAdjacentMines());
+            holder.tv_cell.setText("" + cell.getNumberOfAdjacentMines());
         else
-            holder.button.setText("");
+            holder.tv_cell.setText("");
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(2 * cellSizeInDP, 2 * cellSizeInDP);
+        convertView.setLayoutParams(new GridView.LayoutParams(params));
+
         return convertView;
     }
 
@@ -64,9 +76,8 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
     }
 
     static class RecordHolder {
-        TextView button;
+        TextView tv_cell;
     }
-
 
 
 }

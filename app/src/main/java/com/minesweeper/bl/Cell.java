@@ -14,7 +14,6 @@ import com.minesweeper.app.R;
  */
 public class Cell {
 
-    private static int noImage = -1;
     private CellType cellType;
     private boolean revealed;
     private boolean clicked;

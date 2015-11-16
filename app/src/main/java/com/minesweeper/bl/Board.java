@@ -23,8 +23,7 @@ public class Board {
     private int numberOfBombs;
     private int numberOfFlags;
     private List<Cell> bombsOnBoard; //bomb on board
-    private int cellsToReveal; //cells to reveal when click on an empty cell
-    private int remainsCells;
+    private int remainedCells;
     private Cell lastClicked;
 
     public Board(int rows, int columns, int numberOfBombs) {
@@ -35,8 +34,7 @@ public class Board {
         this.rows = rows;
         this.columns = columns;
         this.numberOfBombs = numberOfBombs;
-        remainsCells = this.rows * this.columns - numberOfBombs;    //remained cells to be revealed
-        cellsToReveal = 0;
+        remainedCells = this.rows * this.columns - numberOfBombs;    //remained cells to be revealed
         numberOfFlags = (int) (ratioFlagsAndBombs * numberOfBombs);
 
         cells = new Cell[rows][columns];
@@ -151,7 +149,7 @@ public class Board {
     }
 
     public boolean won() {
-        return remainsCells == 0;
+        return remainedCells == 0;
     }
 
     public void setBombCellsRevealed() {
@@ -167,8 +165,8 @@ public class Board {
         return lastClicked;
     }
 
-    public int getRemainsCells() {
-        return remainsCells;
+    public int getRemainedCells() {
+        return remainedCells;
     }
 
     public int getNumberOfFlags() {
@@ -181,9 +179,7 @@ public class Board {
 
     public void applyMove(int row, int column) {
         if ((lastClicked = cells[row][column]).getCellType() != Cell.CellType.BOMB) {
-            cellsToReveal = 0;
-            cellToRevealed(row, column);
-            remainsCells -= cellsToReveal;
+            cellsToReveal(row, column);
         }
         lastClicked.setClicked(true);
     }
@@ -194,29 +190,29 @@ public class Board {
      * @param currentRow
      * @param currentColumn
      */
-    private void cellToRevealed(int currentRow, int currentColumn) {
+    private void cellsToReveal(int currentRow, int currentColumn) {
         if (canVisitCell(currentRow, currentColumn)) {
             cells[currentRow][currentColumn].setVisited(true);
             cells[currentRow][currentColumn].setRevealed(true);
-            cellsToReveal++;
+            remainedCells--;
             //if cell is empty check its adjacent cells
             if (cells[currentRow][currentColumn].isEmpty()) {
                 //Top Cell
-                cellToRevealed(currentRow - 1, currentColumn);
+                cellsToReveal(currentRow - 1, currentColumn);
                 //Bottom Cell
-                cellToRevealed(currentRow + 1, currentColumn);
+                cellsToReveal(currentRow + 1, currentColumn);
                 //left Cell
-                cellToRevealed(currentRow, currentColumn - 1);
+                cellsToReveal(currentRow, currentColumn - 1);
                 //right Cell
-                cellToRevealed(currentRow, currentColumn + 1);
+                cellsToReveal(currentRow, currentColumn + 1);
                 //Top right Cell
-                cellToRevealed(currentRow - 1, currentColumn + 1);
+                cellsToReveal(currentRow - 1, currentColumn + 1);
                 //Bottom right Cell
-                cellToRevealed(currentRow + 1, currentColumn + 1);
+                cellsToReveal(currentRow + 1, currentColumn + 1);
                 //Top Left Cell
-                cellToRevealed(currentRow - 1, currentColumn - 1);
+                cellsToReveal(currentRow - 1, currentColumn - 1);
                 //Bottom Left Cell
-                cellToRevealed(currentRow + 1, currentColumn - 1);
+                cellsToReveal(currentRow + 1, currentColumn - 1);
             }
         }
     }

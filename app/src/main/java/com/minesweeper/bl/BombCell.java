@@ -1,11 +1,13 @@
-package com.minesweeper.BL;
+/**
+ * This Application was created as part of academic course
+ * Tamir Sagi
+ */
 
+
+
+package com.minesweeper.BL;
 import com.minesweeper.app.R;
 
-
-/**
- * Created by Administrator on 11/13/2015.
- */
 public class BombCell extends Cell{
 
     public BombCell(int row, int column){

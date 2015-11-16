@@ -1,52 +1,47 @@
-
-
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:background="@drawable/wallpaper_0"
         android:id="@+id/OpeningScreenLayout">
 
-    <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/menu_Button_Padding_Top"
-            android:layout_marginBottom="@dimen/menu_Button_Padding_Bottom"
-            android:layout_marginLeft="@dimen/menu_Button_Padding_Left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/MenuButtons">
-        <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
-            <Button android:id="@+id/BTH_Play"
-                    android:text="@string/BTH_Play"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:onClick="onButtonPlayClicked"
-                    android:layout_height="wrap_content"></Button>
-        </LinearLayout>
-        <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
-            <Button android:id="@+id/BTH_Settings"
-                    android:text="@string/BTH_Option"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:onClick="onButtonOptionsClicked"
-                    android:layout_height="wrap_content"></Button>
-        </LinearLayout>
-        <LinearLayout
-                      android:layout_height="wrap_content"
-                      android:layout_width="wrap_content">
-            <Button android:id="@+id/BTH_About"
-                    android:text="@string/BTH_About"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"></Button>
-        </LinearLayout>
+    <ImageButton android:id="@+id/BTH_Play"
+                 android:background="@drawable/bth_play"
+                 android:layout_width="200dp"
+                 android:onClick="onButtonPlayClicked"
+                 android:layout_height="80dp"
+                 android:layout_alignParentTop="true"
+                 android:layout_centerHorizontal="true"
+                 android:layout_marginTop="223dp">
 
-    </LinearLayout>
+    </ImageButton>
+
+
+    <ImageButton android:id="@+id/BTH_options"
+                 android:background="@drawable/bth_options"
+                 android:text="@string/BTH_Option"
+                 android:layout_width="200dp"
+                 android:onClick="onButtonOptionsClicked"
+                 android:layout_height="80dp"
+                 android:layout_marginTop="29dp"
+                 android:layout_below="@+id/BTH_Play"
+                 android:layout_alignStart="@+id/BTH_Play"/>
+
+    <ImageButton android:id="@+id/BTH_About"
+                 android:layout_height="70dp"
+                 android:layout_width="210dp"
+                 android:background="@drawable/bth_about"
+                 android:layout_below="@+id/BTH_options"
+                 android:layout_alignStart="@+id/BTH_options"
+                 android:layout_marginTop="35dp"/>
+
+    <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:id="@+id/logo"
+            android:src="@drawable/game_logo"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
