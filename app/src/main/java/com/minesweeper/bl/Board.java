@@ -197,8 +197,8 @@ public class Board {
             remainedCells--;
             //if cell is empty check its adjacent cells
             if (cells[currentRow][currentColumn].isEmpty()) {
-                //Top Cell
-                cellsToReveal(currentRow - 1, currentColumn);
+                    //Top Cell
+                    cellsToReveal(currentRow - 1, currentColumn);
                 //Bottom Cell
                 cellsToReveal(currentRow + 1, currentColumn);
                 //left Cell

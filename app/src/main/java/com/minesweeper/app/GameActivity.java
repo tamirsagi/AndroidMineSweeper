@@ -7,6 +7,7 @@ package com.minesweeper.app;
 
 import android.content.Intent;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -41,12 +42,13 @@ public class GameActivity extends AppCompatActivity {
     private Runnable timerJob;
     private long startedTime;
     private ImageButton bth_Rematch;
-
+    private MediaPlayer mp;
+    private boolean playSound;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("onCreate","onCreate");
+        Log.i("onCreate", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_board_layout);
         setGameScreen();
@@ -55,7 +57,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i("onStop","onStop");
+        Log.i("onStop", "onStop");
 
     }
 
@@ -69,18 +71,18 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i("onPause","onPause");
+        Log.i("onPause", "onPause");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("onStart","onStart");
+        Log.i("onStart", "onStart");
     }
 
     @Override
     protected void onResume() {
-        Log.i("onResume","onResume");
+        Log.i("onResume", "onResume");
         super.onResume();
     }
 
@@ -129,6 +131,8 @@ public class GameActivity extends AppCompatActivity {
         gameBoardRows = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_ROWS);
         gameBoardColumns = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS);
         minesOnBoard = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_MINES);
+        playSound = extraData.getBoolean(GeneralGameProperties.KEY_Play_Sound);
+
 
         tv_minesCounter = (TextView) findViewById(R.id.minesCounter);
         tv_gameLevel = (TextView) findViewById(R.id.gameLevel);
@@ -137,8 +141,10 @@ public class GameActivity extends AppCompatActivity {
 
         tv_Timer = (TextView) findViewById(R.id.timer);
 
-        bth_Rematch = (ImageButton)findViewById(R.id.BTH_Restart_Game);
+        bth_Rematch = (ImageButton) findViewById(R.id.BTH_Restart_Game);
         changeRestartButtonState(false);
+
+        mp = new MediaPlayer();
     }
 
 
@@ -182,8 +188,8 @@ public class GameActivity extends AppCompatActivity {
         timerHandler.removeCallbacks(timerJob);
     }
 
-    private void changeRestartButtonState(boolean show){
-        if(show)
+    private void changeRestartButtonState(boolean show) {
+        if (show)
             bth_Rematch.setVisibility(View.VISIBLE);
         else
             bth_Rematch.setVisibility(View.INVISIBLE);
@@ -207,7 +213,7 @@ public class GameActivity extends AppCompatActivity {
         gv_GameBoard.setNumColumns(gameBoardColumns);                  //set grid view column number
         int cellSizeInGrid = setGridItemSize();
         buttonAdapter =
-             new ButtonAdapter(this, R.layout.row_grid, mineSweeperLogicManager.getBoard().getGameBoard(),cellSizeInGrid);
+                new ButtonAdapter(this, R.layout.row_grid, mineSweeperLogicManager.getBoard().getGameBoard(), cellSizeInGrid);
         gv_GameBoard.setAdapter(buttonAdapter);
         gv_GameBoard.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -219,6 +225,7 @@ public class GameActivity extends AppCompatActivity {
                     Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
                     if (!clickedCell.isFlagged())
                         applyMove(clickedRow, clickedColumn);
+
                 }
             }
         });
@@ -229,12 +236,15 @@ public class GameActivity extends AppCompatActivity {
                 int clickedColumn = position / gameBoardRows;
                 Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
                 if (!mineSweeperLogicManager.isGameOver() && !clickedCell.isRevealed()) {
-                    clickedCell.setFlagged(!clickedCell.isFlagged());
                     int remainedFlags = mineSweeperLogicManager.getBoard().getNumberOfFlags();
-                    if (clickedCell.isFlagged())
-                        remainedFlags--;
-                    else
+                    if (clickedCell.isFlagged()) {       //press on a cell where there are no available flags
+                        clickedCell.setFlagged(false);
                         remainedFlags++;
+                    }
+                    else if(remainedFlags > 0){
+                        clickedCell.setFlagged(true);
+                        remainedFlags--;
+                    }
                     mineSweeperLogicManager.getBoard().setNumberOfFlags(remainedFlags);
                     setRemainedFlags();
                     buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
@@ -249,9 +259,10 @@ public class GameActivity extends AppCompatActivity {
     /**
      * Function Measures the corresponded item size within the grid.
      * depends on the screen width and the number of columns in grid
+     *
      * @return the absolute size
      */
-    private int setGridItemSize(){
+    private int setGridItemSize() {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -259,22 +270,16 @@ public class GameActivity extends AppCompatActivity {
         int columnSizeInPX = width / gameBoardColumns;               //column Size in Px units
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         float logicalDensity = metrics.density;
-        int columnSizeInDP = columnSizeInPX/ (int)logicalDensity;  //get column size in DP units
-        int spaces = 4;                                           //padding between items
-        int gridItemSizeInDP = columnSizeInDP - spaces;      //remove 2dp each side
+        int columnSizeInDP = columnSizeInPX / (int) logicalDensity;  //get column size in DP units
+        int spaces = gv_GameBoard.getHorizontalSpacing();         //padding between items
+        int gridItemSizeInDP = columnSizeInDP - spaces;         //remove 2dp each side
         return gridItemSizeInDP;
 
     }
 
-//    private void resizeButtonsInGrid(String gameLevel){
-//        switch (gameLevel){
-//            case GeneralGameProperties.
-//        }
-//    }
-
-
     /**
      * apply move on board
+     *
      * @param row
      * @param column
      */
@@ -286,17 +291,25 @@ public class GameActivity extends AppCompatActivity {
         setRemainedCells();
         if (mineSweeperLogicManager.isGameOver()) {
             stopTimer();
+            if (playSound) {
+                if (mineSweeperLogicManager.hasLost())
+                    mp = MediaPlayer.create(this, R.raw.granade);
+                else
+                    mp = MediaPlayer.create(this, R.raw.victory);
+                mp.start();
+            }
             changeRestartButtonState(true);
-
         }
     }
 
     /**
-     * rematch the game
+     * Rematch the game
+     *
      * @param view
      */
-    public void rematch(View view) {
+    public void onButtonRematchClicked(View view) {
         changeRestartButtonState(false);
+        mp.release();
         mineSweeperLogicManager.rematch();
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
         stopTimer();
@@ -305,7 +318,6 @@ public class GameActivity extends AppCompatActivity {
         tv_Timer.setText("00:00");
 
     }
-
 
 
 }

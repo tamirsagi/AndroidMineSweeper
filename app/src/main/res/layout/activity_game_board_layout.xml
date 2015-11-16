@@ -42,7 +42,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:horizontalSpacing="4dp"
-              android:verticalSpacing= "4dp"
+              android:verticalSpacing= "0dp"
               android:layout_below="@+id/minesCounterIcon"
               android:layout_above="@+id/BTH_Restart_Game"/>
 
@@ -51,7 +51,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/refresh"
-            android:onClick="rematch"
+            android:onClick="onButtonRematchClicked"
             android:layout_alignParentBottom="true" android:layout_centerHorizontal="true"/>
     <ImageView
             android:layout_height="40dp"

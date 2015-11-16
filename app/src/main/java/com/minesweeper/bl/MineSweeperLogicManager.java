@@ -45,7 +45,7 @@ public class MineSweeperLogicManager {
     }
 
     public enum GameResult {
-        NONE, LOST, WIN
+        NONE, LOST, WON
     }
 
     ;
@@ -78,6 +78,14 @@ public class MineSweeperLogicManager {
         return gameResult != GameResult.NONE;
     }
 
+    public boolean hasLost(){
+        return gameResult == GameResult.LOST;
+    }
+
+    public boolean hasWon(){
+        return gameResult == GameResult.WON;
+    }
+
     public boolean isGameStarted(){
         return gameStatus ==  GameStatus.STARTED;
     }
@@ -99,7 +107,7 @@ public class MineSweeperLogicManager {
             endGame(GameResult.LOST);
             gameBoard.setBombCellsRevealed();
         } else if (gameBoard.won()) {
-            endGame(GameResult.WIN);
+            endGame(GameResult.WON);
         }
     }
 
@@ -113,7 +121,7 @@ public class MineSweeperLogicManager {
     }
 
     /**
-     * function prepares the board for a rematch
+     * function prepares the board for a onButtonRematchClicked
      */
     public void rematch() {
         setGameStatus(GameStatus.NOT_STARTED);
