@@ -245,6 +245,12 @@ public class GameActivity extends AppCompatActivity {
         }));
     }
 
+
+    /**
+     * Function Measures the corresponded item size within the grid.
+     * depends on the screen width and the number of columns in grid
+     * @return the absolute size
+     */
     private int setGridItemSize(){
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -254,9 +260,8 @@ public class GameActivity extends AppCompatActivity {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         float logicalDensity = metrics.density;
         int columnSizeInDP = columnSizeInPX/ (int)logicalDensity;  //get column size in DP units
-        int space = 2;                                           //padding between items
-        int gridItemSizeInDP = columnSizeInDP - 2 * space;      //remove 2dp each side
-
+        int spaces = 4;                                           //padding between items
+        int gridItemSizeInDP = columnSizeInDP - spaces;      //remove 2dp each side
         return gridItemSizeInDP;
 
     }
