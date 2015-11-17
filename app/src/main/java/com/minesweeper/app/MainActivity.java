@@ -5,8 +5,6 @@
 
 package com.minesweeper.app;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -23,8 +21,6 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    private Dialog aboutDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String firstName = sharedPrefs.getString(OptionsActivity.KEY_PREF_PLAYER_NAME, "NULL");//get player name
         String lastName = sharedPrefs.getString(OptionsActivity.KEY_PREF_PLAYER_LAST_NAME, "NULL");//get player last name
-        String prefLevel = sharedPrefs.getString(OptionsActivity.KEY_PREF_GAME_LEVEL, "NULL"); //get the selected level
+        String prefLevel = sharedPrefs.getString(OptionsActivity.KEY_PREF_GAME_LEVEL, "Intermediate"); //get the selected level
         String gameSettings = GeneralGameProperties.getGameSettings(prefLevel); //get corresponded game settings
         boolean playSound = sharedPrefs.getBoolean(GeneralGameProperties.KEY_Play_Sound,true);  //get play sound settings
 

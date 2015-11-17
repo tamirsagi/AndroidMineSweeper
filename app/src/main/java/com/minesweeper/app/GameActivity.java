@@ -24,7 +24,7 @@ import com.minesweeper.BL.MineSweeperLogicManager;
 
 public class GameActivity extends AppCompatActivity {
 
-    private final int mil = 1000, secondsInAMinute = 60, delayed = 500;
+    private final int mil = 1000, secondsInAMinute = 60;
     private int gameBoardRows;
     private int gameBoardColumns;
     private int minesOnBoard;

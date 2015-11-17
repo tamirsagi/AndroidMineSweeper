@@ -5,8 +5,6 @@
 
 
 package com.minesweeper.BL;
-
-import android.util.Log;
 import com.minesweeper.app.R;
 
 /**

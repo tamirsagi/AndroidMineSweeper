@@ -22,11 +22,13 @@
                 android:summary="@string/summary_pref_game_level"
                 android:entries="@array/gameLevels"
                 android:entryValues="@array/gameLevels"
+                android:defaultValue="2"
                 android:title="@string/title_pref_game_level_Selection" />
 
         <SwitchPreference
                 android:key="@string/keyToggleSound"
-                android:title="@string/title_pref_sound" />
+                android:defaultValue="true"
+                android:title="@string/title_pref_sound"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
