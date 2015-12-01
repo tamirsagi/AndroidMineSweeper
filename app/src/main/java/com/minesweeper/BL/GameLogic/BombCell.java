@@ -5,8 +5,8 @@
 
 
 
-package com.minesweeper.BL;
-import com.minesweeper.app.R;
+package com.minesweeper.BL.GameLogic;
+import com.minesweeper.UI.Activities.R;
 
 public class BombCell extends Cell{
 

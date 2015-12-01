@@ -3,7 +3,7 @@
  * Tamir Sagi
  */
 
-package com.minesweeper.app;
+package com.minesweeper.UI.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.*;
 import android.widget.PopupWindow;
-import com.minesweeper.BL.GeneralGameProperties;
+import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import org.json.JSONException;
 import org.json.JSONObject;
 

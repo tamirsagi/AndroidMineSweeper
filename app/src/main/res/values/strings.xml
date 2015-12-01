@@ -40,6 +40,14 @@
     <string name="dialogAboutDepartment">Department : Software Engineer </string>
     <string name="dialogAboutCountry">Country: Israel</string>
 
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="column_name">Player Name</string>
+    <string name="column_round_time">Round Time</string>
+    <string name="column_location">Location</string>
+    <string name="column_date">Date</string>
+    <string name="column_time">Time</string>
+
+
 
 
 </resources>

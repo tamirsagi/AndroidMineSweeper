@@ -4,7 +4,7 @@
  */
 
 
-package com.minesweeper.BL;
+package com.minesweeper.BL.GameLogic;
 
 import java.util.LinkedList;
 import java.util.List;

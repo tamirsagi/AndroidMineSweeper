@@ -3,7 +3,7 @@
  * Tamir Sagi
  */
 
-package com.minesweeper.app;
+package com.minesweeper.UI.Activities;
 
 import android.content.Intent;
 import android.graphics.Point;
@@ -16,10 +16,10 @@ import android.view.Display;
 import android.view.View;
 import android.os.Handler;
 import android.widget.*;
-import com.minesweeper.BL.ButtonAdapter;
-import com.minesweeper.BL.Cell;
-import com.minesweeper.BL.GeneralGameProperties;
-import com.minesweeper.BL.MineSweeperLogicManager;
+import com.minesweeper.BL.GameLogic.ButtonAdapter;
+import com.minesweeper.BL.GameLogic.Cell;
+import com.minesweeper.BL.GameLogic.GeneralGameProperties;
+import com.minesweeper.BL.GameLogic.MineSweeperLogicManager;
 
 
 public class GameActivity extends AppCompatActivity {
@@ -235,7 +235,7 @@ public class GameActivity extends AppCompatActivity {
                 int clickedRow = position % gameBoardRows;
                 int clickedColumn = position / gameBoardRows;
                 Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
-                if (!mineSweeperLogicManager.isGameOver() && !clickedCell.isRevealed()) {
+                if (mineSweeperLogicManager.isGameStarted() && !clickedCell.isRevealed()) {
                     int remainedFlags = mineSweeperLogicManager.getBoard().getNumberOfFlags();
                     if (clickedCell.isFlagged()) {       //press on a cell where there are no available flags
                         clickedCell.setFlagged(false);

@@ -5,7 +5,7 @@
 
 
 
-package com.minesweeper.app;
+package com.minesweeper.UI.Activities;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -22,6 +22,5 @@ public class OptionsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.game_settings);
     }
-
 
 }

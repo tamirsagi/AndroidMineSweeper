@@ -4,8 +4,8 @@
  */
 
 
-package com.minesweeper.BL;
-import com.minesweeper.app.R;
+package com.minesweeper.BL.GameLogic;
+import com.minesweeper.UI.Activities.R;
 
 /**
  * Class Represents a single cell within the board. it's responsible for,type and state

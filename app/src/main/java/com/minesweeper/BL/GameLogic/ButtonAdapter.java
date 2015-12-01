@@ -3,7 +3,7 @@
  * Tamir Sagi
  */
 
-package com.minesweeper.BL;
+package com.minesweeper.BL.GameLogic;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.minesweeper.app.R;
+import com.minesweeper.UI.Activities.R;
 
 import java.util.ArrayList;
 

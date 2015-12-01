@@ -3,7 +3,7 @@
  * Tamir Sagi
  */
 
-package com.minesweeper.BL;
+package com.minesweeper.BL.GameLogic;
 
 
 /**

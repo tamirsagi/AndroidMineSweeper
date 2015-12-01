@@ -4,7 +4,7 @@
  */
 
 
-package com.minesweeper.BL;
+package com.minesweeper.BL.GameLogic;
 
 
 public class GeneralGameProperties {
@@ -41,7 +41,7 @@ public class GeneralGameProperties {
             "{"
 
                     + "      \"Level\" : \"Intermediate\","
-                    + "      \"Mines\": \"25\","
+                    + "      \"Mines\": \"15\","
                     + "      \"Rows\": \"9\","
                     + "      \"Columns\" : \"9\""
                     + "    }";
@@ -50,7 +50,7 @@ public class GeneralGameProperties {
             "{"
 
                     + "      \"Level\" : \"Expert\","
-                    + "      \"Mines\": \"40\","
+                    + "      \"Mines\": \"25\","
                     + "      \"Rows\": \"16\","
                     + "      \"Columns\" : \"16\""
                     + "    }";
