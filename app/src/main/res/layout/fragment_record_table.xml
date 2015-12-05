@@ -2,78 +2,31 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             android:background="@drawable/wallpaper_0"
              tools:context="com.minesweeper.UI.Fragments.RecordsTable">
 
-    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent">
+        <Spinner
+                android:id="@+id/tablePicker"
+                style="@style/spinner_style"
+                android:spinnerMode="dropdown"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"/>
 
-    <?xml version="1.0" encoding="utf-8"?>
-    <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tablePicker"/>
-
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                 android:id="@+id/recordsTable"
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:layout_marginTop="50dp"
-                 android:stretchColumns="5">
-        <TableRow
-                android:id="@+id/columns_Names"
+        <android.support.v7.widget.RecyclerView
+                android:background="#DFFFFFFF"
+                android:id="@+id/RecordsRecycler"
                 android:layout_width="match_parent"
-
-                android:layout_height="wrap_content">
-            <TextView
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:id="@+id/ColumnName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="@string/column_name">
-
-            </TextView>
-            <TextView
-                    android:padding="3dp"
-                    android:id="@+id/ColumnRoundTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="@string/column_round_time">
-
-            </TextView>
-            <TextView
-                    android:padding="5dp"
-                    android:id="@+id/ColumnLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="@string/column_location">
-
-            </TextView>
-            <TextView
-                    android:padding="5dp"
-                    android:id="@+id/ColumnDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="@string/column_date">
-
-            </TextView>
-            <TextView
-                    android:padding="5dp"
-                    android:gravity="center"
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="@string/column_time">
-
-            </TextView>
-        </TableRow>
-
-        <TableRow/>
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:layout_below="@+id/tablePicker"
+                android:padding="5dp"
+                android:layout_alignParentStart="true"/>
 
 
-    </TableLayout>
+    </RelativeLayout>
+
 </FrameLayout>

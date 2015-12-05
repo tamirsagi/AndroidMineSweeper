@@ -44,7 +44,15 @@
                  android:onClick="onButtonAboutClicked"
                  android:layout_alignStart="@+id/BTH_options"
                  android:layout_marginTop="35dp"/>
-
+    <ImageButton
+            android:background="@drawable/icon_highscore"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/highScores"
+            android:onClick="onHigheScoresButtonClicked"
+            android:layout_marginBottom="38dp"
+            android:layout_alignBottom="@+id/logo"
+            android:layout_toEndOf="@+id/BTH_About"/>
 
 
 </RelativeLayout>

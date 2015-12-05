@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent">
+    <TextView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:gravity="center"
+            android:padding="5dp"
+            android:id="@+id/ColumnId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:textColor="#000"
+            android:text="@string/Column_ID">
+
+    </TextView>
+    <TextView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:gravity="center"
+            android:padding="5dp"
+            android:id="@+id/ColumnName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="@string/column_name"
+            android:textColor="#000"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/ColumnId"
+            android:layout_marginStart="23dp">
+
+    </TextView>
+    <TextView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:padding="3dp"
+            android:id="@+id/ColumnRoundTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="@string/column_round_time"
+            android:textColor="#000"
+            android:layout_alignBottom="@+id/ColumnLocation"
+            android:layout_alignStart="@+id/ColumnName">
+
+    </TextView>
+    <TextView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:padding="5dp"
+            android:id="@+id/ColumnLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="@string/column_location"
+            android:textColor="#000"
+            android:layout_below="@+id/ColumnDate" android:layout_alignStart="@+id/ColumnDate">
+
+    </TextView>
+    <TextView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:padding="5dp"
+            android:id="@+id/ColumnDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="@string/column_date"
+            android:textColor="#000"
+            android:layout_marginEnd="92dp" android:layout_alignParentTop="true" android:layout_alignParentEnd="true">
+
+    </TextView>
+
+</RelativeLayout>
+        <!--android:soundEffectsEnabled="false"-->

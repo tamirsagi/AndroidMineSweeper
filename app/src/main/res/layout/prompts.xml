@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/dialog_new_score"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical"
+              android:padding="10dp" >
+
+    <TextView
+            android:id="@+id/tv_prompt_dialog_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text= "@string/enterDetailsMessage"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+            android:id="@+id/et_prompt_player_Name_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_prompt_dialog_message" android:layout_alignParentEnd="true">
+
+        <requestFocus />
+
+    </EditText>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:id="@+id/bth_prompt_save"
+            android:layout_gravity="right"
+            android:layout_below="@+id/et_prompt_player_Name_edit"
+            android:layout_alignEnd="@+id/et_prompt_player_Name_edit" android:layout_marginEnd="39dp"/>
+
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Close"
+            android:id="@+id/bth_prompt_close"
+            android:layout_gravity="right"
+            android:layout_alignBottom="@+id/bth_prompt_save"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="28dp"/>
+
+    <TextView
+            android:id="@+id/tv_prompt_confirmation_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@+id/bth_prompt_save"
+            android:layout_alignParentEnd="true"/>
+
+
+</RelativeLayout>

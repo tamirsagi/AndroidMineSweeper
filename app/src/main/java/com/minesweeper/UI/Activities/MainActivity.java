@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.*;
 import android.widget.PopupWindow;
+import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,6 +118,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         popupWindow.showAtLocation(findViewById(R.id.BTH_options), Gravity.CENTER, 0, 0);
+    }
+
+
+    public void onHigheScoresButtonClicked(View v){
+        Intent DBRecordsFragmentActivity = new Intent(this, DBRecordsFragmentActivity.class);
+        startActivity(DBRecordsFragmentActivity);
     }
 
 }

@@ -6,12 +6,11 @@ package com.minesweeper.BL.DB;
  */
 public class PlayerRecord {
 
-
+    private int id;
     private String fullName;
     private String roundTime;
     private String location;
     private String date;
-    private String FullTime;
 
 
     public PlayerRecord() {
@@ -21,6 +20,14 @@ public class PlayerRecord {
         this.fullName = fullName;
         this.roundTime = time;
         this.location = location;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFullName() {
@@ -56,11 +63,6 @@ public class PlayerRecord {
         this.date = date;
     }
 
-    public String getFullTime() {
-        return FullTime;
-    }
 
-    public void setFullTime(String fullTime) {
-        FullTime = fullTime;
-    }
+
 }

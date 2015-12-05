@@ -6,21 +6,32 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.nfc.Tag;
+import android.util.Log;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DbManager extends SQLiteOpenHelper {
 
     public static final String TAG = "DB MANAGER";
 
+
     // Database Name
     public static final String DB_Name = "MineSweeperDb";
+
+    public static final int MAX_PLAYER_NAME_LEENGTH = 10;
+
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
     private SQLiteDatabase dataBase;
     private final int recordsToSave = 10;
+
+    private static final DateFormat dbDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     public static DbManager dbManager;
 
@@ -29,37 +40,41 @@ public class DbManager extends SQLiteOpenHelper {
     }
 
     //Columns names
-    private static final String COL_NAME = "Full Name";
-    private static final String COL_GAME_ROUND_TIME = "Round Time";
+    private static final String COL_NAME = "Full_Name";
+    private static final String COL_GAME_ROUND_TIME = "Round_Time";
     private static final String COL_LOCATION = "Location";
     private static final String COL_DATE = "Date";
-    private static final String COL_FULL_TIME = "Full Time";
+    private static final String COL_FULL_TIME = "Full_Time";
 
 
     private DbManager(Context context) {
         super(context, DB_Name, null, DATABASE_VERSION);
+        this.dataBase = getWritableDatabase();
     }
 
-    public DbManager getInstance(Context context){
-        if(dbManager == null)
+    public static DbManager getInstance(Context context) {
+        if (dbManager == null)
             dbManager = new DbManager(context);
 
         return dbManager;
     }
 
-    public DbManager getInstance(){
-        return dbManager;
+    public static String getDate(){
+        Date date = new Date();
+        return dbDateFormat.format(date);
     }
 
+    public int getRecordsToSave() {
+        return recordsToSave;
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        this.dataBase = db;
+
         for (Tables tableName : Tables.values()) {
             String createTableCommand = "CREATE TABLE "
-                    + tableName.toString() + "(" + COL_NAME + " TEXT PRIMARY KEY," + COL_GAME_ROUND_TIME
-                    + " TEXT," + COL_LOCATION + " TEXT," + COL_DATE + " TEXT PRIMARY KEY," +
-                    COL_FULL_TIME + "TEXT PRIMARY KEY" + ")";
+                    + tableName.toString() + "('_id' INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NAME + " TEXT ," + COL_GAME_ROUND_TIME
+                    + " TEXT," + COL_LOCATION + " TEXT," + COL_DATE + " TEXT" + ")";
             dataBase.execSQL(createTableCommand);
         }
     }
@@ -72,19 +87,34 @@ public class DbManager extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertPlayerRecord(String table, PlayerRecord playerRecord) {
+    /**
+     * add record to table
+     *
+     * @param table
+     * @param playerRecord
+     */
+    public boolean addPlayerRecord(String table, PlayerRecord playerRecord) {
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_NAME, playerRecord.getFullName());
-        values.put(COL_GAME_ROUND_TIME, playerRecord.getRoundTime());
-        values.put(COL_LOCATION, playerRecord.getLocation());
-        values.put(COL_DATE, playerRecord.getDate());
-        values.put(COL_FULL_TIME, playerRecord.getFullTime());
-        db.insert(table, null, values);
+        try {
+            if (count(table) == recordsToSave)
+                deleteLastRecord(table);
 
-        //sort the table after each insertion
-        dataBase.query(table, null, null, null, null, null, COL_GAME_ROUND_TIME + " DESC");
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(COL_NAME, playerRecord.getFullName());
+            values.put(COL_GAME_ROUND_TIME, playerRecord.getRoundTime());
+            values.put(COL_LOCATION, playerRecord.getLocation());
+            values.put(COL_DATE, playerRecord.getDate());
+            db.insert(table, null, values);
+            //sort the table after each insertion
+            dataBase.query(table, null, null, null, null, null, COL_GAME_ROUND_TIME + " DESC");
+            db.close();
+            return true;
+        }catch(Exception e){
+            Log.e(TAG,e.getMessage());
+            return false;
+        }
+
     }
 
     /**
@@ -95,37 +125,46 @@ public class DbManager extends SQLiteOpenHelper {
      * @return true if current player's game time is better than the last
      */
     public boolean shouldBeInserted(String table, String playerTime) {
-        long rowsCount = count(table);
-        if (rowsCount > recordsToSave)
-            rowsCount = recordsToSave;
+        int rowsCount = count(table);
+        //if there are less records than the max records
+        if (rowsCount < recordsToSave)
+            return true;
 
+        rowsCount = recordsToSave;
         Cursor cursor = dataBase.rawQuery("SELECT TOP " + rowsCount + " * FROM " + table, null);
         cursor.moveToPosition((int) rowsCount);
         String lastPlayerTime = cursor.getString(cursor.getColumnIndex(COL_GAME_ROUND_TIME));
         //check if the new time is better than the last
         // if it is so the player's record should be updated within the table
-        return playerTime.compareTo(lastPlayerTime) > 0;
+        return playerTime.compareTo(lastPlayerTime) < 0;
     }
 
-    public List<PlayerRecord> getTopRecords(String table) {
+
+    /**
+     * get top records(Max 10)
+     *
+     * @param table
+     * @return
+     */
+    public List<PlayerRecord> getRecords(String table) {
 
         String sqlCommand = "SELECT * FROM " + table;
         List<PlayerRecord> records = new ArrayList<PlayerRecord>();
         SQLiteDatabase readableDB = this.getReadableDatabase();
-        Cursor rowCursor = readableDB.rawQuery(sqlCommand, null);
-        if (rowCursor.moveToFirst()) {
-            while (rowCursor.moveToNext()) {
+        Cursor recordsCursor = readableDB.rawQuery(sqlCommand, null);
+        if (recordsCursor.moveToFirst()) {
+            while (recordsCursor.moveToNext()) {
                 PlayerRecord playerRecord = new PlayerRecord();
-                playerRecord.setFullName(rowCursor.getString(rowCursor.getColumnIndex(COL_NAME)));
-                playerRecord.setRoundTime(rowCursor.getString(rowCursor.getColumnIndex(COL_GAME_ROUND_TIME)));
-                playerRecord.setLocation(rowCursor.getString(rowCursor.getColumnIndex(COL_LOCATION)));
-                playerRecord.setDate(rowCursor.getString(rowCursor.getColumnIndex(COL_DATE)));
-                playerRecord.setFullTime(rowCursor.getString(rowCursor.getColumnIndex(COL_FULL_TIME)));
-
+                playerRecord.setId(recordsCursor.getInt(0));
+                playerRecord.setFullName(recordsCursor.getString(recordsCursor.getColumnIndex(COL_NAME)));
+                playerRecord.setRoundTime(recordsCursor.getString(recordsCursor.getColumnIndex(COL_GAME_ROUND_TIME)));
+                playerRecord.setLocation(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION)));
+                playerRecord.setDate(recordsCursor.getString(recordsCursor.getColumnIndex(COL_DATE)));
                 //adding to list
                 records.add(playerRecord);
             }
         }
+        readableDB.close();
         return records;
     }
 
@@ -135,7 +174,25 @@ public class DbManager extends SQLiteOpenHelper {
      * @param table
      * @return
      */
-    private long count(String table) {
-        return DatabaseUtils.queryNumEntries(dataBase, table);
+    private int count(String table) {
+        return (int)DatabaseUtils.queryNumEntries(dataBase, table);
     }
+
+    /**
+     * Delete last Record within table
+     * @param table
+     */
+    private void deleteLastRecord(String table) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String command = "DELETE FROM test WHERE " + COL_NAME + " = (SELECT MAX(" + COL_NAME + ") FROM test)";
+        db.execSQL(command);
+        db.close();
+    }
+
+    public void close(){
+        dbManager.close();
+    }
+
+
+
 }

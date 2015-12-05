@@ -5,24 +5,36 @@
 
 package com.minesweeper.UI.Activities;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.telecom.Call;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.os.Handler;
 import android.widget.*;
+import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.BL.GameLogic.ButtonAdapter;
 import com.minesweeper.BL.GameLogic.Cell;
 import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import com.minesweeper.BL.GameLogic.MineSweeperLogicManager;
+import com.minesweeper.UI.Fragments.DetailsDialog;
 
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends FragmentActivity {
+    public static final String TAG = "GameActivity";
+
+    public static final String KEY_TABLE = "TABLE";
+    public static final String KEY_ROUND_TIME = "ROUND_TIME";
+    public static final String KEY_LOCATION = "LOCATION";
+    public static final String KEY_DATE = "DATE";
+
 
     private final int mil = 1000, secondsInAMinute = 60;
     private int gameBoardRows;
@@ -240,8 +252,7 @@ public class GameActivity extends AppCompatActivity {
                     if (clickedCell.isFlagged()) {       //press on a cell where there are no available flags
                         clickedCell.setFlagged(false);
                         remainedFlags++;
-                    }
-                    else if(remainedFlags > 0){
+                    } else if (remainedFlags > 0) {
                         clickedCell.setFlagged(true);
                         remainedFlags--;
                     }
@@ -294,8 +305,19 @@ public class GameActivity extends AppCompatActivity {
             if (playSound) {
                 if (mineSweeperLogicManager.hasLost())
                     mp = MediaPlayer.create(this, R.raw.granade);
-                else
+                else {
                     mp = MediaPlayer.create(this, R.raw.victory);
+                    String tableInDB = getDbTableFromGameLevel(getGameLevel());
+                    String time = tv_Timer.getText().toString();
+                    if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
+                        Bundle details = new Bundle();
+                        details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
+                        details.putString(KEY_LOCATION, "ISRAEL");
+                        details.putString(KEY_DATE, DbManager.getDate());
+                        details.putString(KEY_TABLE, tableInDB);
+                        DetailsDialog.showDialog(getFragmentManager(),details);
+                    }
+                }
                 mp.start();
             }
             changeRestartButtonState(true);
@@ -316,6 +338,22 @@ public class GameActivity extends AppCompatActivity {
         setGameInfo();
         startedTime = 0;
         tv_Timer.setText("00:00");
+
+    }
+
+    private String getDbTableFromGameLevel(String level) {
+        switch (MineSweeperLogicManager.Level.valueOf(level)) {
+            case Beginner:
+                return DbManager.Tables.PLAYERS_RECORDS_BEGINNERS.toString();
+            case Intermediate:
+                return DbManager.Tables.PLAYERS_RECORDS_INTERMEDIATE.toString();
+            case Expert:
+                return DbManager.Tables.PLAYERS_RECORDS_EXPERT.toString();
+            default:
+                return "";
+
+        }
+
 
     }
 
