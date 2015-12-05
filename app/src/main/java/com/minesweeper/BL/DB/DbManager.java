@@ -59,7 +59,7 @@ public class DbManager extends SQLiteOpenHelper {
         return dbManager;
     }
 
-    public static String getDate(){
+    public static String getDate() {
         Date date = new Date();
         return dbDateFormat.format(date);
     }
@@ -70,7 +70,6 @@ public class DbManager extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         for (Tables tableName : Tables.values()) {
             String createTableCommand = "CREATE TABLE "
                     + tableName.toString() + "('_id' INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NAME + " TEXT ," + COL_GAME_ROUND_TIME
@@ -107,11 +106,10 @@ public class DbManager extends SQLiteOpenHelper {
             values.put(COL_DATE, playerRecord.getDate());
             db.insert(table, null, values);
             //sort the table after each insertion
-            dataBase.query(table, null, null, null, null, null, COL_GAME_ROUND_TIME + " DESC");
             db.close();
             return true;
-        }catch(Exception e){
-            Log.e(TAG,e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
             return false;
         }
 
@@ -147,22 +145,20 @@ public class DbManager extends SQLiteOpenHelper {
      * @return
      */
     public List<PlayerRecord> getRecords(String table) {
-
-        String sqlCommand = "SELECT * FROM " + table;
+        String sqlCommand = "SELECT * FROM " + table + " ORDER BY " + COL_GAME_ROUND_TIME + " ASC";
+        int counter = 1;
         List<PlayerRecord> records = new ArrayList<PlayerRecord>();
         SQLiteDatabase readableDB = this.getReadableDatabase();
         Cursor recordsCursor = readableDB.rawQuery(sqlCommand, null);
-        if (recordsCursor.moveToFirst()) {
-            while (recordsCursor.moveToNext()) {
-                PlayerRecord playerRecord = new PlayerRecord();
-                playerRecord.setId(recordsCursor.getInt(0));
-                playerRecord.setFullName(recordsCursor.getString(recordsCursor.getColumnIndex(COL_NAME)));
-                playerRecord.setRoundTime(recordsCursor.getString(recordsCursor.getColumnIndex(COL_GAME_ROUND_TIME)));
-                playerRecord.setLocation(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION)));
-                playerRecord.setDate(recordsCursor.getString(recordsCursor.getColumnIndex(COL_DATE)));
-                //adding to list
-                records.add(playerRecord);
-            }
+        while (recordsCursor.moveToNext()) {
+            PlayerRecord playerRecord = new PlayerRecord();
+            playerRecord.setId(counter++);
+            playerRecord.setFullName(recordsCursor.getString(recordsCursor.getColumnIndex(COL_NAME)));
+            playerRecord.setRoundTime(recordsCursor.getString(recordsCursor.getColumnIndex(COL_GAME_ROUND_TIME)));
+            playerRecord.setLocation(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION)));
+            playerRecord.setDate(recordsCursor.getString(recordsCursor.getColumnIndex(COL_DATE)));
+            //adding to list
+            records.add(playerRecord);
         }
         readableDB.close();
         return records;
@@ -175,24 +171,24 @@ public class DbManager extends SQLiteOpenHelper {
      * @return
      */
     private int count(String table) {
-        return (int)DatabaseUtils.queryNumEntries(dataBase, table);
+        return (int) DatabaseUtils.queryNumEntries(dataBase, table);
     }
 
     /**
      * Delete last Record within table
+     *
      * @param table
      */
     private void deleteLastRecord(String table) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String command = "DELETE FROM test WHERE " + COL_NAME + " = (SELECT MAX(" + COL_NAME + ") FROM test)";
+        String command = "DELETE FROM " + table + " WHERE " + COL_NAME + " = (SELECT MAX(" + COL_NAME + ") FROM " + table + ")";
         db.execSQL(command);
         db.close();
     }
 
-    public void close(){
+    public void close() {
         dbManager.close();
     }
-
 
 
 }

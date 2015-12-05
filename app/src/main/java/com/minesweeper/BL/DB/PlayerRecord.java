@@ -22,8 +22,8 @@ public class PlayerRecord {
         this.location = location;
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return "" + id;
     }
 
     public void setId(int id) {
