@@ -85,7 +85,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopTimer();
-        Log.i("onDestroy", "onDestroy");
+        unregisterReceiver(mMessageFromPositionService);
+        unbindService(positionSampleConnection);
     }
 
     @Override
@@ -375,6 +376,7 @@ public class GameActivity extends AppCompatActivity {
     private void createBinnedService() {
         Intent intent = new Intent(this, PositionSampleService.class);
         bindService(intent, positionSampleConnection, Context.BIND_AUTO_CREATE);
+        isBound = true;
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMessageFromPositionService, new IntentFilter(PositionSampleService.INTENT_FILTER_NAME));
         setPositionsTextViews();
