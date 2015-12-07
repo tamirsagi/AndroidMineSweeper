@@ -54,6 +54,7 @@
     <string name="enterDetailsMessage">Your got a good score,it should be entered to records table.
         \nPlease Enter Your Full Name:</string>
 
-    <string name="err_name">Name is too long</string>
+    <string name="err_name_too_long">Name is too long</string>
+    <string name="err_name_empty_or_null">Please write your name</string>
     <string name="info_saved">Record was successfully saved</string>
 </resources>

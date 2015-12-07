@@ -5,14 +5,13 @@
 
 package com.minesweeper.UI.Activities;
 
-import android.app.FragmentTransaction;
-import android.content.Intent;
+import android.content.*;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.telecom.Call;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -26,8 +25,9 @@ import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import com.minesweeper.BL.GameLogic.MineSweeperLogicManager;
 import com.minesweeper.UI.Fragments.DetailsDialog;
 
+import com.minesweeper.BL.Services.*;
 
-public class GameActivity extends FragmentActivity {
+public class GameActivity extends AppCompatActivity {
     public static final String TAG = "GameActivity";
 
     public static final String KEY_TABLE = "TABLE";
@@ -57,6 +57,13 @@ public class GameActivity extends FragmentActivity {
     private MediaPlayer mp;
     private boolean playSound;
 
+    //Service Params
+    private PositionSampleService positionSampleService;
+    private boolean isBound = false;
+
+    private TextView tv_InitialAccelerometer;
+    private TextView tv_CurrentAccelerometer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,7 @@ public class GameActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_board_layout);
         setGameScreen();
+
     }
 
     @Override
@@ -194,6 +202,7 @@ public class GameActivity extends FragmentActivity {
     private void startTimer() {
         startedTime = System.currentTimeMillis();
         timerHandler.postDelayed(timerJob, 0);
+        createBinnedService();
     }
 
     private void stopTimer() {
@@ -315,7 +324,7 @@ public class GameActivity extends FragmentActivity {
                         details.putString(KEY_LOCATION, "ISRAEL");
                         details.putString(KEY_DATE, DbManager.getDate());
                         details.putString(KEY_TABLE, tableInDB);
-                        DetailsDialog.showDialog(getFragmentManager(),details);
+                        DetailsDialog.showDialog(getFragmentManager(), details);
                     }
                 }
                 mp.start();
@@ -353,9 +362,76 @@ public class GameActivity extends FragmentActivity {
                 return "";
 
         }
-
-
     }
 
 
+    /**
+     * Sampling Phone Position Service Section
+     */
+
+    private void createBinnedService() {
+        Intent intent = new Intent(this, PositionSampleService.class);
+        bindService(intent, positionSampleConnection, Context.BIND_AUTO_CREATE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageFromPositionService, new IntentFilter(PositionSampleService.INTENT_FILTER_NAME));
+        setPositionsTextViews();
+    }
+
+    private void setPositionsTextViews() {
+        tv_InitialAccelerometer = (TextView) findViewById(R.id.initial_Acceleration);
+        tv_CurrentAccelerometer = (TextView) findViewById(R.id.current_Acceleration);
+    }
+
+    private ServiceConnection positionSampleConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PositionSampleService.MyLocalBinder binder = (PositionSampleService.MyLocalBinder) service;
+            positionSampleService = binder.gerService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
+
+
+    /**
+     * handle barodcast messages from position sampler service
+     */
+    private BroadcastReceiver mMessageFromPositionService = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            Bundle dataFromService = intent.getExtras();
+            String action = dataFromService.getString(PositionSampleService.BUNDLE_ACTION);
+            switch (PositionSampleService.ACTIONS.valueOf(action)) {
+                case UPDATE_INITIAL_POSITION:
+                    String initialValues = dataFromService.getString(PositionSampleService.BUNDLE_DATA);
+                    tv_InitialAccelerometer.setText(initialValues);
+                    break;
+                case UPDATE_CURRENT_POSITION:
+                    String currentValues = dataFromService.getString(PositionSampleService.BUNDLE_DATA);
+                    tv_CurrentAccelerometer.setText(currentValues);
+                    break;
+                case ADD_MINES_TO_GAME_BOARD:
+                    Toast.makeText(context,PositionSampleService.BUNDLE_DATA_ADD_MINES, Toast.LENGTH_LONG);
+                    addMinesToGameBoard();
+                    break;
+
+            }
+        }
+    };
+
+
+    /**
+     * function add mines on board and updates relevant cells on board
+     */
+    private void addMinesToGameBoard(){
+        mineSweeperLogicManager.addMinesToGameBoard();
+        buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
+        minesOnBoard = mineSweeperLogicManager.getBoard().getNumberOfBombs();
+        setGameInfo();
+    }
 }

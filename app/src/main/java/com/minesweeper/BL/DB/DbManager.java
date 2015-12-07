@@ -74,7 +74,7 @@ public class DbManager extends SQLiteOpenHelper {
             String createTableCommand = "CREATE TABLE "
                     + tableName.toString() + "('_id' INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NAME + " TEXT ," + COL_GAME_ROUND_TIME
                     + " TEXT," + COL_LOCATION + " TEXT," + COL_DATE + " TEXT" + ")";
-            dataBase.execSQL(createTableCommand);
+            getDataBase().execSQL(createTableCommand);
         }
     }
 
@@ -106,6 +106,7 @@ public class DbManager extends SQLiteOpenHelper {
             values.put(COL_DATE, playerRecord.getDate());
             db.insert(table, null, values);
             //sort the table after each insertion
+
             db.close();
             return true;
         } catch (Exception e) {
@@ -129,8 +130,9 @@ public class DbManager extends SQLiteOpenHelper {
             return true;
 
         rowsCount = recordsToSave;
-        Cursor cursor = dataBase.rawQuery("SELECT TOP " + rowsCount + " * FROM " + table, null);
-        cursor.moveToPosition((int) rowsCount);
+        SQLiteDatabase readableDB = this.getReadableDatabase();
+        Cursor cursor = gerAllTableByRoundTime(readableDB,table);
+        cursor.moveToLast();
         String lastPlayerTime = cursor.getString(cursor.getColumnIndex(COL_GAME_ROUND_TIME));
         //check if the new time is better than the last
         // if it is so the player's record should be updated within the table
@@ -145,11 +147,10 @@ public class DbManager extends SQLiteOpenHelper {
      * @return
      */
     public List<PlayerRecord> getRecords(String table) {
-        String sqlCommand = "SELECT * FROM " + table + " ORDER BY " + COL_GAME_ROUND_TIME + " ASC";
+        SQLiteDatabase readableDB = this.getReadableDatabase();
         int counter = 1;
         List<PlayerRecord> records = new ArrayList<PlayerRecord>();
-        SQLiteDatabase readableDB = this.getReadableDatabase();
-        Cursor recordsCursor = readableDB.rawQuery(sqlCommand, null);
+        Cursor recordsCursor = gerAllTableByRoundTime(readableDB,table);
         while (recordsCursor.moveToNext()) {
             PlayerRecord playerRecord = new PlayerRecord();
             playerRecord.setId(counter++);
@@ -164,6 +165,11 @@ public class DbManager extends SQLiteOpenHelper {
         return records;
     }
 
+    private Cursor gerAllTableByRoundTime(SQLiteDatabase db,String table){
+        String sqlCommand = "SELECT * FROM " + table + " ORDER BY " + COL_GAME_ROUND_TIME + " ASC";
+        return db.rawQuery(sqlCommand, null);
+    }
+
     /**
      * counts number of rows within a table
      *
@@ -171,7 +177,13 @@ public class DbManager extends SQLiteOpenHelper {
      * @return
      */
     private int count(String table) {
-        return (int) DatabaseUtils.queryNumEntries(dataBase, table);
+        return (int) DatabaseUtils.queryNumEntries(getDataBase(), table);
+    }
+
+    private SQLiteDatabase getDataBase(){
+        if(dataBase == null || !dataBase.isOpen())
+            dataBase = getWritableDatabase();
+        return dataBase;
     }
 
     /**
@@ -181,13 +193,19 @@ public class DbManager extends SQLiteOpenHelper {
      */
     private void deleteLastRecord(String table) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String command = "DELETE FROM " + table + " WHERE " + COL_NAME + " = (SELECT MAX(" + COL_NAME + ") FROM " + table + ")";
+        String command = "DELETE FROM " + table +
+                " WHERE " + COL_GAME_ROUND_TIME + " = (SELECT MAX(" + COL_GAME_ROUND_TIME + ") FROM " + table + ")";
         db.execSQL(command);
         db.close();
     }
 
+    public int deleteAll(String table){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(table, null, null);
+    }
+
     public void close() {
-        dbManager.close();
+        getDataBase().close();
     }
 
 

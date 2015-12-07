@@ -2,9 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.minesweeper.UI.Activities" >
 
-    <uses-sdk android:minSdkVersion="17"
-              android:targetSdkVersion="18"
-              android:maxSdkVersion="23" />
+    <uses-sdk
+        android:maxSdkVersion="23"
+        android:minSdkVersion="17"
+        android:targetSdkVersion="18" />
+
+    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -35,6 +40,12 @@
             android:name=".DBRecordsFragmentActivity"
             android:label="@string/title_activity_dbRecords_fragment" >
         </activity>
+
+        <service
+            android:name="com.minesweeper.BL.Services.PositionSampleService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

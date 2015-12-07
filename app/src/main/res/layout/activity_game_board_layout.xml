@@ -3,48 +3,66 @@
                 android:background="@drawable/wallpaper_0"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent">
-        <ImageView
-                android:layout_height="40dp"
-                android:id="@+id/minesCounterIcon"
-                android:src="@drawable/mines_counters_icon"
-                android:layout_width="40dp"
-                android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
-        <TextView
-                android:id="@+id/minesCounter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12pt"
-                android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:text="@string/text_view_upper_menu_default_text"
-                android:layout_alignTop="@+id/timer" android:layout_toEndOf="@+id/minesCounterIcon"/>
+    <ImageView
+            android:layout_height="40dp"
+            android:id="@+id/minesCounterIcon"
+            android:src="@drawable/mines_counters_icon"
+            android:layout_width="40dp"
+            android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
+    <TextView
+            android:id="@+id/minesCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12pt"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:text="@string/text_view_upper_menu_default_text"
+            android:layout_alignTop="@+id/timer" android:layout_toEndOf="@+id/minesCounterIcon"/>
 
-         <TextView
-                android:id="@+id/timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12pt"
-                android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:text="@string/text_view_timer_default_text"
-                android:layout_alignBottom="@+id/timerIcon" android:layout_toStartOf="@+id/timerIcon"/>
+    <TextView
+            android:id="@+id/timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12pt"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:text="@string/text_view_timer_default_text"
+            android:layout_alignBottom="@+id/timerIcon" android:layout_toStartOf="@+id/timerIcon"/>
 
-        <ImageView
-                android:layout_height="40dp"
-                android:layout_width="40dp"
-                android:id="@+id/timerIcon"
-                android:src="@drawable/unnamed"
-                android:layout_alignParentTop="true" android:layout_toEndOf="@+id/remainedCells"/>
+    <ImageView
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:id="@+id/timerIcon"
+            android:src="@drawable/unnamed"
+            android:layout_alignParentTop="true" android:layout_toEndOf="@+id/remainedCells"/>
     <GridView
-              android:id="@+id/gameBoard"
-              android:layout_marginTop="50dp"
+            android:id="@+id/gameBoard"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:horizontalSpacing="4dp"
+            android:verticalSpacing="0dp"
+            android:layout_below="@+id/minesCounterIcon"
+            android:layout_above="@+id/BTH_Restart_Game"/>
+
+    <TextView android:id="@+id/initial_Acceleration"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textSize="8pt"
               android:gravity="center"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:horizontalSpacing="4dp"
-              android:verticalSpacing= "0dp"
-              android:layout_below="@+id/minesCounterIcon"
-              android:layout_above="@+id/BTH_Restart_Game"/>
+              android:textColor="#FFFFFF"
+              android:text="Initial : X: Y: Z: "
+              android:layout_alignBottom="@+id/current_Acceleration" />
+
+    <TextView android:id="@+id/current_Acceleration"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textSize="8pt"
+              android:gravity="center"
+              android:textColor="#FFFFFF"
+              android:text="Current : X: Y: Z: "
+              android:layout_alignBottom="@+id/gameBoard" android:layout_toEndOf="@+id/BTH_Restart_Game"/>
 
     <ImageButton
             android:id="@+id/BTH_Restart_Game"

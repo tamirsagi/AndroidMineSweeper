@@ -62,12 +62,16 @@ public class Board {
         return numberOfBombs;
     }
 
+    public int getBoardSize(){
+        return getNumberOfRows() * getNumberOfColumns();
+    }
+
     /**
      * Function set the board
      */
     public void setBoardAfterFirstClicked() {
         fillUpBombs();
-        setNumberOfAdjacentMinesForEachCell();
+        setNumberOfAdjacentMines();
     }
 
     /**
@@ -108,10 +112,18 @@ public class Board {
     /**
      * Function calculates the number Of adjacent mines for relevant cells only
      */
-    private void setNumberOfAdjacentMinesForEachCell() {
-
+    private void setNumberOfAdjacentMines(){
         for (int i = 0; i < bombsOnBoard.size(); i++) {
             Cell bomb = bombsOnBoard.get(i);
+            setNumberOfAdjacentMinesForEachCell(bomb);
+        }
+    }
+
+    /**
+     * Function calculates the number Of adjacent per cell
+     */
+    private void setNumberOfAdjacentMinesForEachCell(Cell bomb) {
+
             int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow, relevantColumn; // keep Adjacent Cell index
             //One Cell Up
             if ((relevantRow = bombRow - 1) >= 0 && !cells[relevantRow][bombColumn].isBomb())
@@ -141,7 +153,6 @@ public class Board {
             if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn - 1) >= 0
                     && !cells[relevantRow][relevantColumn].isBomb())
                 cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-        }
     }
 
     public boolean lost() {
@@ -227,6 +238,73 @@ public class Board {
         return currentRow >= 0 && currentRow < rows && currentColumn >= 0 &&
                 currentColumn < columns && !cells[currentRow][currentColumn].isBomb() &&
                 !cells[currentRow][currentColumn].isVisited() && !cells[currentRow][currentColumn].isFlagged();
+    }
+
+
+
+    public void handleNewBombOnBoard(Cell bomb){
+        bombsOnBoard.add(bomb);
+        numberOfBombs++;
+        remainedCells--;
+        numberOfFlags = (int)(ratioFlagsAndBombs * numberOfBombs);
+        closeAdjacentCells(bomb);
+        setNumberOfAdjacentMinesForEachCell(bomb);
+
+    }
+
+
+    /**
+     * Function closes adjacent tiles around a bomb
+     */
+    private void closeAdjacentCells(Cell bomb) {
+
+        int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow, relevantColumn; // keep Adjacent Cell index
+        //One Cell Up
+        if ((relevantRow = bombRow - 1) >= 0 && !cells[relevantRow][bombColumn].isBomb()) {
+                cells[relevantRow][bombColumn].setRevealed(false);
+                cells[relevantRow][bombColumn].setFlagged(false);
+
+
+        }
+        //One Cell Bottom
+        if ((relevantRow = bombRow + 1) < rows && !cells[relevantRow][bombColumn].isBomb()){
+            cells[relevantRow][bombColumn].setRevealed(false);
+            cells[relevantRow][bombColumn].setFlagged(false);
+        }
+        //Left Cell
+        if ((relevantColumn = bombColumn - 1) >= 0 && !cells[bombRow][relevantColumn].isBomb()){
+            cells[relevantRow][bombColumn].setRevealed(false);
+            cells[relevantRow][bombColumn].setFlagged(false);
+        }
+        //Right Cell
+        if ((relevantColumn = bombColumn + 1) < columns && !cells[bombRow][relevantColumn].isBomb()){
+            cells[relevantRow][bombColumn].setRevealed(false);
+            cells[relevantRow][bombColumn].setFlagged(false);
+        }
+        //Diagonal Top Right
+        if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn + 1) < columns
+                && !cells[relevantRow][relevantColumn].isBomb()){
+            cells[relevantRow][bombColumn].setRevealed(false);
+            cells[relevantRow][bombColumn].setFlagged(false);
+        }
+        //Diagonal Bottom Right
+        if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn + 1) < columns
+                && !cells[relevantRow][relevantColumn].isBomb()){
+            cells[relevantRow][bombColumn].setRevealed(false);
+            cells[relevantRow][bombColumn].setFlagged(false);
+        }
+        //Diagonal Top Left
+        if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn - 1) >= 0
+                && !cells[relevantRow][relevantColumn].isBomb()){
+            cells[relevantRow][bombColumn].setRevealed(false);
+            cells[relevantRow][bombColumn].setFlagged(false);
+        }
+        //Diagonal Bottom Left
+        if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn - 1) >= 0
+                && !cells[relevantRow][relevantColumn].isBomb()){
+            cells[relevantRow][bombColumn].setRevealed(false);
+            cells[relevantRow][bombColumn].setFlagged(false);
+        }
     }
 
 }

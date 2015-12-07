@@ -50,10 +50,15 @@ public class DetailsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 confirmationMessage.setVisibility(View.VISIBLE);
-                if (name.getText().length() > DbManager.MAX_PLAYER_NAME_LEENGTH) {
-                    confirmationMessage.setText(R.string.err_name);
+                if (name.getText() == null || name.getText().toString().isEmpty()) {
+                    confirmationMessage.setText(R.string.err_name_empty_or_null);
                     confirmationMessage.setTextColor(Color.RED);
-                } else {
+                }
+                else if(name.getText().length() > DbManager.MAX_PLAYER_NAME_LEENGTH){
+                    confirmationMessage.setText(R.string.err_name_too_long);
+                    confirmationMessage.setTextColor(Color.RED);
+                }
+                else {
                     PlayerRecord record = new PlayerRecord();
                     record.setFullName(name.getText().toString());
                     record.setRoundTime(data.getString(GameActivity.KEY_ROUND_TIME));

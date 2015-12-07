@@ -6,6 +6,8 @@
 package com.minesweeper.BL.GameLogic;
 
 
+import java.util.Random;
+
 /**
  * This class is responsible to handle current Game
  */
@@ -129,6 +131,19 @@ public class MineSweeperLogicManager {
         int rows = getBoard().getNumberOfRows(), columns = getBoard().getNumberOfColumns(),
                 bombs = getBoard().getNumberOfBombs();
         getBoard().initializeGameBoard(rows,columns,bombs);
+    }
+
+
+    public void addMinesToGameBoard(){
+        if(getGameStatus() == GameStatus.STARTED && getBoard().getNumberOfBombs() < getBoard().getBoardSize()) {
+            Random rand = new Random();
+            int row = rand.nextInt(getBoard().getNumberOfRows());
+            int col = rand.nextInt(getBoard().getNumberOfColumns());
+            if (!getBoard().getGameBoard()[row][col].isBomb()) {
+                getBoard().getGameBoard()[row][col] = new BombCell(row, col);
+                getBoard().handleNewBombOnBoard(getBoard().getGameBoard()[row][col]);
+            }
+        }
     }
 
 
