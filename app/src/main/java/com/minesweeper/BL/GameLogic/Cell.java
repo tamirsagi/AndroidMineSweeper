@@ -31,6 +31,7 @@ public class Cell {
         flagged = false;
         revealed = false;
         visited = false;
+        setClicked(false);
         numberOfAdjacentMines = 0;
     }
 

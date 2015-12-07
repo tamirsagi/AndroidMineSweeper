@@ -169,10 +169,13 @@ public class GameActivity extends AppCompatActivity {
 
 
     private void setMinesCounter() {
+        minesOnBoard = mineSweeperLogicManager.getNumberOfBombs();
         tv_minesCounter.setText("" + minesOnBoard);
     }
 
     private void setGameLevel() {
+        gameBoardRows = mineSweeperLogicManager.getBoard().getNumberOfRows();
+        gameBoardColumns = mineSweeperLogicManager.getBoard().getNumberOfColumns();
         tv_gameLevel.setText(level.toString() + "(" + gameBoardRows + "X" + gameBoardColumns + ")");
     }
 
@@ -220,9 +223,9 @@ public class GameActivity extends AppCompatActivity {
      * set text to relevant text views on game window
      */
     private void setGameInfo() {
-        setMinesCounter();
         setGameLevel();
         setRemainedCells();
+        setMinesCounter();
         setRemainedFlags();
     }
 

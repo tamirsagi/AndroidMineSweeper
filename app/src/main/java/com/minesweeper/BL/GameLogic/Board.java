@@ -6,6 +6,8 @@
 
 package com.minesweeper.BL.GameLogic;
 
+import android.util.Log;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -27,16 +29,15 @@ public class Board {
     private Cell lastClicked;
 
     public Board(int rows, int columns, int numberOfBombs) {
-        initializeGameBoard(rows, columns,numberOfBombs);
+        initializeGameBoard(rows, columns, numberOfBombs);
     }
 
-    public void initializeGameBoard(int rows, int columns,int numberOfBombs) {
+    public void initializeGameBoard(int rows, int columns, int numberOfBombs) {
         this.rows = rows;
         this.columns = columns;
-        this.numberOfBombs = numberOfBombs;
-        remainedCells = this.rows * this.columns - numberOfBombs;    //remained cells to be revealed
-        numberOfFlags = (int) (ratioFlagsAndBombs * numberOfBombs);
-
+        setNumberOfBombs(numberOfBombs);
+        setRemainedCells(getBoardSize() - getNumberOfBombs());    //remained cells to be revealed
+        numberOfFlags = (int) (ratioFlagsAndBombs * getNumberOfBombs());
         cells = new Cell[rows][columns];
         fillUpEmptyCells();
 
@@ -50,19 +51,23 @@ public class Board {
         return cells;
     }
 
-    public int getNumberOfRows(){
+    public int getNumberOfRows() {
         return rows;
     }
 
-    public int getNumberOfColumns(){
+    public int getNumberOfColumns() {
         return columns;
     }
 
-    public int getNumberOfBombs(){
+    public int getNumberOfBombs() {
         return numberOfBombs;
     }
 
-    public int getBoardSize(){
+    public void setNumberOfBombs(int numberOfBombs) {
+        this.numberOfBombs = numberOfBombs;
+    }
+
+    public int getBoardSize() {
         return getNumberOfRows() * getNumberOfColumns();
     }
 
@@ -112,47 +117,47 @@ public class Board {
     /**
      * Function calculates the number Of adjacent mines for relevant cells only
      */
-    private void setNumberOfAdjacentMines(){
+    private void setNumberOfAdjacentMines() {
         for (int i = 0; i < bombsOnBoard.size(); i++) {
             Cell bomb = bombsOnBoard.get(i);
-            setNumberOfAdjacentMinesForEachCell(bomb);
+            setNumberOfAdjacentMinesForCell(bomb);
         }
     }
 
     /**
      * Function calculates the number Of adjacent per cell
      */
-    private void setNumberOfAdjacentMinesForEachCell(Cell bomb) {
+    private void setNumberOfAdjacentMinesForCell(Cell bomb) {
 
-            int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow, relevantColumn; // keep Adjacent Cell index
-            //One Cell Up
-            if ((relevantRow = bombRow - 1) >= 0 && !cells[relevantRow][bombColumn].isBomb())
-                cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
-            //One Cell Bottom
-            if ((relevantRow = bombRow + 1) < rows && !cells[relevantRow][bombColumn].isBomb())
-                cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
-            //Left Cell
-            if ((relevantColumn = bombColumn - 1) >= 0 && !cells[bombRow][relevantColumn].isBomb())
-                cells[bombRow][relevantColumn].setNumberOfAdjacentMines(cells[bombRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Right Cell
-            if ((relevantColumn = bombColumn + 1) < columns && !cells[bombRow][relevantColumn].isBomb())
-                cells[bombRow][relevantColumn].setNumberOfAdjacentMines(cells[bombRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Diagonal Top Right
-            if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn + 1) < columns
-                    && !cells[relevantRow][relevantColumn].isBomb())
-                cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Diagonal Bottom Right
-            if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn + 1) < columns
-                    && !cells[relevantRow][relevantColumn].isBomb())
-                cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Diagonal Top Left
-            if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn - 1) >= 0
-                    && !cells[relevantRow][relevantColumn].isBomb())
-                cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
-            //Diagonal Bottom Left
-            if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn - 1) >= 0
-                    && !cells[relevantRow][relevantColumn].isBomb())
-                cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
+        int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow, relevantColumn; // keep Adjacent Cell index
+        //One Cell Up
+        if ((relevantRow = bombRow - 1) >= 0 && !cells[relevantRow][bombColumn].isBomb())
+            cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
+        //One Cell Bottom
+        if ((relevantRow = bombRow + 1) < rows && !cells[relevantRow][bombColumn].isBomb())
+            cells[relevantRow][bombColumn].setNumberOfAdjacentMines(cells[relevantRow][bombColumn].getNumberOfAdjacentMines() + 1);
+        //Left Cell
+        if ((relevantColumn = bombColumn - 1) >= 0 && !cells[bombRow][relevantColumn].isBomb())
+            cells[bombRow][relevantColumn].setNumberOfAdjacentMines(cells[bombRow][relevantColumn].getNumberOfAdjacentMines() + 1);
+        //Right Cell
+        if ((relevantColumn = bombColumn + 1) < columns && !cells[bombRow][relevantColumn].isBomb())
+            cells[bombRow][relevantColumn].setNumberOfAdjacentMines(cells[bombRow][relevantColumn].getNumberOfAdjacentMines() + 1);
+        //Diagonal Top Right
+        if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn + 1) < columns
+                && !cells[relevantRow][relevantColumn].isBomb())
+            cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
+        //Diagonal Bottom Right
+        if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn + 1) < columns
+                && !cells[relevantRow][relevantColumn].isBomb())
+            cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
+        //Diagonal Top Left
+        if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn - 1) >= 0
+                && !cells[relevantRow][relevantColumn].isBomb())
+            cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
+        //Diagonal Bottom Left
+        if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn - 1) >= 0
+                && !cells[relevantRow][relevantColumn].isBomb())
+            cells[relevantRow][relevantColumn].setNumberOfAdjacentMines(cells[relevantRow][relevantColumn].getNumberOfAdjacentMines() + 1);
     }
 
     public boolean lost() {
@@ -180,6 +185,10 @@ public class Board {
         return remainedCells;
     }
 
+    public void setRemainedCells(int remainedCells) {
+        this.remainedCells = remainedCells;
+    }
+
     public int getNumberOfFlags() {
         return numberOfFlags;
     }
@@ -205,11 +214,11 @@ public class Board {
         if (canVisitCell(currentRow, currentColumn)) {
             cells[currentRow][currentColumn].setVisited(true);
             cells[currentRow][currentColumn].setRevealed(true);
-            remainedCells--;
+            setRemainedCells(getRemainedCells() - 1);
             //if cell is empty check its adjacent cells
             if (cells[currentRow][currentColumn].isEmpty()) {
-                    //Top Cell
-                    cellsToReveal(currentRow - 1, currentColumn);
+                //Top Cell
+                cellsToReveal(currentRow - 1, currentColumn);
                 //Bottom Cell
                 cellsToReveal(currentRow + 1, currentColumn);
                 //left Cell
@@ -230,6 +239,7 @@ public class Board {
 
     /**
      * function checks whether the cell can ve visited when looking for cells to open
+     *
      * @param currentRow
      * @param currentColumn
      * @return
@@ -241,15 +251,28 @@ public class Board {
     }
 
 
-
-    public void handleNewBombOnBoard(Cell bomb){
-        bombsOnBoard.add(bomb);
-        numberOfBombs++;
-        remainedCells--;
-        numberOfFlags = (int)(ratioFlagsAndBombs * numberOfBombs);
-        closeAdjacentCells(bomb);
-        setNumberOfAdjacentMinesForEachCell(bomb);
-
+    /**
+     * change board tiles correspondingly to a new bomb cell
+     *
+     * @param row
+     * @param col
+     */
+    public void handleNewBombOnBoard(int row, int col) {
+        //if the chosen cell is revealed, its replaced with a bomb so remained cell is reduced by one
+        if(getGameBoard()[row][col].isRevealed())
+            setRemainedCells(getRemainedCells() + 1);
+        //set new cell for chosen position
+        getGameBoard()[row][col] = new BombCell(row, col);
+        Cell newBomb = getGameBoard()[row][col];
+        //add it to bombs list
+        bombsOnBoard.add(newBomb);
+        //close adjacent cells around the new bomb cell
+        closeAdjacentCells(newBomb);
+        //re-evaluate each adjacent cell correspondingly the new bomb cell.
+        setNumberOfAdjacentMinesForCell(newBomb);
+        setNumberOfBombs(getNumberOfBombs() + 1);
+        setRemainedCells(getRemainedCells() - 1);
+        numberOfFlags = (int) (ratioFlagsAndBombs * getNumberOfBombs());
     }
 
 
@@ -257,54 +280,59 @@ public class Board {
      * Function closes adjacent tiles around a bomb
      */
     private void closeAdjacentCells(Cell bomb) {
-
+        System.out.println("before closeAdjacentCells : " + getRemainedCells());
         int bombRow = bomb.getRowNumber(), bombColumn = bomb.getColumnNumber(), relevantRow, relevantColumn; // keep Adjacent Cell index
         //One Cell Up
-        if ((relevantRow = bombRow - 1) >= 0 && !cells[relevantRow][bombColumn].isBomb()) {
-                cells[relevantRow][bombColumn].setRevealed(false);
-                cells[relevantRow][bombColumn].setFlagged(false);
-
-
+        if ((relevantRow = bombRow - 1) >= 0 && cells[relevantRow][bombColumn].isRevealed()) {
+            changeCellStates(relevantRow, bombColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
         //One Cell Bottom
-        if ((relevantRow = bombRow + 1) < rows && !cells[relevantRow][bombColumn].isBomb()){
-            cells[relevantRow][bombColumn].setRevealed(false);
-            cells[relevantRow][bombColumn].setFlagged(false);
+        if ((relevantRow = bombRow + 1) < rows && cells[relevantRow][bombColumn].isRevealed()) {
+            changeCellStates(relevantRow, bombColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
         //Left Cell
-        if ((relevantColumn = bombColumn - 1) >= 0 && !cells[bombRow][relevantColumn].isBomb()){
-            cells[relevantRow][bombColumn].setRevealed(false);
-            cells[relevantRow][bombColumn].setFlagged(false);
+        if ((relevantColumn = bombColumn - 1) >= 0 && cells[bombRow][relevantColumn].isRevealed()) {
+            changeCellStates(bombRow, relevantColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
         //Right Cell
-        if ((relevantColumn = bombColumn + 1) < columns && !cells[bombRow][relevantColumn].isBomb()){
-            cells[relevantRow][bombColumn].setRevealed(false);
-            cells[relevantRow][bombColumn].setFlagged(false);
+        if ((relevantColumn = bombColumn + 1) < columns && cells[bombRow][relevantColumn].isRevealed()) {
+            changeCellStates(bombRow, relevantColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
         //Diagonal Top Right
         if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn + 1) < columns
-                && !cells[relevantRow][relevantColumn].isBomb()){
-            cells[relevantRow][bombColumn].setRevealed(false);
-            cells[relevantRow][bombColumn].setFlagged(false);
+                && cells[relevantRow][relevantColumn].isRevealed()) {
+            changeCellStates(relevantRow, relevantColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
         //Diagonal Bottom Right
         if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn + 1) < columns
-                && !cells[relevantRow][relevantColumn].isBomb()){
-            cells[relevantRow][bombColumn].setRevealed(false);
-            cells[relevantRow][bombColumn].setFlagged(false);
+                && cells[relevantRow][relevantColumn].isRevealed()) {
+            changeCellStates(relevantRow, relevantColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
         //Diagonal Top Left
         if ((relevantRow = bombRow - 1) >= 0 && (relevantColumn = bombColumn - 1) >= 0
-                && !cells[relevantRow][relevantColumn].isBomb()){
-            cells[relevantRow][bombColumn].setRevealed(false);
-            cells[relevantRow][bombColumn].setFlagged(false);
+                && cells[relevantRow][relevantColumn].isRevealed()) {
+            changeCellStates(relevantRow, relevantColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
         //Diagonal Bottom Left
         if ((relevantRow = bombRow + 1) < rows && (relevantColumn = bombColumn - 1) >= 0
-                && !cells[relevantRow][relevantColumn].isBomb()){
-            cells[relevantRow][bombColumn].setRevealed(false);
-            cells[relevantRow][bombColumn].setFlagged(false);
+                && cells[relevantRow][relevantColumn].isRevealed()) {
+            changeCellStates(relevantRow, relevantColumn, false);
+            setRemainedCells(getRemainedCells() + 1);
         }
+        System.out.println("after closeAdjacentCells : " + getRemainedCells());
+    }
+
+    private void changeCellStates(int row, int columns, boolean state) {
+        cells[row][columns].setRevealed(state);
+        cells[row][columns].setFlagged(state);
+        cells[row][columns].setVisited(state);
     }
 
 }

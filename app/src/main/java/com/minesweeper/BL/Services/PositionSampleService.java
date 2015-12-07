@@ -27,7 +27,7 @@ public class PositionSampleService extends Service implements SensorEventListene
     DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
     private final int minAngleDeviation = 10;
-    private final int minTimeToAngleDeviation = 90; // after 1.5 minutes
+    private final int minTimeToAngleDeviation = 5; // after 1.5 minutes
 
     private float[] initialValues = new float[Number_Of_AXIS];
     private double initialAngle;

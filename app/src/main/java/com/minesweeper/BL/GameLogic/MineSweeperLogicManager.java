@@ -17,6 +17,7 @@ public class MineSweeperLogicManager {
     private GameStatus gameStatus; //keep current game status
     private GameResult gameResult;     //When game is over it keeps the result(Win/Lose)
     private Board gameBoard;
+    private int minesOnBoard;
 
 
     public MineSweeperLogicManager(String level, int rows, int columns, int numberOfMines) {
@@ -35,6 +36,7 @@ public class MineSweeperLogicManager {
         setGameStatus(GameStatus.NOT_STARTED);
         setGameResult(GameResult.NONE);
         setGameLevel(Level.valueOf(level));
+        minesOnBoard = numberOfMines;
         gameBoard = new Board(rows, columns, numberOfMines);   //create new board
     }
 
@@ -92,6 +94,10 @@ public class MineSweeperLogicManager {
         return gameStatus ==  GameStatus.STARTED;
     }
 
+    public int getNumberOfBombs(){
+        return getBoard().getNumberOfBombs();
+    }
+
     /**
      * Function makes move for current Cell
      *
@@ -128,9 +134,8 @@ public class MineSweeperLogicManager {
     public void rematch() {
         setGameStatus(GameStatus.NOT_STARTED);
         setGameResult(GameResult.NONE);
-        int rows = getBoard().getNumberOfRows(), columns = getBoard().getNumberOfColumns(),
-                bombs = getBoard().getNumberOfBombs();
-        getBoard().initializeGameBoard(rows,columns,bombs);
+        int rows = getBoard().getNumberOfRows(), columns = getBoard().getNumberOfColumns();
+        getBoard().initializeGameBoard( rows, columns, minesOnBoard);
     }
 
 
@@ -140,8 +145,7 @@ public class MineSweeperLogicManager {
             int row = rand.nextInt(getBoard().getNumberOfRows());
             int col = rand.nextInt(getBoard().getNumberOfColumns());
             if (!getBoard().getGameBoard()[row][col].isBomb()) {
-                getBoard().getGameBoard()[row][col] = new BombCell(row, col);
-                getBoard().handleNewBombOnBoard(getBoard().getGameBoard()[row][col]);
+                getBoard().handleNewBombOnBoard(row,col);
             }
         }
     }
