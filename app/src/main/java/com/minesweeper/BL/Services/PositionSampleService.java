@@ -24,7 +24,8 @@ public class PositionSampleService extends Service implements SensorEventListene
 
     private static final int MILI = 1000;
     private static final int SECONDS_MINUTE = 60;
-    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+    private DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
     private final int minAngleDeviation = 10;
     private final int minTimeToAngleDeviation = 5; // after 1.5 minutes

@@ -78,15 +78,16 @@ public class GameActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.i("onStop", "onStop");
+        stopTimer();
+        unregisterReceiver(mMessageFromPositionService);
+        unbindService(positionSampleConnection);
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopTimer();
-        unregisterReceiver(mMessageFromPositionService);
-        unbindService(positionSampleConnection);
+        Log.i("onDestroy", "onDestroy");
     }
 
     @Override
@@ -403,7 +404,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     /**
-     * handle barodcast messages from position sampler service
+     * handle broadcast messages from position sampler service
      */
     private BroadcastReceiver mMessageFromPositionService = new BroadcastReceiver() {
         @Override
@@ -421,7 +422,7 @@ public class GameActivity extends AppCompatActivity {
                     tv_CurrentAccelerometer.setText(currentValues);
                     break;
                 case ADD_MINES_TO_GAME_BOARD:
-                    Toast.makeText(context,PositionSampleService.BUNDLE_DATA_ADD_MINES, Toast.LENGTH_LONG);
+                    Toast.makeText(context,PositionSampleService.BUNDLE_DATA_ADD_MINES, Toast.LENGTH_LONG).show();
                     addMinesToGameBoard();
                     break;
 
