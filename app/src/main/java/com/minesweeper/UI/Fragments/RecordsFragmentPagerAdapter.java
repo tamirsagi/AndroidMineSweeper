@@ -53,6 +53,8 @@ public class RecordsFragmentPagerAdapter extends FragmentPagerAdapter {
         switch (PAGES.get(position)) {
             case RECORDS:
                 return RecordsTable.newInstance(position + 1);
+            case MAP:
+                return MapFragment.newInstance(position + 1);
         }
 
         return new Fragment();

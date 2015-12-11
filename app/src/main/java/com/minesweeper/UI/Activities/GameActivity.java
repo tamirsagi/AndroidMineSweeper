@@ -27,12 +27,18 @@ import com.minesweeper.UI.Fragments.DetailsDialog;
 
 import com.minesweeper.BL.Services.*;
 
+import java.util.HashMap;
+
 public class GameActivity extends AppCompatActivity {
     public static final String TAG = "GameActivity";
 
     public static final String KEY_TABLE = "TABLE";
     public static final String KEY_ROUND_TIME = "ROUND_TIME";
-    public static final String KEY_LOCATION = "LOCATION";
+    public static final String KEY_LOCATION_CITY = "CITY";
+    public static final String KEY_LOCATION_COUNTRY = "COUNTRY";
+    public static final String KEY_LOCATION_LATITUDE = "LATITUDE";
+    public static final String KEY_LOCATION_LONGITUDE = "LONGITUDE";
+
     public static final String KEY_DATE = "DATE";
 
 
@@ -59,6 +65,7 @@ public class GameActivity extends AppCompatActivity {
 
     //Service Params
     private PositionSampleService positionSampleService;
+    private GPSTracker gpsTrackerService;
     private boolean isBound = false;
 
     private TextView tv_InitialAccelerometer;
@@ -71,6 +78,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_board_layout);
         setGameScreen();
+        createBinnedGPSService();
 
     }
 
@@ -79,9 +87,12 @@ public class GameActivity extends AppCompatActivity {
         super.onStop();
         Log.i("onStop", "onStop");
         stopTimer();
-        unregisterReceiver(mMessageFromPositionService);
-        unbindService(positionSampleConnection);
-
+        if(positionSampleService != null) {
+            unregisterReceiver(mMessageFromPositionService);
+            unbindService(positionSampleConnection);
+        }
+        if(gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
+            unbindService(GPSTrackerServiceConnection);
     }
 
     @Override
@@ -207,7 +218,8 @@ public class GameActivity extends AppCompatActivity {
     private void startTimer() {
         startedTime = System.currentTimeMillis();
         timerHandler.postDelayed(timerJob, 0);
-        createBinnedService();
+        createBinnedPositionService();
+
     }
 
     private void stopTimer() {
@@ -326,7 +338,11 @@ public class GameActivity extends AppCompatActivity {
                     if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
                         Bundle details = new Bundle();
                         details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
-                        details.putString(KEY_LOCATION, "ISRAEL");
+                        HashMap<String,String> locationValues = gpsTrackerService.getLocationValues();
+                        details.putString(KEY_LOCATION_CITY, locationValues.get(KEY_LOCATION_CITY));
+                        details.putString(KEY_LOCATION_COUNTRY, locationValues.get(KEY_LOCATION_COUNTRY));
+                        details.putString(KEY_LOCATION_LATITUDE, locationValues.get(KEY_LOCATION_LATITUDE));
+                        details.putString(KEY_LOCATION_LONGITUDE, locationValues.get(KEY_LOCATION_LONGITUDE));
                         details.putString(KEY_DATE, DbManager.getDate());
                         details.putString(KEY_TABLE, tableInDB);
                         DetailsDialog.showDialog(getFragmentManager(), details);
@@ -355,6 +371,11 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param level
+     * @return corresponded db table by game level
+     */
     private String getDbTableFromGameLevel(String level) {
         switch (MineSweeperLogicManager.Level.valueOf(level)) {
             case Beginner:
@@ -365,7 +386,6 @@ public class GameActivity extends AppCompatActivity {
                 return DbManager.Tables.PLAYERS_RECORDS_EXPERT.toString();
             default:
                 return "";
-
         }
     }
 
@@ -374,18 +394,13 @@ public class GameActivity extends AppCompatActivity {
      * Sampling Phone Position Service Section
      */
 
-    private void createBinnedService() {
+    private void createBinnedPositionService() {
         Intent intent = new Intent(this, PositionSampleService.class);
         bindService(intent, positionSampleConnection, Context.BIND_AUTO_CREATE);
         isBound = true;
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMessageFromPositionService, new IntentFilter(PositionSampleService.INTENT_FILTER_NAME));
         setPositionsTextViews();
-    }
-
-    private void setPositionsTextViews() {
-        tv_InitialAccelerometer = (TextView) findViewById(R.id.initial_Acceleration);
-        tv_CurrentAccelerometer = (TextView) findViewById(R.id.current_Acceleration);
     }
 
     private ServiceConnection positionSampleConnection = new ServiceConnection() {
@@ -402,6 +417,10 @@ public class GameActivity extends AppCompatActivity {
         }
     };
 
+    private void setPositionsTextViews() {
+        tv_InitialAccelerometer = (TextView) findViewById(R.id.initial_Acceleration);
+        tv_CurrentAccelerometer = (TextView) findViewById(R.id.current_Acceleration);
+    }
 
     /**
      * handle broadcast messages from position sampler service
@@ -430,7 +449,6 @@ public class GameActivity extends AppCompatActivity {
         }
     };
 
-
     /**
      * function add mines on board and updates relevant cells on board
      */
@@ -440,4 +458,26 @@ public class GameActivity extends AppCompatActivity {
         minesOnBoard = mineSweeperLogicManager.getBoard().getNumberOfBombs();
         setGameInfo();
     }
+
+    /**
+     * GPS LOCATION
+     */
+
+    private void createBinnedGPSService() {
+        Intent intent = new Intent(this, GPSTracker.class);
+        bindService(intent, GPSTrackerServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private ServiceConnection GPSTrackerServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            GPSTracker.MyLocalBinder gpsBinder = (GPSTracker.MyLocalBinder)service;
+            gpsTrackerService = gpsBinder.gerService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            gpsTrackerService.stopUsingGPS();
+        }
+    };
 }

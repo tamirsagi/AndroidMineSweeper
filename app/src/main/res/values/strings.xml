@@ -57,4 +57,10 @@
     <string name="err_name_too_long">Name is too long</string>
     <string name="err_name_empty_or_null">Please write your name</string>
     <string name="info_saved">Record was successfully saved</string>
+
+
+    <!--    Google GeoLocations Services -->
+    <string name="GeLocationApiKey">AIzaSyDX1o5S5-khqFx1h2dpp8NbOROEpo8gLRk</string>
+
+
 </resources>

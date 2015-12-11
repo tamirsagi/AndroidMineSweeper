@@ -37,8 +37,7 @@
             android:textSize="16dp"
             android:text="@string/column_round_time"
             android:textColor="#000"
-            android:layout_alignBottom="@+id/ColumnLocation"
-            android:layout_alignStart="@+id/ColumnName">
+            android:layout_below="@+id/ColumnName" android:layout_alignStart="@+id/ColumnName">
 
     </TextView>
     <TextView
@@ -50,7 +49,7 @@
             android:textSize="16dp"
             android:text="@string/column_location"
             android:textColor="#000"
-            android:layout_below="@+id/ColumnDate" android:layout_alignStart="@+id/ColumnDate">
+            android:layout_below="@+id/ColumnRoundTime" android:layout_alignStart="@+id/ColumnRoundTime">
 
     </TextView>
     <TextView

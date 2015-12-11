@@ -34,7 +34,8 @@
             android:layout_width="40dp"
             android:id="@+id/timerIcon"
             android:src="@drawable/unnamed"
-            android:layout_alignParentTop="true" android:layout_toEndOf="@+id/remainedCells"/>
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/remainedCells"/>
     <GridView
             android:id="@+id/gameBoard"
             android:layout_marginTop="50dp"
@@ -53,7 +54,7 @@
               android:gravity="center"
               android:textColor="#FFFFFF"
               android:text="Initial : X: Y: Z: "
-              android:layout_alignBottom="@+id/current_Acceleration" />
+              android:layout_alignBottom="@+id/current_Acceleration"/>
 
     <TextView android:id="@+id/current_Acceleration"
               android:layout_width="wrap_content"

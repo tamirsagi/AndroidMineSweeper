@@ -42,9 +42,11 @@ public class DbManager extends SQLiteOpenHelper {
     //Columns names
     private static final String COL_NAME = "Full_Name";
     private static final String COL_GAME_ROUND_TIME = "Round_Time";
-    private static final String COL_LOCATION = "Location";
+    private static final String COL_LOCATION_Latitude = "Latitude";
+    private static final String COL_LOCATION_Longitude = "Longitude";
+    private static final String COL_LOCATION_City = "City";
+    private static final String COL_LOCATION_Country = "City";
     private static final String COL_DATE = "Date";
-    private static final String COL_FULL_TIME = "Full_Time";
 
 
     private DbManager(Context context) {
@@ -72,8 +74,10 @@ public class DbManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         for (Tables tableName : Tables.values()) {
             String createTableCommand = "CREATE TABLE "
-                    + tableName.toString() + "('_id' INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NAME + " TEXT ," + COL_GAME_ROUND_TIME
-                    + " TEXT," + COL_LOCATION + " TEXT," + COL_DATE + " TEXT" + ")";
+                    + tableName.toString() + "('_id' INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NAME + " TEXT ,"
+                    + COL_GAME_ROUND_TIME + " TEXT,"  + COL_LOCATION_Country + " TEXT," + COL_LOCATION_City + " TEXT,"
+                    + COL_LOCATION_Latitude + " TEXT," + COL_LOCATION_Longitude + " TEXT,"
+                    + COL_DATE + " TEXT" + ")";
             getDataBase().execSQL(createTableCommand);
         }
     }
@@ -102,7 +106,10 @@ public class DbManager extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(COL_NAME, playerRecord.getFullName());
             values.put(COL_GAME_ROUND_TIME, playerRecord.getRoundTime());
-            values.put(COL_LOCATION, playerRecord.getLocation());
+            values.put(COL_LOCATION_City, playerRecord.getCity());
+            values.put(COL_LOCATION_Country, playerRecord.getCountry());
+            values.put(COL_LOCATION_Latitude, "" + playerRecord.getLatitude());
+            values.put(COL_LOCATION_Longitude, "" + playerRecord.getLongitude());
             values.put(COL_DATE, playerRecord.getDate());
             db.insert(table, null, values);
             //sort the table after each insertion
@@ -156,7 +163,12 @@ public class DbManager extends SQLiteOpenHelper {
             playerRecord.setId(counter++);
             playerRecord.setFullName(recordsCursor.getString(recordsCursor.getColumnIndex(COL_NAME)));
             playerRecord.setRoundTime(recordsCursor.getString(recordsCursor.getColumnIndex(COL_GAME_ROUND_TIME)));
-            playerRecord.setLocation(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION)));
+            playerRecord.setCity(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_City)));
+            playerRecord.setCountry(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Country)));
+            String latitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Latitude));
+            playerRecord.setLatitude(Double.parseDouble(latitude));
+            String longitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Longitude));
+            playerRecord.setLongitude(Double.parseDouble(latitude));
             playerRecord.setDate(recordsCursor.getString(recordsCursor.getColumnIndex(COL_DATE)));
             //adding to list
             records.add(playerRecord);

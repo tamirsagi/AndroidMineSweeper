@@ -44,7 +44,7 @@ public class RecordsRecyclerAdapter extends  RecyclerView.Adapter<RecordsRecycle
         holder.tv_place.setText(record.getId());
         holder.tv_player_name.setText(record.getFullName());
         holder.tv_round_time.setText(record.getRoundTime());
-        holder.tv_location.setText(record.getLocation());
+        holder.tv_location.setText(record.getCity() +"," + record.getCountry());
         holder.tv_date.setText(record.getDate());
     }
 

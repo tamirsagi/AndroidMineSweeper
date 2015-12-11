@@ -4,35 +4,36 @@ import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.location.*;
+import android.nfc.Tag;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
+import com.minesweeper.UI.Activities.GameActivity;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class GPSTracker extends Service implements LocationListener {
 
     public static final String TAG = "GPSTracker";
-    public static final String INTENT_FILTER_NAME = "GPSTracker SERVICE";
-    public static final String BUNDLE_ACTION = "ACTION";
-    public static final String BUNDLE_DATA = "BUNDLE DATA";
 
-    public static final long MIN_DISTANCE_CHANGE_FOR_UPDATE = 10;
-    public static final long MIN_TIME_BW_UPDATES = 1000 * 60;
+    public static final long MIN_DISTANCE_CHANGE_FOR_UPDATE = 0;
+    public static final long MIN_TIME_BW_UPDATES = 0;
 
     private final IBinder tracker = new MyLocalBinder();
 
-    private LocationManager locationManager;
-    private Location location;
+    private LocationManager mLocationManager;
+    private Location mLastLocation;
+    private Geocoder mGeocoder;
 
-    private boolean isGPSENabled = false;
+    private boolean isGPSEnabled = false;
     private boolean canGetLocation = false;
-    private boolean isNetworkEnabled = false;
 
 
     @Override
@@ -41,75 +42,85 @@ public class GPSTracker extends Service implements LocationListener {
         return tracker;
     }
 
+    @SuppressWarnings("ResourceType")
     private void setLocationManager() {
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        isGPSENabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        canGetLocation = isGPSENabled && isNetworkEnabled;
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        canGetLocation = isGPSEnabled;
+        if (!isGPSEnabled) {
+            Toast.makeText(this, "GPS is Enabled " + LocationManager.GPS_PROVIDER, Toast.LENGTH_LONG).show();
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
+            mGeocoder = new Geocoder(this);
+        } else
+            showSettingAlert();
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        this.location = location;
-
+        this.mLastLocation = location;
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
-    @SuppressWarnings("ResourceType")
+
     @Override
     public void onProviderEnabled(String provider) {
-        if (locationManager != null) {
-            if (provider.equals(LocationManager.NETWORK_PROVIDER))
-                locationManager.requestLocationUpdates(provider,
-                        MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
-
-            else if (provider.equals(LocationManager.GPS_PROVIDER))
-                if (location == null) {
-                    locationManager.requestLocationUpdates(provider, MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
-                }
-        }
-    }
-
-
-    public void stopUsingGPS() {
-        try {
-            if (locationManager != null) {
-                locationManager.removeUpdates(GPSTracker.this);
-            }
-        } catch (SecurityException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-    public void showSettingAlert(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("GPS is settings");
-        alertDialog.setMessage("GPS is not enabled. do you want to go to setting menu?");
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        });
-        alertDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        alertDialog.show();
     }
 
     @Override
     public void onProviderDisabled(String provider) {
 
     }
+
+    public void stopUsingGPS() {
+        try {
+            if (mLocationManager != null) {
+                mLocationManager.removeUpdates(GPSTracker.this);
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    public boolean isGPSEnabled() {
+        return isGPSEnabled;
+    }
+
+    public void showSettingAlert() {
+        //startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        Toast.makeText(this, "Please turn GPS on " + LocationManager.GPS_PROVIDER, Toast.LENGTH_LONG).show();
+    }
+
+    public Location getLastLocation() {
+        return mLastLocation;
+    }
+
+
+
+    public HashMap<String,String> getLocationValues(){
+        double lat = mLastLocation.getLatitude();
+        double log = mLastLocation.getLongitude();
+        HashMap<String,String> location = new HashMap<String, String>();
+        try {
+            List<Address> addresses = mGeocoder.getFromLocation(lat, log, 1);
+            if(addresses.size() > 0){
+                String city = addresses.get(0).getLocality();
+                String country = addresses.get(0).getCountryName();
+                location.put(GameActivity.KEY_LOCATION_CITY,city);
+                location.put(GameActivity.KEY_LOCATION_COUNTRY,country);
+                location.put(GameActivity.KEY_LOCATION_LATITUDE, "" + lat);
+                location.put(GameActivity.KEY_LOCATION_LONGITUDE,"" +log);
+                return location;
+            }
+        } catch (IOException e) {
+            Log.e(TAG,e.getMessage());
+        }
+        return location;
+    }
+
 
 
     public class MyLocalBinder extends Binder {
@@ -118,20 +129,6 @@ public class GPSTracker extends Service implements LocationListener {
             return GPSTracker.this;
         }
 
-    }
-
-    /**
-     * update game activity to change the board
-     *
-     * @param action - the action to take place where service is bonded
-     */
-    private void sendMessageToActivity(String action, String data) {
-        Intent intent = new Intent(INTENT_FILTER_NAME);
-        Bundle bundle = new Bundle();
-        bundle.putString(BUNDLE_ACTION, action);
-        bundle.putString(BUNDLE_DATA, data);
-        intent.putExtras(bundle);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
 }

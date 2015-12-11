@@ -1,54 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.minesweeper.UI.Activities" >
+          package="com.minesweeper.UI.Activities">
 
     <uses-sdk
-        android:maxSdkVersion="23"
-        android:minSdkVersion="17"
-        android:targetSdkVersion="18" />
+            android:maxSdkVersion="23"
+            android:minSdkVersion="17"
+            android:targetSdkVersion="18"/>
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.access_coarse_location" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.access_coarse_location"/>
+    //based on network only
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+
+    <uses-feature
+        android:glEsVersion = "0x00020000"
+        android:required="true"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/bomb_logo"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+            android:allowBackup="true"
+            android:icon="@mipmap/bomb_logo"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
+
+        <uses-library
+                android:name="com.google.android.maps"
+                android:required="true">
+        </uses-library>
+
+        <activity
+                android:name=".MainActivity"
+                android:label="@string/app_name"
+                android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".OptionsActivity"
-            android:label="@string/title_activity_options"
-            android:theme="@style/PreferencesTheme" >
+                android:name=".OptionsActivity"
+                android:label="@string/title_activity_options"
+                android:theme="@style/PreferencesTheme">
         </activity>
         <activity
-            android:name=".GameActivity"
-            android:label="@string/title_activity_game"
-            android:screenOrientation="portrait" >
+                android:name=".GameActivity"
+                android:label="@string/title_activity_game"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".DBRecordsFragmentActivity"
-            android:label="@string/title_activity_dbRecords_fragment" >
+                android:name=".DBRecordsFragmentActivity"
+                android:label="@string/title_activity_dbRecords_fragment">
         </activity>
 
+        <servicec
+                android:name="com.minesweeper.BL.Services.PositionSampleService"
+                android:enabled="true"
+                android:exported="true">
+        </servicec>
+
         <service
-            android:name="com.minesweeper.BL.Services.PositionSampleService"
-            android:enabled="true"
-            android:exported="true" >
+                android:name="com.minesweeper.BL.Services.GPSTracker"
+                android:enabled="true"
+                android:exported="true">
         </service>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDX1o5S5-khqFx1h2dpp8NbOROEpo8gLRk" />
+
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.BL.DB.PlayerRecord;
+import com.minesweeper.UI.Activities.DBRecordsFragmentActivity;
 import com.minesweeper.UI.Activities.R;
 
 import java.util.List;
@@ -64,18 +65,18 @@ public class RecordsTable extends Fragment {
         View root = inflater.inflate(R.layout.fragment_record_table, container, false);
         root.setTag(TAG);
         setupSpinner(root);
-        mRecyclerView = (RecyclerView)root.findViewById(R.id.RecordsRecycler);
+        mRecyclerView = (RecyclerView) root.findViewById(R.id.RecordsRecycler);
 
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecordsRecyclerAdapter(getContext(),mDataSet);
+        mAdapter = new RecordsRecyclerAdapter(getContext(), mDataSet);
         mRecyclerView.setAdapter(mAdapter);
 
         return root;
     }
 
-    private void initDataSet(){
+    private void initDataSet() {
         mDataSet = DbManager.getInstance(getContext()).getRecords(mDefaultTable);
     }
 
@@ -95,22 +96,29 @@ public class RecordsTable extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        DBRecordsFragmentActivity.mDefaultTable = DbManager.Tables.PLAYERS_RECORDS_BEGINNERS.toString();
                         updateTable(DbManager.Tables.PLAYERS_RECORDS_BEGINNERS.toString());
                         break;
                     case 1:
+                        DBRecordsFragmentActivity.mDefaultTable = DbManager.Tables.PLAYERS_RECORDS_INTERMEDIATE.toString();
                         updateTable(DbManager.Tables.PLAYERS_RECORDS_INTERMEDIATE.toString());
                         break;
                     case 2:
+                        DBRecordsFragmentActivity.mDefaultTable = DbManager.Tables.PLAYERS_RECORDS_EXPERT.toString();
                         updateTable(DbManager.Tables.PLAYERS_RECORDS_EXPERT.toString());
                         break;
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {    }
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+
         });
     }
 
-    private void updateTable(String table){
+    private void updateTable(String table) {
         mDataSet = DbManager.getInstance(getContext()).getRecords(table);
         mAdapter.updateList(mDataSet);
     }

@@ -62,7 +62,14 @@ public class DetailsDialog extends DialogFragment {
                     PlayerRecord record = new PlayerRecord();
                     record.setFullName(name.getText().toString());
                     record.setRoundTime(data.getString(GameActivity.KEY_ROUND_TIME));
-                    record.setLocation(data.getString(GameActivity.KEY_LOCATION));
+                    record.setCity(data.getString(GameActivity.KEY_LOCATION_CITY));
+                    record.setCountry(data.getString(GameActivity.KEY_LOCATION_COUNTRY));
+                    //get strings
+                    String latitude = data.getString(GameActivity.KEY_LOCATION_LATITUDE);
+                    String longitude = data.getString(GameActivity.KEY_LOCATION_LONGITUDE);
+                    //parse to double
+                    record.setLatitude(Double.parseDouble(latitude));
+                    record.setLongitude(Double.parseDouble(longitude));
                     record.setDate(data.getString(GameActivity.KEY_DATE));
                     String table = data.getString(GameActivity.KEY_TABLE);
 
