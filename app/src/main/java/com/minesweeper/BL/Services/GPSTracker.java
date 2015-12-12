@@ -47,8 +47,8 @@ public class GPSTracker extends Service implements LocationListener {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         canGetLocation = isGPSEnabled;
-        if (!isGPSEnabled) {
-            Toast.makeText(this, "GPS is Enabled " + LocationManager.GPS_PROVIDER, Toast.LENGTH_LONG).show();
+        if (isGPSEnabled) {
+            Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
                     MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
             mGeocoder = new Geocoder(this);

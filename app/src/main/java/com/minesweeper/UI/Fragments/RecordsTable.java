@@ -43,6 +43,8 @@ public class RecordsTable extends Fragment {
     private List<PlayerRecord> mDataSet;
     protected LayoutManagerType mCurrentLayoutManagerType;
 
+    private TextView tvEmptyTableMessage;
+
     public static RecordsTable newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(PAGE_NUMBER, page);
@@ -55,7 +57,7 @@ public class RecordsTable extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(PAGE_NUMBER);
-        initDataSet();
+
     }
 
     @Override
@@ -64,20 +66,27 @@ public class RecordsTable extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_record_table, container, false);
         root.setTag(TAG);
+        initDataSet();
         setupSpinner(root);
         mRecyclerView = (RecyclerView) root.findViewById(R.id.RecordsRecycler);
-
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecordsRecyclerAdapter(getContext(), mDataSet);
-        mRecyclerView.setAdapter(mAdapter);
+
+        tvEmptyTableMessage = (TextView) root.findViewById(R.id.emptyTable);
+        if (mDataSet.size() > 0) {
+            setRecyclerViewVisible(true);
+            setupRecyclerListAdapter();
+        } else {
+            setRecyclerViewVisible(false);
+        }
 
         return root;
     }
 
     private void initDataSet() {
-        mDataSet = DbManager.getInstance(getContext()).getRecords(mDefaultTable);
+        mDataSet = DbManager.getInstance(getContext().getApplicationContext())
+                .getRecords(mDefaultTable);
     }
 
 
@@ -120,7 +129,29 @@ public class RecordsTable extends Fragment {
 
     private void updateTable(String table) {
         mDataSet = DbManager.getInstance(getContext()).getRecords(table);
-        mAdapter.updateList(mDataSet);
+        if (mDataSet.size() > 0) {
+            setRecyclerViewVisible(true);
+            if(mAdapter == null)
+                setupRecyclerListAdapter();
+            mAdapter.updateList(mDataSet);
+        }
+        else
+            setRecyclerViewVisible(false);
+    }
+
+    private void setupRecyclerListAdapter(){
+        mAdapter = new RecordsRecyclerAdapter(getContext(), mDataSet);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void setRecyclerViewVisible(Boolean state) {
+        if (state) {
+            tvEmptyTableMessage.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            tvEmptyTableMessage.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        }
     }
 
 }

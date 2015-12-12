@@ -40,12 +40,14 @@ public class RecordsRecyclerAdapter extends  RecyclerView.Adapter<RecordsRecycle
 
     @Override
     public void onBindViewHolder(RecordHolder holder, int position) {
-        PlayerRecord record = records.get(position);
-        holder.tv_place.setText(record.getId());
-        holder.tv_player_name.setText(record.getFullName());
-        holder.tv_round_time.setText(record.getRoundTime());
-        holder.tv_location.setText(record.getCity() +"," + record.getCountry());
-        holder.tv_date.setText(record.getDate());
+        if(records.size() > 0 && position >= 0) {
+            PlayerRecord record = records.get(position);
+            holder.tv_place.setText(record.getId());
+            holder.tv_player_name.setText(record.getFullName());
+            holder.tv_round_time.setText(record.getRoundTime());
+            holder.tv_location.setText(record.getCity() + "," + record.getCountry());
+            holder.tv_date.setText(record.getDate());
+        }
     }
 
 

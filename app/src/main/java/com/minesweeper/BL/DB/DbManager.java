@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.nfc.Tag;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -21,14 +20,13 @@ public class DbManager extends SQLiteOpenHelper {
 
 
     // Database Name
-    public static final String DB_Name = "MineSweeperDb";
+    public static final String DB_Name = "MineSweeperDB";
 
-    public static final int MAX_PLAYER_NAME_LEENGTH = 10;
+    public static final int MAX_PLAYER_NAME_LENGTH = 10;
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
-    private SQLiteDatabase dataBase;
     private final int recordsToSave = 10;
 
     private static final DateFormat dbDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -45,18 +43,20 @@ public class DbManager extends SQLiteOpenHelper {
     private static final String COL_LOCATION_Latitude = "Latitude";
     private static final String COL_LOCATION_Longitude = "Longitude";
     private static final String COL_LOCATION_City = "City";
-    private static final String COL_LOCATION_Country = "City";
+    private static final String COL_LOCATION_Country = "Country";
     private static final String COL_DATE = "Date";
 
 
     private DbManager(Context context) {
         super(context, DB_Name, null, DATABASE_VERSION);
-        this.dataBase = getWritableDatabase();
+        //open the db
+        getWritableDatabase();
+
     }
 
-    public static DbManager getInstance(Context context) {
+    public static synchronized  DbManager getInstance(Context context) {
         if (dbManager == null)
-            dbManager = new DbManager(context);
+            dbManager = new DbManager(context.getApplicationContext());
 
         return dbManager;
     }
@@ -74,11 +74,11 @@ public class DbManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         for (Tables tableName : Tables.values()) {
             String createTableCommand = "CREATE TABLE "
-                    + tableName.toString() + "('_id' INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NAME + " TEXT ,"
-                    + COL_GAME_ROUND_TIME + " TEXT,"  + COL_LOCATION_Country + " TEXT," + COL_LOCATION_City + " TEXT,"
-                    + COL_LOCATION_Latitude + " TEXT," + COL_LOCATION_Longitude + " TEXT,"
+                    + tableName.toString() + "('_id' INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NAME + " TEXT,"
+                    + COL_GAME_ROUND_TIME + " TEXT,"  + COL_LOCATION_Country + " TEXT, " + COL_LOCATION_City + " TEXT,"
+                    + COL_LOCATION_Latitude + " TEXT ," + COL_LOCATION_Longitude + " TEXT,"
                     + COL_DATE + " TEXT" + ")";
-            getDataBase().execSQL(createTableCommand);
+            db.execSQL(createTableCommand);
         }
     }
 
@@ -88,6 +88,7 @@ public class DbManager extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + tableName.toString());
         }
         onCreate(db);
+
     }
 
     /**
@@ -97,12 +98,11 @@ public class DbManager extends SQLiteOpenHelper {
      * @param playerRecord
      */
     public boolean addPlayerRecord(String table, PlayerRecord playerRecord) {
-
         try {
             if (count(table) == recordsToSave)
                 deleteLastRecord(table);
 
-            SQLiteDatabase db = this.getWritableDatabase();
+            SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(COL_NAME, playerRecord.getFullName());
             values.put(COL_GAME_ROUND_TIME, playerRecord.getRoundTime());
@@ -137,7 +137,7 @@ public class DbManager extends SQLiteOpenHelper {
             return true;
 
         rowsCount = recordsToSave;
-        SQLiteDatabase readableDB = this.getReadableDatabase();
+        SQLiteDatabase readableDB = dbManager.getReadableDatabase();
         Cursor cursor = gerAllTableByRoundTime(readableDB,table);
         cursor.moveToLast();
         String lastPlayerTime = cursor.getString(cursor.getColumnIndex(COL_GAME_ROUND_TIME));
@@ -154,26 +154,27 @@ public class DbManager extends SQLiteOpenHelper {
      * @return
      */
     public List<PlayerRecord> getRecords(String table) {
-        SQLiteDatabase readableDB = this.getReadableDatabase();
         int counter = 1;
         List<PlayerRecord> records = new ArrayList<PlayerRecord>();
-        Cursor recordsCursor = gerAllTableByRoundTime(readableDB,table);
-        while (recordsCursor.moveToNext()) {
-            PlayerRecord playerRecord = new PlayerRecord();
-            playerRecord.setId(counter++);
-            playerRecord.setFullName(recordsCursor.getString(recordsCursor.getColumnIndex(COL_NAME)));
-            playerRecord.setRoundTime(recordsCursor.getString(recordsCursor.getColumnIndex(COL_GAME_ROUND_TIME)));
-            playerRecord.setCity(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_City)));
-            playerRecord.setCountry(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Country)));
-            String latitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Latitude));
-            playerRecord.setLatitude(Double.parseDouble(latitude));
-            String longitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Longitude));
-            playerRecord.setLongitude(Double.parseDouble(latitude));
-            playerRecord.setDate(recordsCursor.getString(recordsCursor.getColumnIndex(COL_DATE)));
-            //adding to list
-            records.add(playerRecord);
+        if(count(table) > 0) {
+            Cursor recordsCursor = gerAllTableByRoundTime(getReadableDatabase(), table);
+            while (recordsCursor.moveToNext()) {
+                PlayerRecord playerRecord = new PlayerRecord();
+                playerRecord.setId(counter++);
+                playerRecord.setFullName(recordsCursor.getString(recordsCursor.getColumnIndex(COL_NAME)));
+                playerRecord.setRoundTime(recordsCursor.getString(recordsCursor.getColumnIndex(COL_GAME_ROUND_TIME)));
+                playerRecord.setCity(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_City)));
+                playerRecord.setCountry(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Country)));
+                String latitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Latitude));
+                String longitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Longitude));
+                playerRecord.setLatitude(Double.parseDouble(latitude));
+                playerRecord.setLongitude(Double.parseDouble(longitude));
+                playerRecord.setDate(recordsCursor.getString(recordsCursor.getColumnIndex(COL_DATE)));
+                //adding to list
+                records.add(playerRecord);
+            }
+            getReadableDatabase().close();
         }
-        readableDB.close();
         return records;
     }
 
@@ -193,9 +194,7 @@ public class DbManager extends SQLiteOpenHelper {
     }
 
     private SQLiteDatabase getDataBase(){
-        if(dataBase == null || !dataBase.isOpen())
-            dataBase = getWritableDatabase();
-        return dataBase;
+            return getWritableDatabase();
     }
 
     /**
@@ -204,7 +203,7 @@ public class DbManager extends SQLiteOpenHelper {
      * @param table
      */
     private void deleteLastRecord(String table) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         String command = "DELETE FROM " + table +
                 " WHERE " + COL_GAME_ROUND_TIME + " = (SELECT MAX(" + COL_GAME_ROUND_TIME + ") FROM " + table + ")";
         db.execSQL(command);

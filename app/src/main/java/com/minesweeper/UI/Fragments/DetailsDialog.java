@@ -54,7 +54,7 @@ public class DetailsDialog extends DialogFragment {
                     confirmationMessage.setText(R.string.err_name_empty_or_null);
                     confirmationMessage.setTextColor(Color.RED);
                 }
-                else if(name.getText().length() > DbManager.MAX_PLAYER_NAME_LEENGTH){
+                else if(name.getText().length() > DbManager.MAX_PLAYER_NAME_LENGTH){
                     confirmationMessage.setText(R.string.err_name_too_long);
                     confirmationMessage.setTextColor(Color.RED);
                 }
@@ -64,10 +64,9 @@ public class DetailsDialog extends DialogFragment {
                     record.setRoundTime(data.getString(GameActivity.KEY_ROUND_TIME));
                     record.setCity(data.getString(GameActivity.KEY_LOCATION_CITY));
                     record.setCountry(data.getString(GameActivity.KEY_LOCATION_COUNTRY));
-                    //get strings
+                    //get location
                     String latitude = data.getString(GameActivity.KEY_LOCATION_LATITUDE);
                     String longitude = data.getString(GameActivity.KEY_LOCATION_LONGITUDE);
-                    //parse to double
                     record.setLatitude(Double.parseDouble(latitude));
                     record.setLongitude(Double.parseDouble(longitude));
                     record.setDate(data.getString(GameActivity.KEY_DATE));

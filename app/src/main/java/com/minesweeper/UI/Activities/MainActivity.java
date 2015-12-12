@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void onHigheScoresButtonClicked(View v){
+    public void onHighScoresButtonClicked(View v){
         Intent DBRecordsFragmentActivity = new Intent(this, DBRecordsFragmentActivity.class);
         startActivity(DBRecordsFragmentActivity);
     }

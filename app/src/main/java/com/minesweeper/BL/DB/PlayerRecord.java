@@ -1,10 +1,7 @@
 package com.minesweeper.BL.DB;
 
-
-import com.google.android.maps.GeoPoint;
-
 /**
- * Created by Administrator on 12/1/2015.
+ * @author  Tamir Sagi
  */
 public class PlayerRecord {
 
@@ -17,21 +14,7 @@ public class PlayerRecord {
     private String country;
     private String date;
 
-    private GeoPoint geoPoint;
-
-
-    public PlayerRecord() {
-    }
-
-    public PlayerRecord(String fullName, String time, String city,String country,double latitude,double longitude) {
-        this.fullName = fullName;
-        this.roundTime = time;
-        this.city = city;
-        this.country = country;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        setGeoPoint();
-    }
+    public PlayerRecord() { }
 
     public String getId() {
         return "" + id;
@@ -97,12 +80,5 @@ public class PlayerRecord {
         this.date = date;
     }
 
-    private void setGeoPoint(){
-        geoPoint = new GeoPoint((int)(latitude * 1E6),(int)(longitude * 1E6));
-    }
-
-    public GeoPoint getGeoPoint(){
-        return geoPoint;
-    }
 
 }
