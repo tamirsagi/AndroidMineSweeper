@@ -18,15 +18,15 @@ import com.minesweeper.UI.Activities.R;
 
 /**
  * This class represents a Dialog which pops up when user score should be saved in DB
- * @author  Tamir Sagi
  *
+ * @author Tamir Sagi
  */
 public class DetailsDialog extends DialogFragment {
     private static final String TAG = "Details Dialog";
     private static Bundle data;
 
     public static DetailsDialog newInstance(Bundle savedInstanceState) {
-        DetailsDialog  dialog = new DetailsDialog();
+        DetailsDialog dialog = new DetailsDialog();
         data = savedInstanceState;
         dialog.setArguments(savedInstanceState);
         return dialog;
@@ -42,7 +42,7 @@ public class DetailsDialog extends DialogFragment {
         custom_dialog.setView(alertDialogView);
         final EditText name = (EditText) alertDialogView.findViewById(R.id.et_prompt_player_Name_edit);
         final TextView confirmationMessage = (TextView) alertDialogView.findViewById(R.id.tv_prompt_confirmation_message);
-        final Button bth_close = (Button)alertDialogView.findViewById(R.id.bth_prompt_close);
+        final Button bth_close = (Button) alertDialogView.findViewById(R.id.bth_prompt_close);
         bth_close.setEnabled(false);
         confirmationMessage.setVisibility(View.GONE);
         final Button save = (Button) alertDialogView.findViewById(R.id.bth_prompt_save);
@@ -53,12 +53,10 @@ public class DetailsDialog extends DialogFragment {
                 if (name.getText() == null || name.getText().toString().isEmpty()) {
                     confirmationMessage.setText(R.string.err_name_empty_or_null);
                     confirmationMessage.setTextColor(Color.RED);
-                }
-                else if(name.getText().length() > DbManager.MAX_PLAYER_NAME_LENGTH){
+                } else if (name.getText().length() > DbManager.MAX_PLAYER_NAME_LENGTH) {
                     confirmationMessage.setText(R.string.err_name_too_long);
                     confirmationMessage.setTextColor(Color.RED);
-                }
-                else {
+                } else {
                     PlayerRecord record = new PlayerRecord();
                     record.setFullName(name.getText().toString());
                     record.setRoundTime(data.getString(GameActivity.KEY_ROUND_TIME));
@@ -72,7 +70,7 @@ public class DetailsDialog extends DialogFragment {
                     record.setDate(data.getString(GameActivity.KEY_DATE));
                     String table = data.getString(GameActivity.KEY_TABLE);
 
-                    if(DbManager.getInstance(alertDialogView.getContext()).addPlayerRecord(table,record)) {
+                    if (DbManager.getInstance(alertDialogView.getContext()).addPlayerRecord(table, record)) {
                         confirmationMessage.setText(R.string.info_saved);
                         confirmationMessage.setTextColor(Color.GREEN);
                         save.setEnabled(false);
@@ -86,13 +84,12 @@ public class DetailsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 v.setFocusable(false);
-                getDialog().dismiss();
             }
         });
         return custom_dialog.create();
     }
 
-    public static void showDialog(FragmentManager fm,Bundle details) {
+    public static void showDialog(FragmentManager fm, Bundle details) {
         DialogFragment newFragment = DetailsDialog.newInstance(details);
         newFragment.show(fm, TAG);
     }

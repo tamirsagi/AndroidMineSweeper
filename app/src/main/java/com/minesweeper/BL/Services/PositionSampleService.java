@@ -13,6 +13,12 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import java.text.DecimalFormat;
 
+
+/**
+ * @author Tamir Sagi
+ *         This class manages accelerator sensor service. it's binned when timer starts(On Game Activity)
+ *         It keeps updating the phone angle and sends broadcast messages back to Game activity.
+ */
 public class PositionSampleService extends Service implements SensorEventListener {
 
     public static final String TAG = "PositionSampleService";
@@ -24,6 +30,7 @@ public class PositionSampleService extends Service implements SensorEventListene
 
     private static final int MILI = 1000;
     private static final int SECONDS_MINUTE = 60;
+    private static final int RADIANS_PI = 180;
 
     private DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
@@ -77,7 +84,7 @@ public class PositionSampleService extends Service implements SensorEventListene
         position = "X:" + decimalFormat.format(event.values[0]) + "\nY:" + decimalFormat.format(event.values[1]) +
                 "\nZ:" + decimalFormat.format(event.values[2]);
         double radians = (Math.atan2(event.values[0], event.values[1])); //radians
-        double vAngle = radians * (180 / Math.PI);                      //radians to degrees
+        double vAngle = radians * (RADIANS_PI / Math.PI);                      //radians to degrees
         angle = "angle : " + decimalFormat.format(vAngle);
         if (initial) {
             initial = false;
@@ -101,17 +108,16 @@ public class PositionSampleService extends Service implements SensorEventListene
                 startTime = System.currentTimeMillis() / MILI;
             }
             endTime = System.currentTimeMillis() / MILI;
-            if (! addMines && endTime - startTime >= minTimeToAngleDeviation) {
+            if (!addMines && endTime - startTime >= minTimeToAngleDeviation) {
                 addMines = true;
 
             }
 
-            if(addMines){
+            if (addMines) {
                 action = ACTIONS.ADD_MINES_TO_GAME_BOARD.toString();
                 sendMessageToActivity(action, "");
             }
-        }
-        else{
+        } else {
             timerStarted = false;
             startTime = 0;
             endTime = 0;

@@ -57,11 +57,11 @@
                 android:label="@string/title_activity_dbRecords_fragment">
         </activity>
 
-        <servicec
+        <service
                 android:name="com.minesweeper.BL.Services.PositionSampleService"
                 android:enabled="true"
                 android:exported="true">
-        </servicec>
+        </service>
 
         <service
                 android:name="com.minesweeper.BL.Services.GPSTracker"

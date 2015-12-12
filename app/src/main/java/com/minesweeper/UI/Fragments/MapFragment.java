@@ -12,17 +12,22 @@ import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.BL.DB.PlayerRecord;
 import com.minesweeper.UI.Activities.DBRecordsFragmentActivity;
 import com.minesweeper.UI.Activities.R;
+
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * @author Tamir Sagi
+ *         This class manages a google map with markers and a custom info window which pops up when marker is clicked
+ *         The map is V2
+ */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public static final String PAGE_NUMBER = "PAGE NUMBER";
 
     private MapView mapView;
     private GoogleMap mGoogleMap;
-    private UiSettings mUiSettings;
+    private UiSettings mUiSettings;         // Similar to map controller in V1
     private HashMap<Marker, PlayerRecord> markers;
 
 
@@ -53,6 +58,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * Method will get the map in Async manner
+     *
      * @param googleMap
      */
     @Override
@@ -137,6 +143,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * This class is a custom info window which holds marker info.
+     * it shows record per marker
+     */
     class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private HashMap<Marker, PlayerRecord> mData;
 
@@ -162,9 +172,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             return root;
         }
 
-        public void updateMarkers(HashMap<Marker, PlayerRecord> mData){
-            this.mData = mData;
-        }
     }
 
 

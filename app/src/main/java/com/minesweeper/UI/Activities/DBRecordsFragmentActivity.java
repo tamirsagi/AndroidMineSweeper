@@ -7,7 +7,12 @@ import android.os.Bundle;
 import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.UI.Fragments.RecordsFragmentPagerAdapter;
 
-public class DBRecordsFragmentActivity extends FragmentActivity{
+
+/**
+ * @author Tamir Sagi
+ *         This Class manages the Tabs and pager(which contains 2 fragments, Records and the map)
+ */
+public class DBRecordsFragmentActivity extends FragmentActivity {
 
     public static String mDefaultTable = DbManager.Tables.PLAYERS_RECORDS_INTERMEDIATE.toString();
 
@@ -19,17 +24,13 @@ public class DBRecordsFragmentActivity extends FragmentActivity{
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pagersViewer);
         viewPager.setAdapter(new RecordsFragmentPagerAdapter(getSupportFragmentManager()
-                ,DBRecordsFragmentActivity.this));
+                , DBRecordsFragmentActivity.this));
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
     }
-
-
-
 
 
 }

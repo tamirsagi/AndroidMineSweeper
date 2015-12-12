@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * This class holds 2 pages  Records and map. which are both fragments
  */
 public class RecordsFragmentPagerAdapter extends FragmentPagerAdapter {
 

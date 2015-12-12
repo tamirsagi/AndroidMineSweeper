@@ -1,15 +1,11 @@
 package com.minesweeper.BL.Services;
 
-import android.app.AlertDialog;
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.*;
-import android.nfc.Tag;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 import com.minesweeper.UI.Activities.GameActivity;
@@ -18,7 +14,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * @author Tamir Sagi
+ *         This class manges GPS service. it is binned from Game activity and keep the location updated.
+ *         we call its methods when needed, it's kept alive until we unbinned it on Game Activity (on Stop method)
+ */
 public class GPSTracker extends Service implements LocationListener {
 
     public static final String TAG = "GPSTracker";
@@ -91,7 +91,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     public void showSettingAlert() {
         //startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-        Toast.makeText(this, "Please turn GPS on " + LocationManager.GPS_PROVIDER, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Please turn GPS on " + LocationManager.GPS_PROVIDER, Toast.LENGTH_SHORT).show();
     }
 
     public Location getLastLocation() {
@@ -99,28 +99,31 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
 
-
-    public HashMap<String,String> getLocationValues(){
+    /**
+     * get location (latitude, longitude, City and country)
+     *
+     * @return hash map contains these values
+     */
+    public HashMap<String, String> getLocationValues() {
         double lat = mLastLocation.getLatitude();
         double log = mLastLocation.getLongitude();
-        HashMap<String,String> location = new HashMap<String, String>();
+        HashMap<String, String> location = new HashMap<String, String>();
         try {
             List<Address> addresses = mGeocoder.getFromLocation(lat, log, 1);
-            if(addresses.size() > 0){
+            if (addresses.size() > 0) {
                 String city = addresses.get(0).getLocality();
                 String country = addresses.get(0).getCountryName();
-                location.put(GameActivity.KEY_LOCATION_CITY,city);
-                location.put(GameActivity.KEY_LOCATION_COUNTRY,country);
+                location.put(GameActivity.KEY_LOCATION_CITY, city);
+                location.put(GameActivity.KEY_LOCATION_COUNTRY, country);
                 location.put(GameActivity.KEY_LOCATION_LATITUDE, "" + lat);
-                location.put(GameActivity.KEY_LOCATION_LONGITUDE,"" +log);
+                location.put(GameActivity.KEY_LOCATION_LONGITUDE, "" + log);
                 return location;
             }
         } catch (IOException e) {
-            Log.e(TAG,e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
         return location;
     }
-
 
 
     public class MyLocalBinder extends Binder {

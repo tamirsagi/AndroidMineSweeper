@@ -16,32 +16,26 @@ import com.minesweeper.UI.Activities.R;
 
 import java.util.List;
 
-
+/**
+ * @author Tamir Sagi
+ *         this class manages Records Fragment.
+ *         it includes Spiiner to pick table ,recycler view to hold the corresponded records, text view which appears in case
+ *         the table is empty.
+ */
 public class RecordsTable extends Fragment {
-
 
     private static final String TAG = "RecordsTableViewFragment";
     public static final String PAGE_NUMBER = "PAGE NUMBER";
 
+    private int mPage;
+
     private Spinner highScoresTables;
     private String[] spinnerDBTablesNames;
     private String mDefaultTable = DbManager.Tables.PLAYERS_RECORDS_INTERMEDIATE.toString();
-
-
-    private static final int DATASET_COUNT = 10;
-    private static final int SPAN_COUNT = 2;
-    private int mPage;
-
-    private enum LayoutManagerType {
-        GRID_LAYOUT_MANAGER,
-        LINEAR_LAYOUT_MANAGER
-    }
-
     protected RecyclerView mRecyclerView;
     private RecordsRecyclerAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     private List<PlayerRecord> mDataSet;
-    protected LayoutManagerType mCurrentLayoutManagerType;
 
     private TextView tvEmptyTableMessage;
 
@@ -72,7 +66,6 @@ public class RecordsTable extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         tvEmptyTableMessage = (TextView) root.findViewById(R.id.emptyTable);
         if (mDataSet.size() > 0) {
             setRecyclerViewVisible(true);
@@ -80,7 +73,6 @@ public class RecordsTable extends Fragment {
         } else {
             setRecyclerViewVisible(false);
         }
-
         return root;
     }
 
@@ -88,7 +80,6 @@ public class RecordsTable extends Fragment {
         mDataSet = DbManager.getInstance(getContext().getApplicationContext())
                 .getRecords(mDefaultTable);
     }
-
 
     /**
      * set the spinner
@@ -127,23 +118,38 @@ public class RecordsTable extends Fragment {
         });
     }
 
+    /**
+     * When we pick a table form spinner we update the recycler List as well.
+     * if the table is empty we hide the list and show proper message
+     *
+     * @param table
+     */
     private void updateTable(String table) {
         mDataSet = DbManager.getInstance(getContext()).getRecords(table);
         if (mDataSet.size() > 0) {
             setRecyclerViewVisible(true);
-            if(mAdapter == null)
+            if (mAdapter == null)
                 setupRecyclerListAdapter();
             mAdapter.updateList(mDataSet);
-        }
-        else
+        } else
             setRecyclerViewVisible(false);
     }
 
-    private void setupRecyclerListAdapter(){
+
+    /**
+     * setup the list adapter with the corresponded db table
+     */
+    private void setupRecyclerListAdapter() {
         mAdapter = new RecordsRecyclerAdapter(getContext(), mDataSet);
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    /**
+     * if the db table is empty there is nothing to show
+     * we hide the rcycler list and show text view with a proper message
+     *
+     * @param state - if ture we show the recycler list
+     */
     private void setRecyclerViewVisible(Boolean state) {
         if (state) {
             tvEmptyTableMessage.setVisibility(View.GONE);

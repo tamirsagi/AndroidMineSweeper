@@ -84,7 +84,6 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
         Log.i("onStop", "onStop");
         stopTimer();
         if(positionSampleService != null) {
@@ -93,6 +92,8 @@ public class GameActivity extends AppCompatActivity {
         }
         if(gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
             unbindService(GPSTrackerServiceConnection);
+
+        super.onStop();
     }
 
     @Override
@@ -441,7 +442,6 @@ public class GameActivity extends AppCompatActivity {
                     tv_CurrentAccelerometer.setText(currentValues);
                     break;
                 case ADD_MINES_TO_GAME_BOARD:
-                    Toast.makeText(context,PositionSampleService.BUNDLE_DATA_ADD_MINES, Toast.LENGTH_LONG).show();
                     addMinesToGameBoard();
                     break;
 
