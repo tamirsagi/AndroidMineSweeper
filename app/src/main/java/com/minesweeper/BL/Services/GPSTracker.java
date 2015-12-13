@@ -30,7 +30,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     private LocationManager mLocationManager;
     private Location mLastLocation;
-    private Geocoder mGeocoder;
+    private Geocoder mGeoCoder;
 
     private boolean isGPSEnabled = false;
     private boolean canGetLocation = false;
@@ -42,18 +42,9 @@ public class GPSTracker extends Service implements LocationListener {
         return tracker;
     }
 
-    @SuppressWarnings("ResourceType")
     private void setLocationManager() {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        canGetLocation = isGPSEnabled;
-        if (isGPSEnabled) {
-            Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
-                    MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
-            mGeocoder = new Geocoder(this);
-        } else
-            showSettingAlert();
+        askGPS();
     }
 
     @Override
@@ -63,6 +54,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
+        askGPS();
     }
 
 
@@ -73,6 +65,19 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @SuppressWarnings("ResourceType")
+    private void askGPS(){
+        isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        canGetLocation = isGPSEnabled;
+        if (isGPSEnabled) {
+            Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
+            mGeoCoder = new Geocoder(this);
+        } else
+            Toast.makeText(this, "Please turn GPS on ", Toast.LENGTH_SHORT).show();
     }
 
     public void stopUsingGPS() {
@@ -89,10 +94,7 @@ public class GPSTracker extends Service implements LocationListener {
         return isGPSEnabled;
     }
 
-    public void showSettingAlert() {
-        //startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-        Toast.makeText(this, "Please turn GPS on " + LocationManager.GPS_PROVIDER, Toast.LENGTH_SHORT).show();
-    }
+
 
     public Location getLastLocation() {
         return mLastLocation;
@@ -109,7 +111,7 @@ public class GPSTracker extends Service implements LocationListener {
         double log = mLastLocation.getLongitude();
         HashMap<String, String> location = new HashMap<String, String>();
         try {
-            List<Address> addresses = mGeocoder.getFromLocation(lat, log, 1);
+            List<Address> addresses = mGeoCoder.getFromLocation(lat, log, 1);
             if (addresses.size() > 0) {
                 String city = addresses.get(0).getLocality();
                 String country = addresses.get(0).getCountryName();

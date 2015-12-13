@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.os.Handler;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.BL.GameLogic.ButtonAdapter;
@@ -74,8 +76,6 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_InitialAccelerometer;
     private TextView tv_CurrentAccelerometer;
 
-    //Holds the tiles for animation when lost
-    List<TileAnimation> tiles;
 
 
     @Override
@@ -93,7 +93,7 @@ public class GameActivity extends AppCompatActivity {
         Log.i("onStop", "onStop");
         stopTimer();
         if (positionSampleService != null) {
-            unregisterReceiver(mMessageFromPositionService);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromPositionService);
             unbindService(positionSampleConnection);
         }
         if (gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
@@ -385,7 +385,7 @@ public class GameActivity extends AppCompatActivity {
         setGameInfo();
         startedTime = 0;
         tv_Timer.setText("00:00");
-        removeTilesFromLayout();
+
     }
 
     /**
@@ -509,23 +509,11 @@ public class GameActivity extends AppCompatActivity {
      * method add tiles to current layout and draw them
      */
     private void playAnimation() {
-        tiles = new ArrayList<TileAnimation>();
-        RelativeLayout root = (RelativeLayout) findViewById(R.id.layout_GameActivity);
-        for (int i = 0; i < mineSweeperLogicManager.getNumberOfBombs(); i++) {
+        int numberOfTiles = 30;
+        for (int i = 0; i < numberOfTiles; i++) {
             TileAnimation ta = new TileAnimation(this);
-            root.addView(ta);
-            ta.play();
-            tiles.add(ta);
+            ta.playAnimation();
         }
     }
 
-    /**
-     * method removes the tiles from layout
-     */
-    private void removeTilesFromLayout(){
-        RelativeLayout root = (RelativeLayout) findViewById(R.id.layout_GameActivity);
-        for (int i = 0; i < tiles.size(); i++) {
-            root.removeViewInLayout(tiles.get(i));
-        }
-    }
 }

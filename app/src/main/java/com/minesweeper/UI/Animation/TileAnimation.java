@@ -1,11 +1,16 @@
 package com.minesweeper.UI.Animation;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.util.Log;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import com.minesweeper.UI.Activities.R;
 
 import java.util.Random;
@@ -13,59 +18,78 @@ import java.util.Random;
 /**
  * Created by Administrator on 12/12/2015.
  */
-public class TileAnimation extends View {
+public class TileAnimation{
 
-    private static Random rand = new Random();
-    private static final int NUMBER_OF_DIFFERENT_CELL_COLORS = 4;
+    private static final int NUMBER_OF_IMAGES = 3;
+    private static final int MIN_MILI_SECONDS = 1000;
+    private static final int MAX_MILI_SECONDS = 5000;
+    private static final int REPEATING = 2;
 
-    private Bitmap mTile;
-    private float changingY;
-    private float initialX;
+    private Animation mAnimation;
+    private ImageView image;
+    private Random random;
 
 
-    public TileAnimation(Context context) {
+    public TileAnimation(Activity act) {
+        random = new Random();
 
-        super(context);
-        mTile = BitmapFactory.decodeResource(getResources(), getDrawableCell());
-        changingY = 0;
+        //get the view
+        View view = act.getWindow().getDecorView().getRootView();
+       final RelativeLayout root = (RelativeLayout) view.findViewById(R.id.layout_GameActivity);
+
+        //start the tile somewhere along the screen width
+        int xSet = random.nextInt(view.getWidth());
+
+        //create image view
+        image = new ImageView(view.getContext());
+        //get the drawable object
+        Drawable dImage = ContextCompat.getDrawable(view.getContext(), getImage());
+        image.setBackground(dImage);
+        root.addView(image);
+
+        //create animation Transition
+        mAnimation = new TranslateAnimation(xSet,xSet,0,view.getHeight());//AnimationUtils.loadAnimation(context, getTileAnimation());
+        mAnimation.setDuration(random.nextInt(MAX_MILI_SECONDS) + MIN_MILI_SECONDS);
+        mAnimation.setRepeatCount(REPEATING);
+        mAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                root.removeView(image);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+
+
 
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        initialX = rand.nextInt(canvas.getWidth());
-       // resizeTile();
-        canvas.drawBitmap(mTile, initialX, changingY, null);
-        if (changingY < canvas.getHeight()) {
-            changingY += rand.nextInt(10) + 5; //speed between 5 - 10
-            invalidate();
-        }
-    }
+    /**
+     * random drawable cell
+     * @return
+     */
+    private int getImage(){
 
-    private int getDrawableCell() {
-        int num = rand.nextInt() % NUMBER_OF_DIFFERENT_CELL_COLORS;
-        switch(num){
+        int choice = random.nextInt() % NUMBER_OF_IMAGES;
+        switch (choice){
             case 0:
-                return R.drawable.yellocell;
-            case 1:
                 return R.drawable.redcell;
-            case 2:
+            case 1:
                 return R.drawable.bluecell;
-            case 3:
-                return R.drawable.greencell;
             default:
                 return R.drawable.greencell;
         }
     }
 
-    private void resizeTile() {
-        int height = rand.nextInt((int) (0.8 * mTile.getHeight())) + 1;
-        int width = rand.nextInt((int) (0.8 * mTile.getWidth())) + 1;
-        mTile = Bitmap.createScaledBitmap(mTile, width, height, false);
+    public void playAnimation(){
+        image.startAnimation(mAnimation);
     }
 
-    public void play() {
-        invalidate();
-    }
 }

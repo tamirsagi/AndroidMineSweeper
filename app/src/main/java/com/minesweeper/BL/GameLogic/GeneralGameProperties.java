@@ -16,7 +16,6 @@ public class GeneralGameProperties {
     public static final String KEY_GAME_BOARD_MINES = "gameBoarMines";
     public static final String KEY_Play_Sound = "soundSettings";
 
-
     public static final String Level = "Level";
     public static final String RowsInBoard = "Rows";
     public static final String ColumnsInBoard = "Columns";
