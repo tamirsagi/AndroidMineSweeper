@@ -23,11 +23,14 @@ import com.minesweeper.BL.GameLogic.ButtonAdapter;
 import com.minesweeper.BL.GameLogic.Cell;
 import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import com.minesweeper.BL.GameLogic.MineSweeperLogicManager;
+import com.minesweeper.UI.Animation.TileAnimation;
 import com.minesweeper.UI.Fragments.DetailsDialog;
 
 import com.minesweeper.BL.Services.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
     public static final String TAG = "GameActivity";
@@ -71,6 +74,9 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_InitialAccelerometer;
     private TextView tv_CurrentAccelerometer;
 
+    //Holds the tiles for animation when lost
+    List<TileAnimation> tiles;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +92,11 @@ public class GameActivity extends AppCompatActivity {
     protected void onStop() {
         Log.i("onStop", "onStop");
         stopTimer();
-        if(positionSampleService != null) {
+        if (positionSampleService != null) {
             unregisterReceiver(mMessageFromPositionService);
             unbindService(positionSampleConnection);
         }
-        if(gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
+        if (gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
             unbindService(GPSTrackerServiceConnection);
 
         super.onStop();
@@ -330,29 +336,39 @@ public class GameActivity extends AppCompatActivity {
         if (mineSweeperLogicManager.isGameOver()) {
             stopTimer();
             if (playSound) {
-                if (mineSweeperLogicManager.hasLost())
+                if (mineSweeperLogicManager.hasLost()) {
                     mp = MediaPlayer.create(this, R.raw.granade);
+                    playAnimation();
+                }
                 else {
                     mp = MediaPlayer.create(this, R.raw.victory);
                     String tableInDB = getDbTableFromGameLevel(getGameLevel());
                     String time = tv_Timer.getText().toString();
                     if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
-                        Bundle details = new Bundle();
-                        details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
-                        HashMap<String,String> locationValues = gpsTrackerService.getLocationValues();
-                        details.putString(KEY_LOCATION_CITY, locationValues.get(KEY_LOCATION_CITY));
-                        details.putString(KEY_LOCATION_COUNTRY, locationValues.get(KEY_LOCATION_COUNTRY));
-                        details.putString(KEY_LOCATION_LATITUDE, locationValues.get(KEY_LOCATION_LATITUDE));
-                        details.putString(KEY_LOCATION_LONGITUDE, locationValues.get(KEY_LOCATION_LONGITUDE));
-                        details.putString(KEY_DATE, DbManager.getDate());
-                        details.putString(KEY_TABLE, tableInDB);
-                        DetailsDialog.showDialog(getFragmentManager(), details);
+                        showDialog(tableInDB);
                     }
                 }
                 mp.start();
             }
             changeRestartButtonState(true);
         }
+    }
+
+    /**
+     * pops up the insertion dialog and pass relevant data
+     * @param tableInDB
+     */
+    private void showDialog(String tableInDB){
+        Bundle details = new Bundle();
+        details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
+        HashMap<String, String> locationValues = gpsTrackerService.getLocationValues();
+        details.putString(KEY_LOCATION_CITY, locationValues.get(KEY_LOCATION_CITY));
+        details.putString(KEY_LOCATION_COUNTRY, locationValues.get(KEY_LOCATION_COUNTRY));
+        details.putString(KEY_LOCATION_LATITUDE, locationValues.get(KEY_LOCATION_LATITUDE));
+        details.putString(KEY_LOCATION_LONGITUDE, locationValues.get(KEY_LOCATION_LONGITUDE));
+        details.putString(KEY_DATE, DbManager.getDate());
+        details.putString(KEY_TABLE, tableInDB);
+        DetailsDialog.showDialog(getFragmentManager(), details);
     }
 
     /**
@@ -369,11 +385,10 @@ public class GameActivity extends AppCompatActivity {
         setGameInfo();
         startedTime = 0;
         tv_Timer.setText("00:00");
-
+        removeTilesFromLayout();
     }
 
     /**
-     *
      * @param level
      * @return corresponded db table by game level
      */
@@ -452,11 +467,14 @@ public class GameActivity extends AppCompatActivity {
     /**
      * function add mines on board and updates relevant cells on board
      */
-    private void addMinesToGameBoard(){
-        mineSweeperLogicManager.addMinesToGameBoard();
-        buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
-        minesOnBoard = mineSweeperLogicManager.getBoard().getNumberOfBombs();
-        setGameInfo();
+    private void addMinesToGameBoard() {
+        if(mineSweeperLogicManager.getGameStatus() == MineSweeperLogicManager.GameStatus.STARTED &&
+                mineSweeperLogicManager.getBoard().getNumberOfBombs() < mineSweeperLogicManager.getBoard().getBoardSize()) {
+            mineSweeperLogicManager.addMinesToGameBoard();
+            buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
+            minesOnBoard = mineSweeperLogicManager.getBoard().getNumberOfBombs();
+            setGameInfo();
+        }
     }
 
     /**
@@ -471,7 +489,7 @@ public class GameActivity extends AppCompatActivity {
     private ServiceConnection GPSTrackerServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            GPSTracker.MyLocalBinder gpsBinder = (GPSTracker.MyLocalBinder)service;
+            GPSTracker.MyLocalBinder gpsBinder = (GPSTracker.MyLocalBinder) service;
             gpsTrackerService = gpsBinder.gerService();
         }
 
@@ -480,4 +498,34 @@ public class GameActivity extends AppCompatActivity {
             gpsTrackerService.stopUsingGPS();
         }
     };
+
+
+    /**
+     * Animation Methods
+     */
+
+
+    /**
+     * method add tiles to current layout and draw them
+     */
+    private void playAnimation() {
+        tiles = new ArrayList<TileAnimation>();
+        RelativeLayout root = (RelativeLayout) findViewById(R.id.layout_GameActivity);
+        for (int i = 0; i < mineSweeperLogicManager.getNumberOfBombs(); i++) {
+            TileAnimation ta = new TileAnimation(this);
+            root.addView(ta);
+            ta.play();
+            tiles.add(ta);
+        }
+    }
+
+    /**
+     * method removes the tiles from layout
+     */
+    private void removeTilesFromLayout(){
+        RelativeLayout root = (RelativeLayout) findViewById(R.id.layout_GameActivity);
+        for (int i = 0; i < tiles.size(); i++) {
+            root.removeViewInLayout(tiles.get(i));
+        }
+    }
 }

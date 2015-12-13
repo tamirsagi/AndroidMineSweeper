@@ -78,23 +78,23 @@ public class MineSweeperLogicManager {
         gameResult = result;
     }
 
-    public boolean isGameOver(){
+    public boolean isGameOver() {
         return gameResult != GameResult.NONE;
     }
 
-    public boolean hasLost(){
+    public boolean hasLost() {
         return gameResult == GameResult.LOST;
     }
 
-    public boolean hasWon(){
+    public boolean hasWon() {
         return gameResult == GameResult.WON;
     }
 
-    public boolean isGameStarted(){
-        return gameStatus ==  GameStatus.STARTED;
+    public boolean isGameStarted() {
+        return gameStatus == GameStatus.STARTED;
     }
 
-    public int getNumberOfBombs(){
+    public int getNumberOfBombs() {
         return getBoard().getNumberOfBombs();
     }
 
@@ -121,6 +121,7 @@ public class MineSweeperLogicManager {
 
     /**
      * Function ends the game
+     *
      * @param result
      */
     private void endGame(GameResult result) {
@@ -135,18 +136,16 @@ public class MineSweeperLogicManager {
         setGameStatus(GameStatus.NOT_STARTED);
         setGameResult(GameResult.NONE);
         int rows = getBoard().getNumberOfRows(), columns = getBoard().getNumberOfColumns();
-        getBoard().initializeGameBoard( rows, columns, minesOnBoard);
+        getBoard().initializeGameBoard(rows, columns, minesOnBoard);
     }
 
 
-    public void addMinesToGameBoard(){
-        if(getGameStatus() == GameStatus.STARTED && getBoard().getNumberOfBombs() < getBoard().getBoardSize()) {
-            Random rand = new Random();
-            int row = rand.nextInt(getBoard().getNumberOfRows());
-            int col = rand.nextInt(getBoard().getNumberOfColumns());
-            if (!getBoard().getGameBoard()[row][col].isBomb()) {
-                getBoard().handleNewBombOnBoard(row,col);
-            }
+    public void addMinesToGameBoard() {
+        Random rand = new Random();
+        int row = rand.nextInt(getBoard().getNumberOfRows());
+        int col = rand.nextInt(getBoard().getNumberOfColumns());
+        if (!getBoard().getGameBoard()[row][col].isBomb()) {
+            getBoard().handleNewBombOnBoard(row, col);
         }
     }
 
