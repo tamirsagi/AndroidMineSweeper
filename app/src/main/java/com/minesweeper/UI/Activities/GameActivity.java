@@ -19,12 +19,14 @@ import android.view.View;
 import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
 import android.widget.*;
 import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.BL.GameLogic.ButtonAdapter;
 import com.minesweeper.BL.GameLogic.Cell;
 import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import com.minesweeper.BL.GameLogic.MineSweeperLogicManager;
+import com.minesweeper.UI.Animation.GifView;
 import com.minesweeper.UI.Animation.TileAnimation;
 import com.minesweeper.UI.Fragments.DetailsDialog;
 
@@ -75,7 +77,6 @@ public class GameActivity extends AppCompatActivity {
 
     private TextView tv_InitialAccelerometer;
     private TextView tv_CurrentAccelerometer;
-
 
 
     @Override
@@ -339,13 +340,14 @@ public class GameActivity extends AppCompatActivity {
                 if (mineSweeperLogicManager.hasLost()) {
                     mp = MediaPlayer.create(this, R.raw.granade);
                     playAnimation();
-                }
-                else {
+                    loadGif(false);
+                } else {
                     mp = MediaPlayer.create(this, R.raw.victory);
+                    loadGif(true);
                     String tableInDB = getDbTableFromGameLevel(getGameLevel());
                     String time = tv_Timer.getText().toString();
                     if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
-                        showDialog(tableInDB);
+                      //  showDialog(tableInDB);
                     }
                 }
                 mp.start();
@@ -356,9 +358,10 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * pops up the insertion dialog and pass relevant data
+     *
      * @param tableInDB
      */
-    private void showDialog(String tableInDB){
+    private void showDialog(String tableInDB) {
         Bundle details = new Bundle();
         details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
         HashMap<String, String> locationValues = gpsTrackerService.getLocationValues();
@@ -468,7 +471,7 @@ public class GameActivity extends AppCompatActivity {
      * function add mines on board and updates relevant cells on board
      */
     private void addMinesToGameBoard() {
-        if(mineSweeperLogicManager.getGameStatus() == MineSweeperLogicManager.GameStatus.STARTED &&
+        if (mineSweeperLogicManager.getGameStatus() == MineSweeperLogicManager.GameStatus.STARTED &&
                 mineSweeperLogicManager.getBoard().getNumberOfBombs() < mineSweeperLogicManager.getBoard().getBoardSize()) {
             mineSweeperLogicManager.addMinesToGameBoard();
             buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
@@ -514,6 +517,28 @@ public class GameActivity extends AppCompatActivity {
             TileAnimation ta = new TileAnimation(this);
             ta.playAnimation();
         }
+    }
+
+    private void loadGif(boolean won) {
+       final WebView wv = (WebView) findViewById(R.id.gifAnimation);
+        wv.setVisibility(View.VISIBLE);
+        wv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wv.stopLoading();
+                wv.setVisibility(v.GONE);
+            }
+        });
+        if(won)
+            wv.loadUrl("http://www.sherv.net/cm/emo/funny/2/big-dancing-banana-smiley-emoticon.gif");
+        else
+            wv.loadUrl("https://cdn2.scratch.mit.edu/get_image/gallery/1063608_200x130.png?v=1427128301.0");
+
+//        RelativeLayout root = (RelativeLayout)findViewById(R.id.layout_GameActivity);
+//        GifView gif = new GifView(getApplicationContext());
+//        gif.setEndGameState(won);
+//        root.addView(gif);
+//        gif.play();
     }
 
 }

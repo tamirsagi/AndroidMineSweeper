@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * Created by Administrator on 12/12/2015.
  */
-public class TileAnimation{
+public class TileAnimation {
 
     private static final int NUMBER_OF_IMAGES = 3;
     private static final int MIN_MILI_SECONDS = 1000;
@@ -65,9 +65,6 @@ public class TileAnimation{
             public void onAnimationRepeat(Animation animation) {
             }
         });
-
-
-
 
     }
 
