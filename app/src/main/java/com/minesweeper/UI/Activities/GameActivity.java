@@ -97,6 +97,7 @@ public class GameActivity extends AppCompatActivity {
             unbindService(positionSampleConnection);
         }
         if (gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromGPSService);
             unbindService(GPSTrackerServiceConnection);
 
         super.onStop();

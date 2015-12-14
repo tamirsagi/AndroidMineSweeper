@@ -1,11 +1,12 @@
 package com.minesweeper.UI.Activities;
 
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import com.minesweeper.BL.DB.DbManager;
+import com.minesweeper.UI.Fragments.MapFragment;
 import com.minesweeper.UI.Fragments.RecordsFragmentPagerAdapter;
 
 
@@ -23,8 +24,8 @@ public class DBRecordsFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dbrecords_fragments);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pagersViewer);
-        final FragmentStatePagerAdapter adapter = new RecordsFragmentPagerAdapter(getSupportFragmentManager()
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pagesViewer);
+        final RecordsFragmentPagerAdapter adapter = new RecordsFragmentPagerAdapter(getSupportFragmentManager()
                 , DBRecordsFragmentActivity.this);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(1);
@@ -35,23 +36,29 @@ public class DBRecordsFragmentActivity extends FragmentActivity {
 
             @Override
             public void onPageSelected(int position) {
-//                if(RecordsFragmentPagerAdapter.PAGES.get(position).equals(RecordsFragmentPagerAdapter.PAGES.MAP))
-//                    viewPager.getChildAt(position)
+                switch (RecordsFragmentPagerAdapter.PAGES.get(position)) {
+                    case MAP:
+                        Fragment frag = getSupportFragmentManager().
+                                findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + position);
+                        ((MapFragment)frag).loadMap();
+                        break;
+                }
+                }
+
+                @Override
+                public void onPageScrollStateChanged ( int state){
+
+                }
             }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            );
 
-            }
-        });
+            // Give the TabLayout the ViewPager
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+            tabLayout.setupWithViewPager(viewPager);
 
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
 
+        }
 
 
     }
-
-
-}

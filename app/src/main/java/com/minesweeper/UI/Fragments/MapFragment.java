@@ -63,35 +63,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        mGoogleMap.setMyLocationEnabled(true);                     //enable location
-        mUiSettings = mGoogleMap.getUiSettings();                 //get map UI controller
-        mUiSettings.setMyLocationButtonEnabled(true);             //enable location button
-        mUiSettings.setCompassEnabled(true);                     //enable compass
-        mUiSettings.setZoomControlsEnabled(true);
-        mUiSettings.setScrollGesturesEnabled(true);
-        mUiSettings.setTiltGesturesEnabled(true);
-        createRecordsMarkers();
-        mGoogleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(markers));
-        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
-                // Zoom in, animating the camera.
-                mGoogleMap.animateCamera(CameraUpdateFactory.zoomIn());
-                // Zoom out to zoom level 10, animating with a duration of 2 seconds.
-                mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-                marker.showInfoWindow();
-                return true;
-            }
-        });
+        loadMap();
 
-        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                marker.hideInfoWindow();
-            }
-        });
-        mapView.invalidate();
     }
 
     @Override
@@ -125,6 +98,43 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapView.onLowMemory();
     }
 
+
+    public void loadMap(){
+        if(mGoogleMap != null) {
+            mGoogleMap.setMyLocationEnabled(true);                     //enable location
+            mUiSettings = mGoogleMap.getUiSettings();                 //get map UI controller
+            mUiSettings.setMyLocationButtonEnabled(true);             //enable location button
+            mUiSettings.setCompassEnabled(true);                     //enable compass
+            mUiSettings.setZoomControlsEnabled(true);
+            mUiSettings.setScrollGesturesEnabled(true);
+            mUiSettings.setTiltGesturesEnabled(true);
+            createRecordsMarkers();
+            mGoogleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(markers));
+            mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+                    // Zoom in, animating the camera.
+                    mGoogleMap.animateCamera(CameraUpdateFactory.zoomIn());
+                    // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+                    mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+                    marker.showInfoWindow();
+                    return true;
+                }
+            });
+
+            mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    marker.hideInfoWindow();
+                }
+            });
+
+            mapView.invalidate();
+
+        }
+    }
+
     /**
      * function get the chosen table and fill up the map with relevant markers
      */
@@ -145,6 +155,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 markers.put(recordMarker, record);
             }
         }
+        mapView.invalidate();
     }
 
 

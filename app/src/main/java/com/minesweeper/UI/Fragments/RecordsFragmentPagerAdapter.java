@@ -1,10 +1,10 @@
 package com.minesweeper.UI.Fragments;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.view.ViewGroup;
 
@@ -15,10 +15,12 @@ import java.util.Map;
 /**
  * This class holds 2 pages  Records and map. which are both fragments
  */
-public class RecordsFragmentPagerAdapter extends FragmentStatePagerAdapter {
+public class RecordsFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private String tabTitles[] = new String[]{"Table", "Map"};
     private Context context;
+
+    public static HashMap<PAGES,Fragment> pages = new HashMap<PAGES, Fragment>();
 
     public enum PAGES {
         RECORDS(0), MAP(1);
@@ -56,20 +58,16 @@ public class RecordsFragmentPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (PAGES.get(position)) {
             case RECORDS:
-                return RecordsTable.newInstance(position + 1);
+                return RecordsTable.newInstance(position);
             case MAP:
-                return MapFragment.newInstance(position + 1);
+                return MapFragment.newInstance(position);
         }
-
         return new Fragment();
     }
 
     //this is called when notifyDataSetChanged() is called
     @Override
     public int getItemPosition(Object object) {
-        // refresh Map fragments when data set changed
-        if(object instanceof RecordsTable)
-            return PAGES.RECORDS.getNumVal();
 
         return PagerAdapter.POSITION_UNCHANGED;
     }
@@ -77,12 +75,6 @@ public class RecordsFragmentPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         return super.instantiateItem(container, position);
-
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        super.destroyItem(container, position, object);
     }
 
     @Override
@@ -97,7 +89,4 @@ public class RecordsFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     }
 
-    public void findViewWithTag(){
-
-    }
 }

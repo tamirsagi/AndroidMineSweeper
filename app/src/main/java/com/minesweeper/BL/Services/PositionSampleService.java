@@ -43,11 +43,6 @@ public class PositionSampleService extends Service implements SensorEventListene
     private long startTime;
     private long endTime;
 
-
-
-
-    ;
-
     //Bind the Client which is the game Activity to the service
     //We use an Object for that
     private final IBinder positioningKeeper = new MyLocalBinder();
@@ -94,7 +89,7 @@ public class PositionSampleService extends Service implements SensorEventListene
             action = GeneralServiceParams.ACTIONS.UPDATE_CURRENT_POSITION.toString();
         }
         //update position
-        sendMessageToActivity(action, position);
+        GeneralServiceParams.sendMessageToActivity(this,INTENT_FILTER_NAME,action, position);
 
         //Check duration for deviation
         if (Math.abs(vAngle - initialAngle) >= minAngleDeviation) {
@@ -110,7 +105,7 @@ public class PositionSampleService extends Service implements SensorEventListene
 
             if (addMines) {
                 action = GeneralServiceParams.ACTIONS.ADD_MINES_TO_GAME_BOARD.toString();
-                sendMessageToActivity(action, "");
+                GeneralServiceParams.sendMessageToActivity(this,INTENT_FILTER_NAME,action, "");
             }
         } else {
             timerStarted = false;
@@ -131,23 +126,7 @@ public class PositionSampleService extends Service implements SensorEventListene
         public PositionSampleService gerService() {
             return PositionSampleService.this;
         }
-
     }
-
-    /**
-     * update game activity to change the board
-     *
-     * @param action - the action to take place where service is bonded
-     */
-    private void sendMessageToActivity(String action, String data) {
-        Intent intent = new Intent(INTENT_FILTER_NAME);
-        Bundle bundle = new Bundle();
-        bundle.putString(GeneralServiceParams.BUNDLE_ACTION, action);
-        bundle.putString(GeneralServiceParams.BUNDLE_DATA, data);
-        intent.putExtras(bundle);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
 
 }
 

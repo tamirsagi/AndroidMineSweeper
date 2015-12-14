@@ -1,14 +1,11 @@
 package com.minesweeper.BL.Services;
 
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.*;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 import com.minesweeper.UI.Activities.GameActivity;
@@ -71,18 +68,18 @@ public class GPSTracker extends Service implements LocationListener {
     @SuppressWarnings("ResourceType")
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-//        switch (status){
-//            case LocationProvider.AVAILABLE:
-//                Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
-//                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
-//                        MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
-//                mGeoCoder = new Geocoder(this);
-//                break;
-//            default:
-//                Toast.makeText(this, "Please turn GPS on ", Toast.LENGTH_LONG).show();
-//                // notifyUser(GeneralServiceParams.ACTIONS.Go_TO_SETTING_WINDOW.toString(),"");
-//                break;
-//        }
+        switch (status){
+            case LocationProvider.AVAILABLE:
+                Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
+                mGeoCoder = new Geocoder(this);
+                break;
+            default:
+                Toast.makeText(this, "Please turn GPS on ", Toast.LENGTH_LONG).show();
+                // notifyUser(GeneralServiceParams.ACTIONS.Go_TO_SETTING_WINDOW.toString(),"");
+                break;
+        }
 
     }
 
@@ -156,54 +153,36 @@ public class GPSTracker extends Service implements LocationListener {
 
     }
 
-    private void showDialog(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+//    private void showDialog(){
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+//
+//        // set title
+//        alertDialogBuilder.setTitle("Your Title");
+//
+//        // set dialog message
+//        alertDialogBuilder
+//                .setMessage("Click yes to exit!")
+//                .setCancelable(false)
+//                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog,int id) {
+//
+//                        dialog.cancel();
+//                    }
+//                })
+//                .setNegativeButton("No",new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog,int id) {
+//                        // if this button is clicked, just close
+//                        // the dialog box and do nothing
+//                        dialog.cancel();
+//                    }
+//                });
+//
+//        // create alert dialog
+//        AlertDialog alertDialog = alertDialogBuilder.create();
+//
+//        // show it
+//        alertDialog.show();
+//    };
 
-        // set title
-        alertDialogBuilder.setTitle("Your Title");
-
-        // set dialog message
-        alertDialogBuilder
-                .setMessage("Click yes to exit!")
-                .setCancelable(false)
-                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton("No",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-                        // if this button is clicked, just close
-                        // the dialog box and do nothing
-                        dialog.cancel();
-                    }
-                });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-    };
-
-
-
-
-
-
-    /**
-     * notify user to enable GPS
-     * @param action
-     * @param data
-     */
-    private void notifyUser(String action, String data) {
-        Intent intent = new Intent(INTENT_FILTER_NAME);
-        Bundle bundle = new Bundle();
-        bundle.putString(GeneralServiceParams.BUNDLE_ACTION, action);
-        bundle.putString(GeneralServiceParams.BUNDLE_DATA, data);
-        intent.putExtras(bundle);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
 
 }
