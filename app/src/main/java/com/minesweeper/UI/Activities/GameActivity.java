@@ -341,10 +341,8 @@ public class GameActivity extends AppCompatActivity {
                 if (mineSweeperLogicManager.hasLost()) {
                     mp = MediaPlayer.create(this, R.raw.granade);
                     playAnimation();
-                    loadGif(false);
                 } else {
                     mp = MediaPlayer.create(this, R.raw.victory);
-                    //loadGif(true);
                     String tableInDB = getDbTableFromGameLevel(getGameLevel());
                     String time = tv_Timer.getText().toString();
                     if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
@@ -480,8 +478,10 @@ public class GameActivity extends AppCompatActivity {
      * function add mines on board and updates relevant cells on board
      */
     private void addMinesToGameBoard() {
+        //we add + 1 to leave one remained cell in the worth case, otherwise we wont be able to click
+        // onClick is locked when game is over (remained cell == 0)
         if (mineSweeperLogicManager.getGameStatus() == MineSweeperLogicManager.GameStatus.STARTED &&
-                mineSweeperLogicManager.getBoard().getNumberOfBombs() < mineSweeperLogicManager.getBoard().getBoardSize()) {
+                mineSweeperLogicManager.getBoard().getNumberOfBombs() + 1 < mineSweeperLogicManager.getBoard().getBoardSize()) {
             mineSweeperLogicManager.addMinesToGameBoard();
             buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
             minesOnBoard = mineSweeperLogicManager.getBoard().getNumberOfBombs();
@@ -545,6 +545,7 @@ public class GameActivity extends AppCompatActivity {
             ta.playAnimation();
         }
     }
+
 
     private void loadGif(boolean won) {
        final WebView wv = (WebView) findViewById(R.id.gifAnimation);

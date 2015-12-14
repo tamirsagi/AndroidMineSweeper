@@ -47,10 +47,8 @@ public class DBRecordsFragmentActivity extends FragmentActivity {
 
                 @Override
                 public void onPageScrollStateChanged ( int state){
-
                 }
             }
-
             );
 
             // Give the TabLayout the ViewPager

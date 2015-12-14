@@ -143,7 +143,6 @@ public class DbManager extends SQLiteOpenHelper {
         if (rowsCount < recordsToSave)
             return true;
 
-        rowsCount = recordsToSave;
         SQLiteDatabase readableDB = dbManager.getReadableDatabase();
         Cursor cursor = gerAllTableByRoundTime(readableDB,table);
         cursor.moveToLast();
