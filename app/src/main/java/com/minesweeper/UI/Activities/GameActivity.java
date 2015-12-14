@@ -85,7 +85,6 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_board_layout);
         setGameScreen();
-        createBinnedGPSService();
 
     }
 
@@ -118,6 +117,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        createBinnedGPSService();
         Log.i("onStart", "onStart");
     }
 
@@ -343,11 +343,11 @@ public class GameActivity extends AppCompatActivity {
                     loadGif(false);
                 } else {
                     mp = MediaPlayer.create(this, R.raw.victory);
-                    loadGif(true);
+                    //loadGif(true);
                     String tableInDB = getDbTableFromGameLevel(getGameLevel());
                     String time = tv_Timer.getText().toString();
                     if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
-                      //  showDialog(tableInDB);
+                       showDialog(tableInDB);
                     }
                 }
                 mp.start();
@@ -364,11 +364,19 @@ public class GameActivity extends AppCompatActivity {
     private void showDialog(String tableInDB) {
         Bundle details = new Bundle();
         details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
-        HashMap<String, String> locationValues = gpsTrackerService.getLocationValues();
-        details.putString(KEY_LOCATION_CITY, locationValues.get(KEY_LOCATION_CITY));
-        details.putString(KEY_LOCATION_COUNTRY, locationValues.get(KEY_LOCATION_COUNTRY));
-        details.putString(KEY_LOCATION_LATITUDE, locationValues.get(KEY_LOCATION_LATITUDE));
-        details.putString(KEY_LOCATION_LONGITUDE, locationValues.get(KEY_LOCATION_LONGITUDE));
+        if(gpsTrackerService.getLastLocation() != null) {
+            HashMap<String, String> locationValues = gpsTrackerService.getLocationValues();
+            details.putString(KEY_LOCATION_CITY, locationValues.get(KEY_LOCATION_CITY));
+            details.putString(KEY_LOCATION_COUNTRY, locationValues.get(KEY_LOCATION_COUNTRY));
+            details.putString(KEY_LOCATION_LATITUDE, locationValues.get(KEY_LOCATION_LATITUDE));
+            details.putString(KEY_LOCATION_LONGITUDE, locationValues.get(KEY_LOCATION_LONGITUDE));
+        }
+        else{
+            details.putString(KEY_LOCATION_CITY, "");
+            details.putString(KEY_LOCATION_COUNTRY, "");
+            details.putString(KEY_LOCATION_LATITUDE, "");
+            details.putString(KEY_LOCATION_LONGITUDE, "");
+        }
         details.putString(KEY_DATE, DbManager.getDate());
         details.putString(KEY_TABLE, tableInDB);
         DetailsDialog.showDialog(getFragmentManager(), details);
@@ -449,14 +457,14 @@ public class GameActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             Bundle dataFromService = intent.getExtras();
-            String action = dataFromService.getString(PositionSampleService.BUNDLE_ACTION);
-            switch (PositionSampleService.ACTIONS.valueOf(action)) {
+            String action = dataFromService.getString(GeneralServiceParams.BUNDLE_ACTION);
+            switch (GeneralServiceParams.ACTIONS.valueOf(action)) {
                 case UPDATE_INITIAL_POSITION:
-                    String initialValues = dataFromService.getString(PositionSampleService.BUNDLE_DATA);
+                    String initialValues = dataFromService.getString(GeneralServiceParams.BUNDLE_DATA);
                     tv_InitialAccelerometer.setText(initialValues);
                     break;
                 case UPDATE_CURRENT_POSITION:
-                    String currentValues = dataFromService.getString(PositionSampleService.BUNDLE_DATA);
+                    String currentValues = dataFromService.getString(GeneralServiceParams.BUNDLE_DATA);
                     tv_CurrentAccelerometer.setText(currentValues);
                     break;
                 case ADD_MINES_TO_GAME_BOARD:
@@ -487,6 +495,8 @@ public class GameActivity extends AppCompatActivity {
     private void createBinnedGPSService() {
         Intent intent = new Intent(this, GPSTracker.class);
         bindService(intent, GPSTrackerServiceConnection, Context.BIND_AUTO_CREATE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageFromGPSService, new IntentFilter(GPSTracker.INTENT_FILTER_NAME));
     }
 
     private ServiceConnection GPSTrackerServiceConnection = new ServiceConnection() {
@@ -499,6 +509,22 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             gpsTrackerService.stopUsingGPS();
+        }
+    };
+
+    /**
+     * handle messages from service
+     */
+    private BroadcastReceiver mMessageFromGPSService = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle dataFromService = intent.getExtras();
+            String action = dataFromService.getString(GeneralServiceParams.BUNDLE_ACTION);
+            switch (GeneralServiceParams.ACTIONS.valueOf(action)){
+                case Go_TO_SETTING_WINDOW:
+                    startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                    break;
+            }
         }
     };
 

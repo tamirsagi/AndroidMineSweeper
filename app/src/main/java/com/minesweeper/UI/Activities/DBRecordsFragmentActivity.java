@@ -2,6 +2,7 @@ package com.minesweeper.UI.Activities;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import com.minesweeper.BL.DB.DbManager;
@@ -22,13 +23,33 @@ public class DBRecordsFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dbrecords_fragments);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pagersViewer);
-        viewPager.setAdapter(new RecordsFragmentPagerAdapter(getSupportFragmentManager()
-                , DBRecordsFragmentActivity.this));
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pagersViewer);
+        final FragmentStatePagerAdapter adapter = new RecordsFragmentPagerAdapter(getSupportFragmentManager()
+                , DBRecordsFragmentActivity.this);
+        viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(1);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+//                if(RecordsFragmentPagerAdapter.PAGES.get(position).equals(RecordsFragmentPagerAdapter.PAGES.MAP))
+//                    viewPager.getChildAt(position)
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+
 
     }
 

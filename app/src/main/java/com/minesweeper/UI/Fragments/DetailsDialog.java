@@ -60,13 +60,20 @@ public class DetailsDialog extends DialogFragment {
                     PlayerRecord record = new PlayerRecord();
                     record.setFullName(name.getText().toString());
                     record.setRoundTime(data.getString(GameActivity.KEY_ROUND_TIME));
-                    record.setCity(data.getString(GameActivity.KEY_LOCATION_CITY));
-                    record.setCountry(data.getString(GameActivity.KEY_LOCATION_COUNTRY));
+                    //if we got location forom GPS or not
+                    String city = data.getString(GameActivity.KEY_LOCATION_CITY);
+                    String country = data.getString(GameActivity.KEY_LOCATION_COUNTRY);
+                    if(city != null && !city.isEmpty())
+                        record.setCity(data.getString(GameActivity.KEY_LOCATION_CITY));
+                    if(country != null && !country.isEmpty())
+                        record.setCountry(data.getString(GameActivity.KEY_LOCATION_COUNTRY));
                     //get location
                     String latitude = data.getString(GameActivity.KEY_LOCATION_LATITUDE);
                     String longitude = data.getString(GameActivity.KEY_LOCATION_LONGITUDE);
-                    record.setLatitude(Double.parseDouble(latitude));
-                    record.setLongitude(Double.parseDouble(longitude));
+                    if(latitude != null && !latitude.isEmpty() && longitude != null && !longitude.isEmpty()) {
+                        record.setLatitude(Double.parseDouble(latitude));
+                        record.setLongitude(Double.parseDouble(longitude));
+                    }
                     record.setDate(data.getString(GameActivity.KEY_DATE));
                     String table = data.getString(GameActivity.KEY_TABLE);
 
@@ -84,6 +91,7 @@ public class DetailsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 v.setFocusable(false);
+                dismiss();
             }
         });
         return custom_dialog.create();

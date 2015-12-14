@@ -14,7 +14,11 @@ public class PlayerRecord {
     private String country;
     private String date;
 
-    public PlayerRecord() { }
+    public PlayerRecord() {
+        latitude = Double.MAX_VALUE;
+        longitude = Double.MAX_VALUE;
+
+    }
 
     public String getId() {
         return "" + id;

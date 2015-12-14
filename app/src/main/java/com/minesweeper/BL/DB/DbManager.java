@@ -108,8 +108,15 @@ public class DbManager extends SQLiteOpenHelper {
             values.put(COL_GAME_ROUND_TIME, playerRecord.getRoundTime());
             values.put(COL_LOCATION_City, playerRecord.getCity());
             values.put(COL_LOCATION_Country, playerRecord.getCountry());
-            values.put(COL_LOCATION_Latitude, "" + playerRecord.getLatitude());
-            values.put(COL_LOCATION_Longitude, "" + playerRecord.getLongitude());
+            if(playerRecord.getLatitude() != Double.MAX_VALUE && playerRecord.getLatitude() != Double.MAX_VALUE) {
+                values.put(COL_LOCATION_Latitude, "" + playerRecord.getLatitude());
+                values.put(COL_LOCATION_Longitude, "" + playerRecord.getLongitude());
+            }
+            else{
+                values.put(COL_LOCATION_Latitude, "");
+                values.put(COL_LOCATION_Longitude, "");
+            }
+
             values.put(COL_DATE, playerRecord.getDate());
             db.insert(table, null, values);
             //sort the table after each insertion
@@ -167,8 +174,10 @@ public class DbManager extends SQLiteOpenHelper {
                 playerRecord.setCountry(recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Country)));
                 String latitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Latitude));
                 String longitude = recordsCursor.getString(recordsCursor.getColumnIndex(COL_LOCATION_Longitude));
-                playerRecord.setLatitude(Double.parseDouble(latitude));
-                playerRecord.setLongitude(Double.parseDouble(longitude));
+                if(latitude != null && !latitude.isEmpty() && longitude != null && !longitude.isEmpty()) {
+                    playerRecord.setLatitude(Double.parseDouble(latitude));
+                    playerRecord.setLongitude(Double.parseDouble(longitude));
+                }
                 playerRecord.setDate(recordsCursor.getString(recordsCursor.getColumnIndex(COL_DATE)));
                 //adding to list
                 records.add(playerRecord);

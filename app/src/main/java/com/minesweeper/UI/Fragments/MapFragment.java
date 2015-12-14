@@ -30,7 +30,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private UiSettings mUiSettings;         // Similar to map controller in V1
     private HashMap<Marker, PlayerRecord> markers;
 
-
     public static MapFragment newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(PAGE_NUMBER, page);
@@ -92,12 +91,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 marker.hideInfoWindow();
             }
         });
+        mapView.invalidate();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        mapView.invalidate();
     }
 
     @Override
@@ -129,16 +130,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     private void createRecordsMarkers() {
         markers = new HashMap<Marker, PlayerRecord>();
+        mGoogleMap.clear();
         List<PlayerRecord> records = DbManager.dbManager.getRecords(DBRecordsFragmentActivity.mDefaultTable);
         for (PlayerRecord record : records) {
-            LatLng position = new LatLng(record.getLatitude(), record.getLongitude());
-            Marker recordMarker = mGoogleMap.addMarker(
-                    new MarkerOptions().position(position)
-                            .visible(true)
-                            .draggable(false)
-                            .snippet(record.getFullName())
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_40_75)));
-            markers.put(recordMarker, record);
+            //Double.MAX_VALUE is assign by default as initial value(if not updated it means there is no lcation)
+            if (record.getLatitude() != Double.MAX_VALUE && record.getLongitude() != Double.MAX_VALUE) {
+                LatLng position = new LatLng(record.getLatitude(), record.getLongitude());
+                Marker recordMarker = mGoogleMap.addMarker(
+                        new MarkerOptions().position(position)
+                                .visible(true)
+                                .draggable(false)
+                                .snippet(record.getFullName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_40_75)));
+                markers.put(recordMarker, record);
+            }
         }
     }
 

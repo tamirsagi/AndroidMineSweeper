@@ -4,6 +4,9 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.view.ViewGroup;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -12,7 +15,7 @@ import java.util.Map;
 /**
  * This class holds 2 pages  Records and map. which are both fragments
  */
-public class RecordsFragmentPagerAdapter extends FragmentPagerAdapter {
+public class RecordsFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     private String tabTitles[] = new String[]{"Table", "Map"};
     private Context context;
@@ -59,7 +62,27 @@ public class RecordsFragmentPagerAdapter extends FragmentPagerAdapter {
         }
 
         return new Fragment();
+    }
 
+    //this is called when notifyDataSetChanged() is called
+    @Override
+    public int getItemPosition(Object object) {
+        // refresh Map fragments when data set changed
+        if(object instanceof RecordsTable)
+            return PAGES.RECORDS.getNumVal();
+
+        return PagerAdapter.POSITION_UNCHANGED;
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        return super.instantiateItem(container, position);
+
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
     }
 
     @Override
@@ -72,6 +95,9 @@ public class RecordsFragmentPagerAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         return tabTitles[position];
 
+    }
+
+    public void findViewWithTag(){
 
     }
 }

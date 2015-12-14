@@ -40,7 +40,21 @@ public class RecordsRecyclerAdapter extends RecyclerView.Adapter<RecordsRecycler
         holder.tv_place.setText(record.getId());
         holder.tv_player_name.setText(record.getFullName());
         holder.tv_round_time.setText(record.getRoundTime());
-        holder.tv_location.setText(record.getCity() + "," + record.getCountry());
+        String location = "None";
+        boolean cityExist = false;
+        if (record.getCity() != null && !record.getCity().isEmpty()) {
+            location = record.getCity();
+            cityExist = true;
+        }
+
+        if (record.getCountry() != null && !record.getCountry().isEmpty()) {
+            if (cityExist)
+                location += "," + record.getCountry();
+            else
+                location = record.getCountry();
+        }
+
+        holder.tv_location.setText(location);
         holder.tv_date.setText(record.getDate());
     }
 

@@ -22,12 +22,9 @@ import java.text.DecimalFormat;
 public class PositionSampleService extends Service implements SensorEventListener {
 
     public static final String TAG = "PositionSampleService";
-    public static final String INTENT_FILTER_NAME = "SERVICE NOTIFIER";
-    public static final String BUNDLE_ACTION = "ACTION";
-    public static final String BUNDLE_DATA = "BUNDLE DATA";
+    public static final String INTENT_FILTER_NAME = "POSITION_SERVICE NOTIFIER";
     public static final String BUNDLE_DATA_ADD_MINES = "phone's angle was deviated for long time, mines added to board";
     public static final int Number_Of_AXIS = 3;
-
     private static final int MILI = 1000;
     private static final int SECONDS_MINUTE = 60;
     private static final int RADIANS_PI = 180;
@@ -47,9 +44,7 @@ public class PositionSampleService extends Service implements SensorEventListene
     private long endTime;
 
 
-    public enum ACTIONS {
-        UPDATE_INITIAL_POSITION, UPDATE_CURRENT_POSITION, ADD_MINES_TO_GAME_BOARD
-    }
+
 
     ;
 
@@ -93,10 +88,10 @@ public class PositionSampleService extends Service implements SensorEventListene
             initialValues[2] = event.values[2];                         // Z
             initialAngle = vAngle;
             position = "Initial\n" + position + "\n" + angle;
-            action = ACTIONS.UPDATE_INITIAL_POSITION.toString();
+            action = GeneralServiceParams.ACTIONS.UPDATE_INITIAL_POSITION.toString();
         } else {
             position = "Current\n" + position + "\n" + angle;
-            action = ACTIONS.UPDATE_CURRENT_POSITION.toString();
+            action = GeneralServiceParams.ACTIONS.UPDATE_CURRENT_POSITION.toString();
         }
         //update position
         sendMessageToActivity(action, position);
@@ -114,7 +109,7 @@ public class PositionSampleService extends Service implements SensorEventListene
             }
 
             if (addMines) {
-                action = ACTIONS.ADD_MINES_TO_GAME_BOARD.toString();
+                action = GeneralServiceParams.ACTIONS.ADD_MINES_TO_GAME_BOARD.toString();
                 sendMessageToActivity(action, "");
             }
         } else {
@@ -147,8 +142,8 @@ public class PositionSampleService extends Service implements SensorEventListene
     private void sendMessageToActivity(String action, String data) {
         Intent intent = new Intent(INTENT_FILTER_NAME);
         Bundle bundle = new Bundle();
-        bundle.putString(BUNDLE_ACTION, action);
-        bundle.putString(BUNDLE_DATA, data);
+        bundle.putString(GeneralServiceParams.BUNDLE_ACTION, action);
+        bundle.putString(GeneralServiceParams.BUNDLE_DATA, data);
         intent.putExtras(bundle);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
