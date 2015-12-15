@@ -1,13 +1,8 @@
-/**
- * This Application was created as part of academic course
- * Tamir Sagi
- */
-
-
 package com.minesweeper.BL.GameLogic;
 import com.minesweeper.UI.Activities.R;
 
 /**
+ * @author  Tamir Sagi
  * Class Represents a single cell within the board. it's responsible for,type and state
  */
 public class Cell {

@@ -1,18 +1,15 @@
-/**
- * This Application was created as part of academic course
- * Tamir Sagi
- */
+
 
 
 package com.minesweeper.BL.GameLogic;
 
-import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 /**
+ * @author  Tamir Sagi
  * This class represents a game board
  */
 public class Board {

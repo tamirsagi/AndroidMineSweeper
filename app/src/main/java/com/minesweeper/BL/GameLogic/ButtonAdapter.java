@@ -1,8 +1,3 @@
-/**
- * This Application was created as part of academic course
- * Tamir Sagi
- */
-
 package com.minesweeper.BL.GameLogic;
 
 import android.app.Activity;
@@ -15,6 +10,11 @@ import com.minesweeper.UI.Activities.R;
 
 import java.util.ArrayList;
 
+/**
+ * @author Tamir Sagi
+ * This Application was created as part of academic course
+ *
+ */
 public class ButtonAdapter extends ArrayAdapter<Cell> {
 
     private Context context;

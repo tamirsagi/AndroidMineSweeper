@@ -48,13 +48,12 @@ public class GPSTracker extends Service implements LocationListener {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         canGetLocation = isGPSEnabled;
-        if(isGPSEnabled()){
+        if (isGPSEnabled()) {
             Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
                     MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
             mGeoCoder = new Geocoder(this);
-        }
-        else{
+        } else {
             Toast.makeText(this, "Please turn GPS on ", Toast.LENGTH_LONG).show();
             //notifyUser(GeneralServiceParams.ACTIONS.Go_TO_SETTING_WINDOW.toString(),"");
         }
@@ -68,7 +67,7 @@ public class GPSTracker extends Service implements LocationListener {
     @SuppressWarnings("ResourceType")
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        switch (status){
+        switch (status) {
             case LocationProvider.AVAILABLE:
                 Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
@@ -92,7 +91,6 @@ public class GPSTracker extends Service implements LocationListener {
     public void onProviderDisabled(String provider) {
 
     }
-
 
 
     /**

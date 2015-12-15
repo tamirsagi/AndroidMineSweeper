@@ -1,12 +1,12 @@
-/**
- * This Application was created as part of academic course
- * Tamir Sagi
- */
+
 
 
 package com.minesweeper.BL.GameLogic;
 
-
+/**
+ * @author Tamir Sagi
+ * This Application was created as part of academic course
+ */
 public class GeneralGameProperties {
 
     public static final String KEY_PLAYER_FULL_NAME = "playerFullName";
@@ -31,7 +31,7 @@ public class GeneralGameProperties {
             "{"
 
                     + "      \"Level\" : \"Beginner\","
-                    + "      \"Mines\": \"1\","
+                    + "      \"Mines\": \"5\","
                     + "      \"Rows\": \"5\","
                     + "      \"Columns\" : \"5\""
                     + "    }";

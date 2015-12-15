@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author  Tamir Sagi
+ * This class managed the DB
+ */
 public class DbManager extends SQLiteOpenHelper {
 
     public static final String TAG = "DB MANAGER";

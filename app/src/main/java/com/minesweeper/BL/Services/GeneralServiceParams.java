@@ -6,7 +6,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
 /**
- * Created by Administrator on 12/14/2015.
+ * @author Tamir Sagi
+ * This Class hold shared parameters among the 2 services including static method to update acticity
  */
 public class GeneralServiceParams {
 

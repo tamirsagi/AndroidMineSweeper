@@ -1,6 +1,5 @@
 package com.minesweeper.UI.Fragments;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,8 +18,6 @@ public class RecordsFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private String tabTitles[] = new String[]{"Table", "Map"};
     private Context context;
-
-    public static HashMap<PAGES,Fragment> pages = new HashMap<PAGES, Fragment>();
 
     public enum PAGES {
         RECORDS(0), MAP(1);

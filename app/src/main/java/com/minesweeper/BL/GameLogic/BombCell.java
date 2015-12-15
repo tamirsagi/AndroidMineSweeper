@@ -1,12 +1,11 @@
-/**
- * This Application was created as part of academic course
- * Tamir Sagi
- */
-
-
-
 package com.minesweeper.BL.GameLogic;
 import com.minesweeper.UI.Activities.R;
+
+
+/**
+ * @author Tamir Sagi
+ * This Application was created as part of academic course
+ */
 
 public class BombCell extends Cell{
 

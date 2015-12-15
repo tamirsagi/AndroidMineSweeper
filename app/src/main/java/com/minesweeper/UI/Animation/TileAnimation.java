@@ -16,7 +16,8 @@ import com.minesweeper.UI.Activities.R;
 import java.util.Random;
 
 /**
- * Created by Administrator on 12/12/2015.
+ * @author  Tamir Sagi
+ * This class manges the falling tiles animation using translate
  */
 public class TileAnimation {
 

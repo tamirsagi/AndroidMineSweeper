@@ -1,8 +1,8 @@
 /**
+ * @author Tamir sagi
  * This Application was created as part of academic course
- * Tamir Sagi
+ *
  */
-
 
 
 package com.minesweeper.UI.Activities;

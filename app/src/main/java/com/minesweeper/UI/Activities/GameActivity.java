@@ -1,6 +1,6 @@
 /**
+ * @author Tamir Sagi
  * This Application was created as part of academic course
- * Tamir Sagi
  */
 
 package com.minesweeper.UI.Activities;
@@ -98,7 +98,7 @@ public class GameActivity extends AppCompatActivity {
         }
         if (gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromGPSService);
-            unbindService(GPSTrackerServiceConnection);
+        unbindService(GPSTrackerServiceConnection);
 
         super.onStop();
     }
@@ -346,7 +346,7 @@ public class GameActivity extends AppCompatActivity {
                     String tableInDB = getDbTableFromGameLevel(getGameLevel());
                     String time = tv_Timer.getText().toString();
                     if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
-                       showDialog(tableInDB);
+                        showDialog(tableInDB);
                     }
                 }
                 mp.start();
@@ -363,14 +363,13 @@ public class GameActivity extends AppCompatActivity {
     private void showDialog(String tableInDB) {
         Bundle details = new Bundle();
         details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
-        if(gpsTrackerService.getLastLocation() != null) {
+        if (gpsTrackerService.getLastLocation() != null) {
             HashMap<String, String> locationValues = gpsTrackerService.getLocationValues();
             details.putString(KEY_LOCATION_CITY, locationValues.get(KEY_LOCATION_CITY));
             details.putString(KEY_LOCATION_COUNTRY, locationValues.get(KEY_LOCATION_COUNTRY));
             details.putString(KEY_LOCATION_LATITUDE, locationValues.get(KEY_LOCATION_LATITUDE));
             details.putString(KEY_LOCATION_LONGITUDE, locationValues.get(KEY_LOCATION_LONGITUDE));
-        }
-        else{
+        } else {
             details.putString(KEY_LOCATION_CITY, "");
             details.putString(KEY_LOCATION_COUNTRY, "");
             details.putString(KEY_LOCATION_LATITUDE, "");
@@ -521,7 +520,7 @@ public class GameActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Bundle dataFromService = intent.getExtras();
             String action = dataFromService.getString(GeneralServiceParams.BUNDLE_ACTION);
-            switch (GeneralServiceParams.ACTIONS.valueOf(action)){
+            switch (GeneralServiceParams.ACTIONS.valueOf(action)) {
                 case Go_TO_SETTING_WINDOW:
                     startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
                     break;
@@ -548,7 +547,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     private void loadGif(boolean won) {
-       final WebView wv = (WebView) findViewById(R.id.gifAnimation);
+        final WebView wv = (WebView) findViewById(R.id.gifAnimation);
         wv.setVisibility(View.VISIBLE);
         wv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -557,7 +556,7 @@ public class GameActivity extends AppCompatActivity {
                 wv.setVisibility(v.GONE);
             }
         });
-        if(won)
+        if (won)
             wv.loadUrl("http://www.sherv.net/cm/emo/funny/2/big-dancing-banana-smiley-emoticon.gif");
         else
             wv.loadUrl("https://cdn2.scratch.mit.edu/get_image/gallery/1063608_200x130.png?v=1427128301.0");

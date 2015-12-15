@@ -1,14 +1,9 @@
-/**
- * This Application was created as part of academic course
- * Tamir Sagi
- */
-
 package com.minesweeper.BL.GameLogic;
-
 
 import java.util.Random;
 
 /**
+ * @author  Tamir Sagi
  * This class is responsible to handle current Game
  */
 public class MineSweeperLogicManager {

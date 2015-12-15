@@ -99,8 +99,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    public void loadMap(){
-        if(mGoogleMap != null) {
+    public void loadMap() {
+        if (mGoogleMap != null) {
             mGoogleMap.setMyLocationEnabled(true);                     //enable location
             mUiSettings = mGoogleMap.getUiSettings();                 //get map UI controller
             mUiSettings.setMyLocationButtonEnabled(true);             //enable location button

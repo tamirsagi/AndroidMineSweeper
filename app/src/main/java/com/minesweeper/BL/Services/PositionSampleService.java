@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 public class PositionSampleService extends Service implements SensorEventListener {
 
     public static final String TAG = "PositionSampleService";
+
     public static final String INTENT_FILTER_NAME = "POSITION_SERVICE NOTIFIER";
     public static final String BUNDLE_DATA_ADD_MINES = "phone's angle was deviated for long time, mines added to board";
     public static final int Number_Of_AXIS = 3;
@@ -89,7 +90,7 @@ public class PositionSampleService extends Service implements SensorEventListene
             action = GeneralServiceParams.ACTIONS.UPDATE_CURRENT_POSITION.toString();
         }
         //update position
-        GeneralServiceParams.sendMessageToActivity(this,INTENT_FILTER_NAME,action, position);
+        GeneralServiceParams.sendMessageToActivity(this, INTENT_FILTER_NAME, action, position);
 
         //Check duration for deviation
         if (Math.abs(vAngle - initialAngle) >= minAngleDeviation) {
@@ -100,12 +101,11 @@ public class PositionSampleService extends Service implements SensorEventListene
             endTime = System.currentTimeMillis() / MILI;
             if (!addMines && endTime - startTime >= minTimeToAngleDeviation) {
                 addMines = true;
-
             }
 
             if (addMines) {
                 action = GeneralServiceParams.ACTIONS.ADD_MINES_TO_GAME_BOARD.toString();
-                GeneralServiceParams.sendMessageToActivity(this,INTENT_FILTER_NAME,action, "");
+                GeneralServiceParams.sendMessageToActivity(this, INTENT_FILTER_NAME, action, "");
             }
         } else {
             timerStarted = false;

@@ -1,6 +1,7 @@
 /**
+ * @author Tamir Sagi
  * This Application was created as part of academic course
- * Tamir Sagi
+ *
  */
 
 package com.minesweeper.UI.Activities;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         String lastName = sharedPrefs.getString(OptionsActivity.KEY_PREF_PLAYER_LAST_NAME, "NULL");//get player last name
         String prefLevel = sharedPrefs.getString(OptionsActivity.KEY_PREF_GAME_LEVEL, "Intermediate"); //get the selected level
         String gameSettings = GeneralGameProperties.getGameSettings(prefLevel); //get corresponded game settings
-        boolean playSound = sharedPrefs.getBoolean(GeneralGameProperties.KEY_Play_Sound,true);  //get play sound settings
+        boolean playSound = sharedPrefs.getBoolean(GeneralGameProperties.KEY_Play_Sound, true);  //get play sound settings
 
         Intent gameActivity = new Intent(this, GameActivity.class);
         gameActivity.putExtra(GeneralGameProperties.KEY_PLAYER_FULL_NAME, firstName + " " + lastName);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void onButtonAboutClicked(View v){
+    public void onButtonAboutClicked(View v) {
         View popupView = new View(MainActivity.this);
         final PopupWindow popupWindow = new PopupWindow(popupView,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -121,13 +122,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void onHighScoresButtonClicked(View v){
+    public void onHighScoresButtonClicked(View v) {
         Intent DBRecordsFragmentActivity = new Intent(this, DBRecordsFragmentActivity.class);
         startActivity(DBRecordsFragmentActivity);
     }
-
-
-
 
 
 }

@@ -43,7 +43,6 @@ public class DetailsDialog extends DialogFragment {
         final EditText name = (EditText) alertDialogView.findViewById(R.id.et_prompt_player_Name_edit);
         final TextView confirmationMessage = (TextView) alertDialogView.findViewById(R.id.tv_prompt_confirmation_message);
         final Button bth_close = (Button) alertDialogView.findViewById(R.id.bth_prompt_close);
-        bth_close.setEnabled(false);
         confirmationMessage.setVisibility(View.GONE);
         final Button save = (Button) alertDialogView.findViewById(R.id.bth_prompt_save);
         save.setOnClickListener(new View.OnClickListener() {
@@ -63,14 +62,14 @@ public class DetailsDialog extends DialogFragment {
                     //if we got location forom GPS or not
                     String city = data.getString(GameActivity.KEY_LOCATION_CITY);
                     String country = data.getString(GameActivity.KEY_LOCATION_COUNTRY);
-                    if(city != null && !city.isEmpty())
+                    if (city != null && !city.isEmpty())
                         record.setCity(data.getString(GameActivity.KEY_LOCATION_CITY));
-                    if(country != null && !country.isEmpty())
+                    if (country != null && !country.isEmpty())
                         record.setCountry(data.getString(GameActivity.KEY_LOCATION_COUNTRY));
                     //get location
                     String latitude = data.getString(GameActivity.KEY_LOCATION_LATITUDE);
                     String longitude = data.getString(GameActivity.KEY_LOCATION_LONGITUDE);
-                    if(latitude != null && !latitude.isEmpty() && longitude != null && !longitude.isEmpty()) {
+                    if (latitude != null && !latitude.isEmpty() && longitude != null && !longitude.isEmpty()) {
                         record.setLatitude(Double.parseDouble(latitude));
                         record.setLongitude(Double.parseDouble(longitude));
                     }
