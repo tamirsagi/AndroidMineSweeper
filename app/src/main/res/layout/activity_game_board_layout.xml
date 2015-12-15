@@ -114,12 +114,11 @@
               android:text="@string/text_view_upper_menu_default_text"
               android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/flags_icon"/>
     <WebView
-            android:layout_width="500px"
-            android:layout_height="500px"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
             android:id="@+id/gifAnimation"
-            android:visibility="gone"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"/>
+
+            android:layout_above="@+id/initial_Acceleration" android:layout_toEndOf="@+id/initial_Acceleration"/>
 
 
 </RelativeLayout>

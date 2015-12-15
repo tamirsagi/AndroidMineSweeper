@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.os.Handler;
 import android.view.animation.Animation;
@@ -70,6 +71,8 @@ public class GameActivity extends AppCompatActivity {
     private MediaPlayer mp;
     private boolean playSound;
     private boolean playAnimation;
+    private WebView wv;
+
 
     //Service Params
     private PositionSampleService positionSampleService;
@@ -161,6 +164,7 @@ public class GameActivity extends AppCompatActivity {
         setGameInfo();
         setGridView();
         setTimer();
+        setGifWebView();
     }
 
     /**
@@ -331,6 +335,7 @@ public class GameActivity extends AppCompatActivity {
      * @param column
      */
     public void applyMove(int row, int column) {
+        boolean won;
         if (!mineSweeperLogicManager.isGameStarted())
             startTimer();
         mineSweeperLogicManager.makeMove(row, column);
@@ -338,21 +343,23 @@ public class GameActivity extends AppCompatActivity {
         setRemainedCells();
         if (mineSweeperLogicManager.isGameOver()) {
             stopTimer();
-            if (playSound) {
-                if (mineSweeperLogicManager.hasLost()) {
-                    mp = MediaPlayer.create(this, R.raw.granade);
-                    if(playAnimation)
-                        playAnimation();
-                } else {
-                    mp = MediaPlayer.create(this, R.raw.victory);
-                    String tableInDB = getDbTableFromGameLevel(getGameLevel());
-                    String time = tv_Timer.getText().toString();
-                    if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
-                        showDialog(tableInDB);
-                    }
+            if (mineSweeperLogicManager.hasLost()) {
+                won = false;
+                mp = MediaPlayer.create(this, R.raw.granade);
+            } else {
+                won = true;
+                loadGif(true);
+                mp = MediaPlayer.create(this, R.raw.victory);
+                String tableInDB = getDbTableFromGameLevel(getGameLevel());
+                String time = tv_Timer.getText().toString();
+                if (DbManager.getInstance(this).shouldBeInserted(tableInDB, time)) {
+                    showDialog(tableInDB);
                 }
-                mp.start();
             }
+            if (playAnimation)
+                playAnimation(won);
+            if (playSound)
+                mp.start();
             changeRestartButtonState(true);
         }
     }
@@ -388,6 +395,10 @@ public class GameActivity extends AppCompatActivity {
      * @param view
      */
     public void onButtonRematchClicked(View view) {
+        if (wv.getVisibility() == View.VISIBLE) {
+            wv.stopLoading();
+            wv.setVisibility(View.GONE);
+        }
         changeRestartButtonState(false);
         mp.release();
         mineSweeperLogicManager.rematch();
@@ -396,6 +407,7 @@ public class GameActivity extends AppCompatActivity {
         setGameInfo();
         startedTime = 0;
         tv_Timer.setText("00:00");
+
 
     }
 
@@ -539,7 +551,13 @@ public class GameActivity extends AppCompatActivity {
     /**
      * method add tiles to current layout and draw them
      */
-    private void playAnimation() {
+    private void playAnimation(boolean won) {
+        loadGif(won);
+        if (!won)
+            startFallingTiles();
+    }
+
+    private void startFallingTiles() {
         int numberOfTiles = 30;
         for (int i = 0; i < numberOfTiles; i++) {
             TileAnimation ta = new TileAnimation(this);
@@ -547,17 +565,8 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
     private void loadGif(boolean won) {
-        final WebView wv = (WebView) findViewById(R.id.gifAnimation);
         wv.setVisibility(View.VISIBLE);
-        wv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wv.stopLoading();
-                wv.setVisibility(v.GONE);
-            }
-        });
         if (won)
             wv.loadUrl("http://www.sherv.net/cm/emo/funny/2/big-dancing-banana-smiley-emoticon.gif");
         else
@@ -569,5 +578,19 @@ public class GameActivity extends AppCompatActivity {
 //        root.addView(gif);
 //        gif.play();
     }
+
+    private void setGifWebView() {
+        wv = (WebView) findViewById(R.id.gifAnimation);
+        wv.setBackgroundColor(0);
+        wv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                wv.stopLoading();
+                wv.setVisibility(v.GONE);
+                return true;
+            }
+        });
+    }
+
 
 }
