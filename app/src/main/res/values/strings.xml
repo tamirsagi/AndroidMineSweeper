@@ -26,7 +26,9 @@
     <string name="key_pref_level">prefGameLevel</string>
     <string name="summary_pref_game_level">Please Select Game Level</string>
     <string name="keyToggleSound">soundSettings</string>
+    <string name="keyToggleAnimation">animationSettings</string>
     <string name="title_pref_sound">Sound</string>
+    <string name="title_pref_Animation">Animations</string>
     <string name="title_activity_game">GameActivity</string>
 
 
@@ -50,9 +52,8 @@
     <string name="title_activity_dbRecords_fragment">DBRecordsFragmentActivity</string>
 
 <!-- Alert Dialog when game  is over and player had new record -->
-    <string name="enterDetailsRecord">Add Record</string>
-    <string name="enterDetailsMessage">Your got a good score,it should be entered to records table.
-        \nPlease Enter Your Full Name:</string>
+    <string name="enterDetailsRecord">Good Game!!!</string>
+    <string name="enterDetailsMessage">Enter Name and click save to add this Score to table.</string>
 
     <string name="err_name_too_long">Name is too long</string>
     <string name="err_name_empty_or_null">Please write your name</string>

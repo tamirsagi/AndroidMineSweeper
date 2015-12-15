@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.View;
 import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.UI.Fragments.MapFragment;
 import com.minesweeper.UI.Fragments.RecordsFragmentPagerAdapter;

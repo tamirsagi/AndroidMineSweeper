@@ -12,6 +12,7 @@ import android.widget.*;
 import com.minesweeper.BL.DB.DbManager;
 import com.minesweeper.BL.DB.PlayerRecord;
 import com.minesweeper.UI.Activities.DBRecordsFragmentActivity;
+import com.minesweeper.UI.Activities.MainActivity;
 import com.minesweeper.UI.Activities.R;
 
 import java.util.List;

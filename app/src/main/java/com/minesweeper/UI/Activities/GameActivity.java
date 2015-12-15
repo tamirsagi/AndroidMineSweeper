@@ -69,6 +69,7 @@ public class GameActivity extends AppCompatActivity {
     private ImageButton bth_Rematch;
     private MediaPlayer mp;
     private boolean playSound;
+    private boolean playAnimation;
 
     //Service Params
     private PositionSampleService positionSampleService;
@@ -174,7 +175,7 @@ public class GameActivity extends AppCompatActivity {
         gameBoardColumns = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS);
         minesOnBoard = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_MINES);
         playSound = extraData.getBoolean(GeneralGameProperties.KEY_Play_Sound);
-
+        playAnimation = extraData.getBoolean(GeneralGameProperties.KEY_Play_Animation);
 
         tv_minesCounter = (TextView) findViewById(R.id.minesCounter);
         tv_gameLevel = (TextView) findViewById(R.id.gameLevel);
@@ -340,7 +341,8 @@ public class GameActivity extends AppCompatActivity {
             if (playSound) {
                 if (mineSweeperLogicManager.hasLost()) {
                     mp = MediaPlayer.create(this, R.raw.granade);
-                    playAnimation();
+                    if(playAnimation)
+                        playAnimation();
                 } else {
                     mp = MediaPlayer.create(this, R.raw.victory);
                     String tableInDB = getDbTableFromGameLevel(getGameLevel());

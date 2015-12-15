@@ -29,6 +29,10 @@
                 android:key="@string/keyToggleSound"
                 android:defaultValue="true"
                 android:title="@string/title_pref_sound"/>
+        <SwitchPreference
+                android:key="@string/keyToggleAnimation"
+                android:defaultValue="true"
+                android:title="@string/title_pref_Animation"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

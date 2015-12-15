@@ -3,7 +3,6 @@
  * This Application was created as part of academic course
  *
  */
-
 package com.minesweeper.UI.Activities;
 
 import android.content.Intent;
@@ -15,7 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.*;
 import android.widget.PopupWindow;
-import com.minesweeper.BL.DB.DbManager;
+import android.widget.ProgressBar;
 import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,11 +22,14 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private  ProgressBar loading;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        loading = (ProgressBar)findViewById(R.id.progressBar);
+        loading.setVisibility(View.GONE);
     }
 
     @Override
@@ -58,21 +60,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loading.setVisibility(View.GONE);
     }
 
 
     public void onButtonOptionsClicked(View view) {
+        loading.setVisibility(View.VISIBLE);
         Intent i = new Intent(this, OptionsActivity.class);
         startActivityForResult(i, 0);
     }
 
     public void onButtonPlayClicked(View view) {
+        loading.setVisibility(View.VISIBLE);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String firstName = sharedPrefs.getString(OptionsActivity.KEY_PREF_PLAYER_NAME, "NULL");//get player name
         String lastName = sharedPrefs.getString(OptionsActivity.KEY_PREF_PLAYER_LAST_NAME, "NULL");//get player last name
         String prefLevel = sharedPrefs.getString(OptionsActivity.KEY_PREF_GAME_LEVEL, "Intermediate"); //get the selected level
         String gameSettings = GeneralGameProperties.getGameSettings(prefLevel); //get corresponded game settings
         boolean playSound = sharedPrefs.getBoolean(GeneralGameProperties.KEY_Play_Sound, true);  //get play sound settings
+        boolean playAnimations = sharedPrefs.getBoolean(GeneralGameProperties.KEY_Play_Animation, true);  //get play animation settings
 
         Intent gameActivity = new Intent(this, GameActivity.class);
         gameActivity.putExtra(GeneralGameProperties.KEY_PLAYER_FULL_NAME, firstName + " " + lastName);
@@ -89,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS, columns);
             gameActivity.putExtra(GeneralGameProperties.KEY_GAME_BOARD_MINES, mines);
             gameActivity.putExtra(GeneralGameProperties.KEY_Play_Sound, playSound);
+            gameActivity.putExtra(GeneralGameProperties.KEY_Play_Animation, playAnimations);
 
             //Chane activity
             startActivity(gameActivity);
@@ -123,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onHighScoresButtonClicked(View v) {
+        loading.setVisibility(View.VISIBLE);
         Intent DBRecordsFragmentActivity = new Intent(this, DBRecordsFragmentActivity.class);
         startActivity(DBRecordsFragmentActivity);
+
     }
 
 
