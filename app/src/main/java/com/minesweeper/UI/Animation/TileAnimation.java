@@ -24,7 +24,7 @@ public class TileAnimation {
     private static final int NUMBER_OF_IMAGES = 3;
     private static final int MIN_MILI_SECONDS = 1000;
     private static final int MAX_MILI_SECONDS = 5000;
-    private static final int REPEATING = 1;
+    private static final int REPEATING = 0;
 
     private Animation mAnimation;
     private ImageView image;

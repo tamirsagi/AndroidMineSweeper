@@ -28,6 +28,10 @@ public class GeneralGameProperties {
     public static final String CUSTOM = "Custom";
 
 
+    public static final String DANCING_BANANA_ANIMATION_1_URL = "https://s-media-cache-ak0.pinimg.com/originals/78/15/ce/7815cee28667b7e6d7479dba530a0219.jpg";
+    public static final String DANCING_BANANA_ANIMATION_2_URL = "http://www.sherv.net/cm/emo/funny/2/big-dancing-banana-smiley-emoticon.gif";
+    public static final String EXPLOSION_1_URL = "http://i.imgur.com/O0UGS6y.gif";
+
     private final static String BeginnerSettings =
             "{"
 

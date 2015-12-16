@@ -114,11 +114,19 @@
               android:text="@string/text_view_upper_menu_default_text"
               android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/flags_icon"/>
     <WebView
-            android:layout_width="140dp"
+            android:layout_width="270dp"
             android:layout_height="wrap_content"
-            android:id="@+id/gifAnimation"
+            android:id="@+id/gifAnimation_Winning"
+            android:layout_above="@+id/initial_Acceleration"
+            android:layout_toEndOf="@+id/flags_icon"/>
 
-            android:layout_above="@+id/initial_Acceleration" android:layout_toEndOf="@+id/initial_Acceleration"/>
+    <WebView
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/gifAnimation_Losing"
+            android:layout_above="@+id/initial_Acceleration"
+            android:layout_toEndOf="@+id/flags_icon"/>
+
 
 
 </RelativeLayout>

@@ -18,8 +18,6 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.os.Handler;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.widget.*;
 import com.minesweeper.BL.DB.DbManager;
@@ -27,15 +25,13 @@ import com.minesweeper.BL.GameLogic.ButtonAdapter;
 import com.minesweeper.BL.GameLogic.Cell;
 import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import com.minesweeper.BL.GameLogic.MineSweeperLogicManager;
-import com.minesweeper.UI.Animation.GifView;
 import com.minesweeper.UI.Animation.TileAnimation;
 import com.minesweeper.UI.Fragments.DetailsDialog;
 
 import com.minesweeper.BL.Services.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
     public static final String TAG = "GameActivity";
@@ -71,7 +67,9 @@ public class GameActivity extends AppCompatActivity {
     private MediaPlayer mp;
     private boolean playSound;
     private boolean playAnimation;
-    private WebView wv;
+    private WebView mWebViewWinning;
+    private WebView mWebViewLosing;
+    private boolean isAnimationShown;
 
 
     //Service Params
@@ -395,10 +393,8 @@ public class GameActivity extends AppCompatActivity {
      * @param view
      */
     public void onButtonRematchClicked(View view) {
-        if (wv.getVisibility() == View.VISIBLE) {
-            wv.stopLoading();
-            wv.setVisibility(View.GONE);
-        }
+        if (isAnimationShown)
+            stopWebView();
         changeRestartButtonState(false);
         mp.release();
         mineSweeperLogicManager.rematch();
@@ -557,40 +553,77 @@ public class GameActivity extends AppCompatActivity {
             startFallingTiles();
     }
 
+    /**
+     * load the falling tiles translation
+     */
     private void startFallingTiles() {
-        int numberOfTiles = 30;
+        int numberOfTiles = 10;
         for (int i = 0; i < numberOfTiles; i++) {
             TileAnimation ta = new TileAnimation(this);
             ta.playAnimation();
         }
     }
 
+    /**
+     * load gid animation when game ends
+     *
+     * @param won
+     */
     private void loadGif(boolean won) {
-        wv.setVisibility(View.VISIBLE);
-        if (won)
-            wv.loadUrl("http://www.sherv.net/cm/emo/funny/2/big-dancing-banana-smiley-emoticon.gif");
-        else
-            wv.loadUrl("https://cdn2.scratch.mit.edu/get_image/gallery/1063608_200x130.png?v=1427128301.0");
-
-//        RelativeLayout root = (RelativeLayout)findViewById(R.id.layout_GameActivity);
-//        GifView gif = new GifView(getApplicationContext());
-//        gif.setEndGameState(won);
-//        root.addView(gif);
-//        gif.play();
+        if (won) {
+            if ((new Random()).nextInt() % 2 == 0)
+                mWebViewWinning.loadUrl(GeneralGameProperties.DANCING_BANANA_ANIMATION_1_URL);
+            else
+                mWebViewWinning.loadUrl(GeneralGameProperties.DANCING_BANANA_ANIMATION_2_URL);
+            mWebViewWinning.setVisibility(View.VISIBLE);
+        } else {
+            mWebViewLosing.loadUrl(GeneralGameProperties.EXPLOSION_1_URL);
+            mWebViewLosing.setVisibility(View.VISIBLE);
+        }
+        isAnimationShown = true;
     }
 
+    /**
+     * Method creates 3  gif animations
+     */
     private void setGifWebView() {
-        wv = (WebView) findViewById(R.id.gifAnimation);
-        wv.setBackgroundColor(0);
-        wv.setOnTouchListener(new View.OnTouchListener() {
+        mWebViewWinning = (WebView) findViewById(R.id.gifAnimation_Winning);
+        mWebViewWinning.setBackgroundColor(0);
+        mWebViewWinning.setVisibility(View.GONE);
+        mWebViewWinning.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                wv.stopLoading();
-                wv.setVisibility(v.GONE);
+                stopWebView();
+                return true;
+            }
+        });
+
+        mWebViewLosing = (WebView) findViewById(R.id.gifAnimation_Losing);
+        mWebViewLosing.setBackgroundColor(0);
+        mWebViewLosing.setVisibility(View.GONE);
+        mWebViewLosing.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                stopWebView();
                 return true;
             }
         });
     }
+
+    /**
+     * stop web views
+     */
+    private void stopWebView() {
+        if(mWebViewLosing.getVisibility() == View.VISIBLE){
+        mWebViewLosing.stopLoading();
+        mWebViewLosing.setVisibility(View.GONE);
+    }
+    else{
+        mWebViewWinning.stopLoading();
+        mWebViewWinning.setVisibility(View.GONE);
+    }
+    isAnimationShown = false;
+}
 
 
 }
