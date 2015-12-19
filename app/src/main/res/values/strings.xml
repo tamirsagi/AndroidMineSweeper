@@ -51,6 +51,9 @@
     <string name="column_time">Time</string>
     <string name="title_activity_dbRecords_fragment">DBRecordsFragmentActivity</string>
 
+    <string name="initial_angle_text">Initial Angle:</string>
+    <string name="current_angle_text">Current Angle:</string>
+
 <!-- Alert Dialog when game  is over and player had new record -->
     <string name="enterDetailsRecord">Good Game!!!</string>
     <string name="enterDetailsMessage">Enter Name and click save to add this Score to table.</string>

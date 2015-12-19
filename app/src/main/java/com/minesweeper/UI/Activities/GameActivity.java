@@ -46,12 +46,12 @@ public class GameActivity extends AppCompatActivity {
     public static final String KEY_DATE = "DATE";
 
 
-    private final int mil = 1000, secondsInAMinute = 60;
-    private int gameBoardRows;
-    private int gameBoardColumns;
-    private int minesOnBoard;
-    private String level;
-    private String playerName;
+    private final int mil = 1000, mSecondsInAMinute = 60;
+    private int mGameBoardRows;
+    private int mGameBoardColumns;
+    private int mMinesOnBoard;
+    private String mLevel;
+    private String mPlayerName;
     private MineSweeperLogicManager mineSweeperLogicManager;
     private GridView gv_GameBoard;
     private ButtonAdapter buttonAdapter;
@@ -73,8 +73,8 @@ public class GameActivity extends AppCompatActivity {
 
 
     //Service Params
-    private PositionSampleService positionSampleService;
-    private GPSTracker gpsTrackerService;
+    private PositionSampleService mPositionSampleService;
+    private GPSTracker mGpsTrackerService;
     private boolean isBound = false;
 
     private TextView tv_InitialAccelerometer;
@@ -87,21 +87,23 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_board_layout);
         setGameScreen();
-
+        createBinnedGPSService();
+        createBinnedPositionService();
     }
 
     @Override
     protected void onStop() {
         Log.i("onStop", "onStop");
         stopTimer();
-        if (positionSampleService != null) {
+        if (mPositionSampleService != null) {
+            mPositionSampleService.unregisterListener();
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromPositionService);
             unbindService(positionSampleConnection);
         }
-        if (gpsTrackerService != null && gpsTrackerService.isGPSEnabled())
+        if (mGpsTrackerService != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromGPSService);
-        unbindService(GPSTrackerServiceConnection);
-
+            unbindService(GPSTrackerServiceConnection);
+        }
         super.onStop();
     }
 
@@ -120,7 +122,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        createBinnedGPSService();
         Log.i("onStart", "onStart");
     }
 
@@ -132,23 +133,23 @@ public class GameActivity extends AppCompatActivity {
 
 
     public String getPlayerName() {
-        return playerName;
+        return mPlayerName;
     }
 
     public String getGameLevel() {
-        return level;
+        return mLevel;
     }
 
     public int getGameBoardRows() {
-        return gameBoardRows;
+        return mGameBoardRows;
     }
 
     public int getGameBoardColumns() {
-        return gameBoardColumns;
+        return mGameBoardColumns;
     }
 
     public int getMinesOnBoard() {
-        return minesOnBoard;
+        return mMinesOnBoard;
     }
 
     public MineSweeperLogicManager getMineSweeperLogicManager() {
@@ -158,11 +159,13 @@ public class GameActivity extends AppCompatActivity {
 
     private void setGameScreen() {
         setSettings();
-        mineSweeperLogicManager = new MineSweeperLogicManager(level, gameBoardRows, gameBoardColumns, minesOnBoard);
+        mineSweeperLogicManager = new MineSweeperLogicManager(mLevel, mGameBoardRows, mGameBoardColumns, mMinesOnBoard);
         setGameInfo();
         setGridView();
         setTimer();
         setGifWebView();
+        setPositionsTextViews();
+
     }
 
     /**
@@ -171,11 +174,11 @@ public class GameActivity extends AppCompatActivity {
     private void setSettings() {
         Intent received = getIntent();
         Bundle extraData = received.getExtras();
-        playerName = extraData.getString(GeneralGameProperties.KEY_PLAYER_FULL_NAME);
-        level = extraData.getString(GeneralGameProperties.KEY_GAME_LEVEL);
-        gameBoardRows = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_ROWS);
-        gameBoardColumns = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS);
-        minesOnBoard = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_MINES);
+        mPlayerName = extraData.getString(GeneralGameProperties.KEY_PLAYER_FULL_NAME);
+        mLevel = extraData.getString(GeneralGameProperties.KEY_GAME_LEVEL);
+        mGameBoardRows = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_ROWS);
+        mGameBoardColumns = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_COLUMNS);
+        mMinesOnBoard = extraData.getInt(GeneralGameProperties.KEY_GAME_BOARD_MINES);
         playSound = extraData.getBoolean(GeneralGameProperties.KEY_Play_Sound);
         playAnimation = extraData.getBoolean(GeneralGameProperties.KEY_Play_Animation);
 
@@ -194,14 +197,14 @@ public class GameActivity extends AppCompatActivity {
 
 
     private void setMinesCounter() {
-        minesOnBoard = mineSweeperLogicManager.getNumberOfBombs();
-        tv_minesCounter.setText("" + minesOnBoard);
+        mMinesOnBoard = mineSweeperLogicManager.getNumberOfBombs();
+        tv_minesCounter.setText("" + mMinesOnBoard);
     }
 
     private void setGameLevel() {
-        gameBoardRows = mineSweeperLogicManager.getBoard().getNumberOfRows();
-        gameBoardColumns = mineSweeperLogicManager.getBoard().getNumberOfColumns();
-        tv_gameLevel.setText(level.toString() + "(" + gameBoardRows + "X" + gameBoardColumns + ")");
+        mGameBoardRows = mineSweeperLogicManager.getBoard().getNumberOfRows();
+        mGameBoardColumns = mineSweeperLogicManager.getBoard().getNumberOfColumns();
+        tv_gameLevel.setText(mLevel.toString() + "(" + mGameBoardRows + "X" + mGameBoardColumns + ")");
     }
 
     private void setRemainedCells() {
@@ -219,8 +222,8 @@ public class GameActivity extends AppCompatActivity {
             public void run() {
                 long millis = System.currentTimeMillis() - startedTime;
                 int seconds = (int) (millis / mil);             // get seconds from mili seconds
-                int minutes = seconds / secondsInAMinute;      //  get minutes from seconds
-                seconds = seconds % secondsInAMinute;         //   get updated seconds
+                int minutes = seconds / mSecondsInAMinute;      //  get minutes from seconds
+                seconds = seconds % mSecondsInAMinute;         //   get updated seconds
                 tv_Timer.setText(String.format("%02d:%02d", minutes, seconds));
                 timerHandler.postDelayed(this, 0);
             }
@@ -230,12 +233,12 @@ public class GameActivity extends AppCompatActivity {
     private void startTimer() {
         startedTime = System.currentTimeMillis();
         timerHandler.postDelayed(timerJob, 0);
-        createBinnedPositionService();
-
+        mPositionSampleService.startUpdatingCurrentAngle();
     }
 
     private void stopTimer() {
         timerHandler.removeCallbacks(timerJob);
+        mPositionSampleService.stopUpdatingCurrentAngle();
     }
 
     private void changeRestartButtonState(boolean show) {
@@ -253,6 +256,7 @@ public class GameActivity extends AppCompatActivity {
         setRemainedCells();
         setMinesCounter();
         setRemainedFlags();
+
     }
 
     /**
@@ -260,7 +264,7 @@ public class GameActivity extends AppCompatActivity {
      */
     private void setGridView() {
         gv_GameBoard = (GridView) findViewById(R.id.gameBoard);         //get grid view element from layout
-        gv_GameBoard.setNumColumns(gameBoardColumns);                  //set grid view column number
+        gv_GameBoard.setNumColumns(mGameBoardColumns);                  //set grid view column number
         int cellSizeInGrid = setGridItemSize();
         buttonAdapter =
                 new ButtonAdapter(this, R.layout.row_grid, mineSweeperLogicManager.getBoard().getGameBoard(), cellSizeInGrid);
@@ -270,8 +274,8 @@ public class GameActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
                 Log.i("onItemClick", "" + position);
                 if (!mineSweeperLogicManager.isGameOver()) {
-                    int clickedRow = position % gameBoardRows;
-                    int clickedColumn = position / gameBoardRows;
+                    int clickedRow = position % mGameBoardRows;
+                    int clickedColumn = position / mGameBoardRows;
                     Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
                     if (!clickedCell.isFlagged())
                         applyMove(clickedRow, clickedColumn);
@@ -282,8 +286,8 @@ public class GameActivity extends AppCompatActivity {
         gv_GameBoard.setOnItemLongClickListener((new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                int clickedRow = position % gameBoardRows;
-                int clickedColumn = position / gameBoardRows;
+                int clickedRow = position % mGameBoardRows;
+                int clickedColumn = position / mGameBoardRows;
                 Cell clickedCell = mineSweeperLogicManager.getBoard().getGameBoard()[clickedRow][clickedColumn];
                 if (mineSweeperLogicManager.isGameStarted() && !clickedCell.isRevealed()) {
                     int remainedFlags = mineSweeperLogicManager.getBoard().getNumberOfFlags();
@@ -316,7 +320,7 @@ public class GameActivity extends AppCompatActivity {
         Point size = new Point();
         display.getSize(size);
         int width = size.x;                                           //in px unit
-        int columnSizeInPX = width / gameBoardColumns;               //column Size in Px units
+        int columnSizeInPX = width / mGameBoardColumns;               //column Size in Px units
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         float logicalDensity = metrics.density;
         int columnSizeInDP = columnSizeInPX / (int) logicalDensity;  //get column size in DP units
@@ -370,8 +374,8 @@ public class GameActivity extends AppCompatActivity {
     private void showDialog(String tableInDB) {
         Bundle details = new Bundle();
         details.putString(KEY_ROUND_TIME, tv_Timer.getText().toString());
-        if (gpsTrackerService.getLastLocation() != null) {
-            HashMap<String, String> locationValues = gpsTrackerService.getLocationValues();
+        if (mGpsTrackerService.getLastLocation() != null) {
+            HashMap<String, String> locationValues = mGpsTrackerService.getLocationValues();
             details.putString(KEY_LOCATION_CITY, locationValues.get(KEY_LOCATION_CITY));
             details.putString(KEY_LOCATION_COUNTRY, locationValues.get(KEY_LOCATION_COUNTRY));
             details.putString(KEY_LOCATION_LATITUDE, locationValues.get(KEY_LOCATION_LATITUDE));
@@ -399,17 +403,16 @@ public class GameActivity extends AppCompatActivity {
         mp.release();
         mineSweeperLogicManager.rematch();
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
-        stopTimer();
         setGameInfo();
         startedTime = 0;
         tv_Timer.setText("00:00");
-
-
+        tv_CurrentAccelerometer.setText(R.string.current_angle_text);
+        mPositionSampleService.setGetUpdatedInitialAngle(true);
     }
 
     /**
      * @param level
-     * @return corresponded db table by game level
+     * @return corresponded db table by game mLevel
      */
     private String getDbTableFromGameLevel(String level) {
         switch (MineSweeperLogicManager.Level.valueOf(level)) {
@@ -435,15 +438,15 @@ public class GameActivity extends AppCompatActivity {
         isBound = true;
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMessageFromPositionService, new IntentFilter(PositionSampleService.INTENT_FILTER_NAME));
-        setPositionsTextViews();
+
     }
 
     private ServiceConnection positionSampleConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             PositionSampleService.MyLocalBinder binder = (PositionSampleService.MyLocalBinder) service;
-            positionSampleService = binder.gerService();
-            isBound = true;
+            mPositionSampleService = binder.gerService();
+            mPositionSampleService.registerListener();
         }
 
         @Override
@@ -456,6 +459,7 @@ public class GameActivity extends AppCompatActivity {
         tv_InitialAccelerometer = (TextView) findViewById(R.id.initial_Acceleration);
         tv_CurrentAccelerometer = (TextView) findViewById(R.id.current_Acceleration);
     }
+
 
     /**
      * handle broadcast messages from position sampler service
@@ -493,7 +497,7 @@ public class GameActivity extends AppCompatActivity {
                 mineSweeperLogicManager.getBoard().getNumberOfBombs() + 1 < mineSweeperLogicManager.getBoard().getBoardSize()) {
             mineSweeperLogicManager.addMinesToGameBoard();
             buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
-            minesOnBoard = mineSweeperLogicManager.getBoard().getNumberOfBombs();
+            mMinesOnBoard = mineSweeperLogicManager.getBoard().getNumberOfBombs();
             setGameInfo();
         }
     }
@@ -513,12 +517,15 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             GPSTracker.MyLocalBinder gpsBinder = (GPSTracker.MyLocalBinder) service;
-            gpsTrackerService = gpsBinder.gerService();
+            mGpsTrackerService = gpsBinder.gerService();
+            //my method, not override
+            mGpsTrackerService.StartUsingGPS();
+
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            gpsTrackerService.stopUsingGPS();
+            mGpsTrackerService.stopUsingGPS();
         }
     };
 
@@ -614,16 +621,15 @@ public class GameActivity extends AppCompatActivity {
      * stop web views
      */
     private void stopWebView() {
-        if(mWebViewLosing.getVisibility() == View.VISIBLE){
-        mWebViewLosing.stopLoading();
-        mWebViewLosing.setVisibility(View.GONE);
+        if (mWebViewLosing.getVisibility() == View.VISIBLE) {
+            mWebViewLosing.stopLoading();
+            mWebViewLosing.setVisibility(View.GONE);
+        } else {
+            mWebViewWinning.stopLoading();
+            mWebViewWinning.setVisibility(View.GONE);
+        }
+        isAnimationShown = false;
     }
-    else{
-        mWebViewWinning.stopLoading();
-        mWebViewWinning.setVisibility(View.GONE);
-    }
-    isAnimationShown = false;
-}
 
 
 }

@@ -54,7 +54,7 @@
               android:textSize="8pt"
               android:gravity="center"
               android:textColor="#FFFFFF"
-              android:text="Initial : X: Y: Z: "
+              android:text="@string/initial_angle_text"
               android:layout_alignBottom="@+id/current_Acceleration"/>
 
     <TextView android:id="@+id/current_Acceleration"
@@ -63,7 +63,7 @@
               android:textSize="8pt"
               android:gravity="center"
               android:textColor="#FFFFFF"
-              android:text="Current : X: Y: Z: "
+              android:text="@string/current_angle_text"
               android:layout_alignBottom="@+id/gameBoard" android:layout_toEndOf="@+id/BTH_Restart_Game"/>
 
     <ImageButton

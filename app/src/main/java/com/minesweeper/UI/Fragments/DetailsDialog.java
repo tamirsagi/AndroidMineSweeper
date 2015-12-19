@@ -59,7 +59,7 @@ public class DetailsDialog extends DialogFragment {
                     PlayerRecord record = new PlayerRecord();
                     record.setFullName(name.getText().toString());
                     record.setRoundTime(data.getString(GameActivity.KEY_ROUND_TIME));
-                    //if we got location forom GPS or not
+                    //if we got location from GPS or not
                     String city = data.getString(GameActivity.KEY_LOCATION_CITY);
                     String country = data.getString(GameActivity.KEY_LOCATION_COUNTRY);
                     if (city != null && !city.isEmpty())

@@ -34,8 +34,6 @@ public class GPSTracker extends Service implements LocationListener {
     private Geocoder mGeoCoder;
 
     private boolean isGPSEnabled = false;
-    private boolean canGetLocation = false;
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -43,26 +41,18 @@ public class GPSTracker extends Service implements LocationListener {
         return tracker;
     }
 
-    @SuppressWarnings("ResourceType")
+
     private void setLocationManager() {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        canGetLocation = isGPSEnabled;
-        if (isGPSEnabled()) {
-            Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
-                    MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
-            mGeoCoder = new Geocoder(this);
-        } else {
-            Toast.makeText(this, "Please turn GPS on ", Toast.LENGTH_LONG).show();
-            //notifyUser(GeneralServiceParams.ACTIONS.Go_TO_SETTING_WINDOW.toString(),"");
-        }
     }
 
     @Override
     public void onLocationChanged(Location location) {
         this.mLastLocation = location;
     }
+
+
 
     @SuppressWarnings("ResourceType")
     @Override
@@ -105,6 +95,21 @@ public class GPSTracker extends Service implements LocationListener {
             Log.e(TAG, e.getMessage());
         }
     }
+
+    @SuppressWarnings("ResourceType")
+    public void StartUsingGPS(){
+        if (isGPSEnabled()) {
+            Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
+            mGeoCoder = new Geocoder(this);
+        } else {
+            Toast.makeText(this, "Please turn GPS on ", Toast.LENGTH_LONG).show();
+            //notifyUser(GeneralServiceParams.ACTIONS.Go_TO_SETTING_WINDOW.toString(),"");
+        }
+    }
+
+
 
     public boolean isGPSEnabled() {
         return isGPSEnabled;

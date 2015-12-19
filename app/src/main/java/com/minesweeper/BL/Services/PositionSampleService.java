@@ -7,9 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 
 import java.text.DecimalFormat;
 
@@ -34,11 +32,7 @@ public class PositionSampleService extends Service implements SensorEventListene
 
     private final int minAngleDeviation = 10;
     private final int minTimeToAngleDeviation = 10; // after 10 seconds
-
-    private float[] initialValues = new float[Number_Of_AXIS];
     private double initialAngle;
-
-
     private boolean timerStarted = false;
     private boolean addMines = false;
     private long startTime;
@@ -50,7 +44,8 @@ public class PositionSampleService extends Service implements SensorEventListene
 
     private Sensor accelerometer;
     private SensorManager sensorManager;
-    private boolean initial;
+    private boolean getUpdatedInitialAngle;
+    private boolean work = false;                        //determines whether we should send the data or not
 
     public PositionSampleService() {
     }
@@ -64,61 +59,84 @@ public class PositionSampleService extends Service implements SensorEventListene
     private void setAccelerationSensor() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        initial = true;
+        setGetUpdatedInitialAngle(true);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         String position, action, angle;
         position = "X:" + decimalFormat.format(event.values[0]) + "\nY:" + decimalFormat.format(event.values[1]) +
                 "\nZ:" + decimalFormat.format(event.values[2]);
         double radians = (Math.atan2(event.values[0], event.values[1])); //radians
         double vAngle = radians * (RADIANS_PI / Math.PI);                      //radians to degrees
         angle = "angle : " + decimalFormat.format(vAngle);
-        if (initial) {
-            initial = false;
-            initialValues[0] = event.values[0];                         // X
-            initialValues[1] = event.values[1];                         // Y
-            initialValues[2] = event.values[2];                         // Z
+        if (getUpdatedInitialAngle) {
             initialAngle = vAngle;
             position = "Initial\n" + position + "\n" + angle;
             action = GeneralServiceParams.ACTIONS.UPDATE_INITIAL_POSITION.toString();
-        } else {
+            GeneralServiceParams.sendMessageToActivity(this, INTENT_FILTER_NAME, action,position);
+        }
+
+        //work = true only when game timer starts
+        if (work) {
+            //update current phone angle
             position = "Current\n" + position + "\n" + angle;
             action = GeneralServiceParams.ACTIONS.UPDATE_CURRENT_POSITION.toString();
-        }
-        //update position
-        GeneralServiceParams.sendMessageToActivity(this, INTENT_FILTER_NAME, action, position);
+            //update UI with position
+            GeneralServiceParams.sendMessageToActivity(this, INTENT_FILTER_NAME, action, position);
+            //Check duration for deviation
+            if (Math.abs(vAngle - initialAngle) >= minAngleDeviation) {
+                if (!timerStarted) {
+                    timerStarted = true;
+                    startTime = System.currentTimeMillis() / MILI;
+                }
+                endTime = System.currentTimeMillis() / MILI;
+                if (!addMines && endTime - startTime >= minTimeToAngleDeviation) {
+                    addMines = true;
+                }
 
-        //Check duration for deviation
-        if (Math.abs(vAngle - initialAngle) >= minAngleDeviation) {
-            if (!timerStarted) {
-                timerStarted = true;
-                startTime = System.currentTimeMillis() / MILI;
+                if (addMines) {
+                    action = GeneralServiceParams.ACTIONS.ADD_MINES_TO_GAME_BOARD.toString();
+                    GeneralServiceParams.sendMessageToActivity(this, INTENT_FILTER_NAME, action, "");
+                }
+            } else {
+                timerStarted = false;
+                startTime = 0;
+                endTime = 0;
+                addMines = false;
             }
-            endTime = System.currentTimeMillis() / MILI;
-            if (!addMines && endTime - startTime >= minTimeToAngleDeviation) {
-                addMines = true;
-            }
-
-            if (addMines) {
-                action = GeneralServiceParams.ACTIONS.ADD_MINES_TO_GAME_BOARD.toString();
-                GeneralServiceParams.sendMessageToActivity(this, INTENT_FILTER_NAME, action, "");
-            }
-        } else {
-            timerStarted = false;
-            startTime = 0;
-            endTime = 0;
-            addMines = false;
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    //stop service from updating with position and restart values
+    public void stopUpdatingCurrentAngle() {
+        work = false;
 
     }
+
+    //let the service work
+    public void startUpdatingCurrentAngle() {
+        setGetUpdatedInitialAngle(false);
+        work = true;
+
+    }
+
+    public void setGetUpdatedInitialAngle(boolean update){
+        getUpdatedInitialAngle = update;
+    }
+
+    public void unregisterListener() {
+        sensorManager.unregisterListener(this);
+    }
+
+    public void registerListener() {
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
 
     //we need to extends Binder in order to make our object as a binder
     public class MyLocalBinder extends Binder {
