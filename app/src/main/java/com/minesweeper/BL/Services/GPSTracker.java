@@ -97,7 +97,7 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     @SuppressWarnings("ResourceType")
-    public void StartUsingGPS(){
+    public void startUsingGPS(){
         if (isGPSEnabled()) {
             Toast.makeText(this, "GPS is Enabled ", Toast.LENGTH_LONG).show();
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,

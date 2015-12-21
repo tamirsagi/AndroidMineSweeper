@@ -31,7 +31,6 @@ import com.minesweeper.UI.Fragments.DetailsDialog;
 import com.minesweeper.BL.Services.*;
 
 import java.util.HashMap;
-import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
     public static final String TAG = "GameActivity";
@@ -94,16 +93,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.i("onStop", "onStop");
-        stopTimer();
-        if (mPositionSampleService != null) {
-            mPositionSampleService.unregisterListener();
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromPositionService);
-            unbindService(positionSampleConnection);
-        }
-        if (mGpsTrackerService != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromGPSService);
-            unbindService(GPSTrackerServiceConnection);
-        }
+
         super.onStop();
     }
 
@@ -111,11 +101,22 @@ public class GameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.i("onDestroy", "onDestroy");
+        stopTimer();
+        if (mPositionSampleService != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromPositionService);
+            unbindService(positionSampleConnection);
+        }
+        if (mGpsTrackerService != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageFromGPSService);
+            unbindService(GPSTrackerServiceConnection);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mPositionSampleService.unregisterListener();
+        mGpsTrackerService.stopUsingGPS();
         Log.i("onPause", "onPause");
     }
 
@@ -129,6 +130,10 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         Log.i("onResume", "onResume");
         super.onResume();
+        if(mPositionSampleService != null)
+             mPositionSampleService.registerListener();
+        if(mGpsTrackerService != null)
+            mGpsTrackerService.startUsingGPS();
     }
 
 
@@ -519,7 +524,7 @@ public class GameActivity extends AppCompatActivity {
             GPSTracker.MyLocalBinder gpsBinder = (GPSTracker.MyLocalBinder) service;
             mGpsTrackerService = gpsBinder.gerService();
             //my method, not override
-            mGpsTrackerService.StartUsingGPS();
+            mGpsTrackerService.startUsingGPS();
 
         }
 
