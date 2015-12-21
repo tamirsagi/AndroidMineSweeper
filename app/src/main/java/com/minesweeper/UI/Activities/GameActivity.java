@@ -578,10 +578,7 @@ public class GameActivity extends AppCompatActivity {
      */
     private void loadGif(boolean won) {
         if (won) {
-            if ((new Random()).nextInt() % 2 == 0)
-                mWebViewWinning.loadUrl(GeneralGameProperties.DANCING_BANANA_ANIMATION_1_URL);
-            else
-                mWebViewWinning.loadUrl(GeneralGameProperties.DANCING_BANANA_ANIMATION_2_URL);
+            mWebViewWinning.loadUrl(GeneralGameProperties.DANCING_BANANA_ANIMATION_1_URL);
             mWebViewWinning.setVisibility(View.VISIBLE);
         } else {
             mWebViewLosing.loadUrl(GeneralGameProperties.EXPLOSION_1_URL);

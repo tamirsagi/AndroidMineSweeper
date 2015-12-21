@@ -5,6 +5,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.*;
 import com.minesweeper.UI.Activities.R;
 
@@ -24,6 +26,8 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
     private int row, columns;
     private AbsListView.LayoutParams layoutParams;
     private int cellSizeInDP;
+    private Animation mAnimation;
+
 
     public ButtonAdapter(Context context, int layoutResourceId, Cell[][] gameBoard, int cellSizeInDP) {
         super(context, layoutResourceId, new ArrayList());
@@ -35,6 +39,7 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
         this.layoutResourceId = layoutResourceId;
         //layoutParams = new AbsListView.LayoutParams(cellSizeInDP,cellSizeInDP);
         this.cellSizeInDP = cellSizeInDP;
+
     }
 
     @Override
@@ -78,6 +83,5 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
     static class RecordHolder {
         TextView tv_cell;
     }
-
 
 }

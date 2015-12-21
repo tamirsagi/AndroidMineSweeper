@@ -58,7 +58,11 @@ public class PositionSampleService extends Service implements SensorEventListene
 
     private void setAccelerationSensor() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        }
+        else if(sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null)
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         setGetUpdatedInitialAngle(true);
     }
 
