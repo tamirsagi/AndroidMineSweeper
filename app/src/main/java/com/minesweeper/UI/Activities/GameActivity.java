@@ -18,6 +18,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.os.Handler;
+import android.view.animation.*;
 import android.webkit.WebView;
 import android.widget.*;
 import com.minesweeper.BL.DB.DbManager;
@@ -349,13 +350,13 @@ public class GameActivity extends AppCompatActivity {
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
         setRemainedCells();
         if (mineSweeperLogicManager.isGameOver()) {
+            buttonAdapter.playAnimation();
             stopTimer();
             if (mineSweeperLogicManager.hasLost()) {
                 won = false;
                 mp = MediaPlayer.create(this, R.raw.granade);
             } else {
                 won = true;
-                loadGif(true);
                 mp = MediaPlayer.create(this, R.raw.victory);
                 String tableInDB = getDbTableFromGameLevel(getGameLevel());
                 String time = tv_Timer.getText().toString();
@@ -407,7 +408,9 @@ public class GameActivity extends AppCompatActivity {
         changeRestartButtonState(false);
         mp.release();
         mineSweeperLogicManager.rematch();
+        gv_GameBoard.removeAllViewsInLayout();
         buttonAdapter.setGameBoard(mineSweeperLogicManager.getBoard().getGameBoard());
+        gv_GameBoard.setAdapter(buttonAdapter);
         setGameInfo();
         startedTime = 0;
         tv_Timer.setText("00:00");
@@ -560,9 +563,9 @@ public class GameActivity extends AppCompatActivity {
      * method add tiles to current layout and draw them
      */
     private void playAnimation(boolean won) {
-        loadGif(won);
-        if (!won)
-            startFallingTiles();
+//        loadGif(won);
+//        if (!won)
+//            startFallingTiles();
     }
 
     /**
