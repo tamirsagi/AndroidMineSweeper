@@ -35,7 +35,7 @@ public class GeneralGameProperties {
             "{"
 
                     + "      \"Level\" : \"Beginner\","
-                    + "      \"Mines\": \"1\","
+                    + "      \"Mines\": \"5\","
                     + "      \"Rows\": \"5\","
                     + "      \"Columns\" : \"5\""
                     + "    }";

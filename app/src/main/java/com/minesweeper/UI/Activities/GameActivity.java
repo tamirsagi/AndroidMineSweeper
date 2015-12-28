@@ -18,7 +18,6 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.os.Handler;
-import android.view.animation.*;
 import android.webkit.WebView;
 import android.widget.*;
 import com.minesweeper.BL.DB.DbManager;
@@ -26,7 +25,6 @@ import com.minesweeper.BL.GameLogic.ButtonAdapter;
 import com.minesweeper.BL.GameLogic.Cell;
 import com.minesweeper.BL.GameLogic.GeneralGameProperties;
 import com.minesweeper.BL.GameLogic.MineSweeperLogicManager;
-import com.minesweeper.UI.Animation.TileAnimation;
 import com.minesweeper.UI.Fragments.DetailsDialog;
 
 import com.minesweeper.BL.Services.*;
@@ -563,22 +561,8 @@ public class GameActivity extends AppCompatActivity {
      * method add tiles to current layout and draw them
      */
     private void playAnimation(boolean won) {
-//        loadGif(won);
-//        if (!won)
-//            startFallingTiles();
+        loadGif(won);
     }
-
-    /**
-     * load the falling tiles translation
-     */
-    private void startFallingTiles() {
-        int numberOfTiles = 10;
-        for (int i = 0; i < numberOfTiles; i++) {
-            TileAnimation ta = new TileAnimation(this);
-            ta.playAnimation();
-        }
-    }
-
     /**
      * load gid animation when game ends
      *
@@ -588,10 +572,11 @@ public class GameActivity extends AppCompatActivity {
         if (won) {
             mWebViewWinning.loadUrl(GeneralGameProperties.DANCING_BANANA_ANIMATION_1_URL);
             mWebViewWinning.setVisibility(View.VISIBLE);
-        } else {
-            mWebViewLosing.loadUrl(GeneralGameProperties.EXPLOSION_1_URL);
-            mWebViewLosing.setVisibility(View.VISIBLE);
         }
+    // else {
+//            mWebViewLosing.loadUrl(GeneralGameProperties.EXPLOSION_1_URL);
+//            mWebViewLosing.setVisibility(View.VISIBLE);
+//        }
         isAnimationShown = true;
     }
 

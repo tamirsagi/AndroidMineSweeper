@@ -1,5 +1,6 @@
 package com.minesweeper.BL.GameLogic;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -94,7 +95,7 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
     }
 
     public void playAnimation() {
-        for(View v : views) {
+        for(final View v : views) {
             ObjectAnimator animY = ObjectAnimator.ofFloat(v, "y", 1000);
             ObjectAnimator rotateView = ObjectAnimator.ofFloat(v, "rotation", 0,360);
             AnimatorSet animSetXY = new AnimatorSet();
@@ -103,6 +104,27 @@ public class ButtonAdapter extends ArrayAdapter<Cell> {
             delay += 100;
             animSetXY.start();
             v.invalidate();
+            animSetXY.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    v.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
         }
         delay = 0;
         views.clear();
